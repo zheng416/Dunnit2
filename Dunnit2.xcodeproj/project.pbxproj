@@ -3,10 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7A054B71794EC5CF1EC95F59 /* Pods_Dunnit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C32BCD4DFEF6F40DC7EADA4A /* Pods_Dunnit2.framework */; };
+		9B46D56725DB7DB500E990CC /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B46D56625DB7DB500E990CC /* Utilities.swift */; };
+		9B46D56A25DB8BBD00E990CC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9B46D56925DB8BBD00E990CC /* GoogleService-Info.plist */; };
+		9B46D59125DC73CE00E990CC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B46D59025DC73CE00E990CC /* Constants.swift */; };
 		9B6CC76B25DB5F5A00C0CAF7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC76A25DB5F5A00C0CAF7 /* AppDelegate.swift */; };
 		9B6CC76D25DB5F5A00C0CAF7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC76C25DB5F5A00C0CAF7 /* SceneDelegate.swift */; };
 		9B6CC76F25DB5F5A00C0CAF7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC76E25DB5F5A00C0CAF7 /* ViewController.swift */; };
@@ -19,6 +23,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6ACBC333C343F4E6DF719209 /* Pods-Dunnit2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dunnit2.debug.xcconfig"; path = "Target Support Files/Pods-Dunnit2/Pods-Dunnit2.debug.xcconfig"; sourceTree = "<group>"; };
+		9B46D56625DB7DB500E990CC /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		9B46D56925DB8BBD00E990CC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		9B46D59025DC73CE00E990CC /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9B6CC76725DB5F5A00C0CAF7 /* Dunnit2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dunnit2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B6CC76A25DB5F5A00C0CAF7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9B6CC76C25DB5F5A00C0CAF7 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -30,7 +38,8 @@
 		9B6CC77F25DB60DA00C0CAF7 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		9B6CC78225DB60F300C0CAF7 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		9B6CC78525DB60FD00C0CAF7 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
-		9B6CC78F25DB7B1600C0CAF7 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		C32BCD4DFEF6F40DC7EADA4A /* Pods_Dunnit2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dunnit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA084741BFBD77730308FAB1 /* Pods-Dunnit2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dunnit2.release.xcconfig"; path = "Target Support Files/Pods-Dunnit2/Pods-Dunnit2.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A054B71794EC5CF1EC95F59 /* Pods_Dunnit2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -49,6 +59,8 @@
 			children = (
 				9B6CC76925DB5F5A00C0CAF7 /* Dunnit2 */,
 				9B6CC76825DB5F5A00C0CAF7 /* Products */,
+				A999CD333B1E60664AE0A3A6 /* Pods */,
+				F30E44BAF396EA4AF5FC070A /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -71,6 +83,7 @@
 				9B6CC77325DB5F5F00C0CAF7 /* Assets.xcassets */,
 				9B6CC77525DB5F5F00C0CAF7 /* LaunchScreen.storyboard */,
 				9B6CC77825DB5F5F00C0CAF7 /* Info.plist */,
+				9B46D56925DB8BBD00E990CC /* GoogleService-Info.plist */,
 			);
 			path = Dunnit2;
 			sourceTree = "<group>";
@@ -89,9 +102,27 @@
 		9B6CC78E25DB7B1100C0CAF7 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				9B6CC78F25DB7B1600C0CAF7 /* Utilities.swift */,
+				9B46D56625DB7DB500E990CC /* Utilities.swift */,
+				9B46D59025DC73CE00E990CC /* Constants.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		A999CD333B1E60664AE0A3A6 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6ACBC333C343F4E6DF719209 /* Pods-Dunnit2.debug.xcconfig */,
+				CA084741BFBD77730308FAB1 /* Pods-Dunnit2.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		F30E44BAF396EA4AF5FC070A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C32BCD4DFEF6F40DC7EADA4A /* Pods_Dunnit2.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -101,9 +132,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9B6CC77B25DB5F5F00C0CAF7 /* Build configuration list for PBXNativeTarget "Dunnit2" */;
 			buildPhases = (
+				D70DFEF9D1E34B5D3E1D3A9D /* [CP] Check Pods Manifest.lock */,
 				9B6CC76325DB5F5A00C0CAF7 /* Sources */,
 				9B6CC76425DB5F5A00C0CAF7 /* Frameworks */,
 				9B6CC76525DB5F5A00C0CAF7 /* Resources */,
+				4EE061EF5456B279209C947C /* [CP] Embed Pods Frameworks */,
+				09BA24D706CA859654220F68 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -154,10 +188,70 @@
 				9B6CC77725DB5F5F00C0CAF7 /* LaunchScreen.storyboard in Resources */,
 				9B6CC77425DB5F5F00C0CAF7 /* Assets.xcassets in Resources */,
 				9B6CC77225DB5F5A00C0CAF7 /* Main.storyboard in Resources */,
+				9B46D56A25DB8BBD00E990CC /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		09BA24D706CA859654220F68 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Dunnit2/Pods-Dunnit2-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Dunnit2/Pods-Dunnit2-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Dunnit2/Pods-Dunnit2-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4EE061EF5456B279209C947C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Dunnit2/Pods-Dunnit2-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Dunnit2/Pods-Dunnit2-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Dunnit2/Pods-Dunnit2-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D70DFEF9D1E34B5D3E1D3A9D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Dunnit2-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		9B6CC76325DB5F5A00C0CAF7 /* Sources */ = {
@@ -166,10 +260,12 @@
 			files = (
 				9B6CC76F25DB5F5A00C0CAF7 /* ViewController.swift in Sources */,
 				9B6CC76B25DB5F5A00C0CAF7 /* AppDelegate.swift in Sources */,
+				9B46D56725DB7DB500E990CC /* Utilities.swift in Sources */,
 				9B6CC78025DB60DA00C0CAF7 /* SignUpViewController.swift in Sources */,
 				9B6CC78325DB60F300C0CAF7 /* LoginViewController.swift in Sources */,
 				9B6CC76D25DB5F5A00C0CAF7 /* SceneDelegate.swift in Sources */,
 				9B6CC78625DB60FD00C0CAF7 /* HomeViewController.swift in Sources */,
+				9B46D59125DC73CE00E990CC /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -313,6 +409,7 @@
 		};
 		9B6CC77C25DB5F5F00C0CAF7 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6ACBC333C343F4E6DF719209 /* Pods-Dunnit2.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -332,6 +429,7 @@
 		};
 		9B6CC77D25DB5F5F00C0CAF7 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CA084741BFBD77730308FAB1 /* Pods-Dunnit2.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
