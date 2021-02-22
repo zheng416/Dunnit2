@@ -45,14 +45,14 @@
                                 </constraints>
                             </stackView>
                             <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8uN-Fp-C8k" customClass="GIDSignInButton">
-                                <rect key="frame" x="40" y="566" width="334" height="128"/>
+                                <rect key="frame" x="40" y="424" width="334" height="128"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="8uN-Fp-C8k" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="520" id="7Oe-dH-xj9"/>
+                            <constraint firstItem="8uN-Fp-C8k" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="450" id="7Oe-dH-xj9"/>
                             <constraint firstItem="c3E-oI-zc3" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="40" id="9ri-Sc-N7K"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="c3E-oI-zc3" secondAttribute="trailing" constant="40" id="SIi-XU-wGi"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="c3E-oI-zc3" secondAttribute="bottom" constant="40" id="tGO-hj-Hn7"/>
