@@ -12,6 +12,7 @@
 		9B46D56A25DB8BBD00E990CC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9B46D56925DB8BBD00E990CC /* GoogleService-Info.plist */; };
 		9B46D59125DC73CE00E990CC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B46D59025DC73CE00E990CC /* Constants.swift */; };
 		9B46D5CC25E4228400E990CC /* Home.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9B46D5CB25E4228300E990CC /* Home.storyboard */; };
+		9B46D5CF25E4D12000E990CC /* AddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B46D5CE25E4D12000E990CC /* AddViewController.swift */; };
 		9B6CC76B25DB5F5A00C0CAF7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC76A25DB5F5A00C0CAF7 /* AppDelegate.swift */; };
 		9B6CC76D25DB5F5A00C0CAF7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC76C25DB5F5A00C0CAF7 /* SceneDelegate.swift */; };
 		9B6CC76F25DB5F5A00C0CAF7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC76E25DB5F5A00C0CAF7 /* ViewController.swift */; };
@@ -29,6 +30,7 @@
 		9B46D56925DB8BBD00E990CC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9B46D59025DC73CE00E990CC /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9B46D5CB25E4228300E990CC /* Home.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Home.storyboard; sourceTree = "<group>"; };
+		9B46D5CE25E4D12000E990CC /* AddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddViewController.swift; sourceTree = "<group>"; };
 		9B6CC76725DB5F5A00C0CAF7 /* Dunnit2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dunnit2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B6CC76A25DB5F5A00C0CAF7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9B6CC76C25DB5F5A00C0CAF7 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 				9B6CC77F25DB60DA00C0CAF7 /* SignUpViewController.swift */,
 				9B6CC78225DB60F300C0CAF7 /* LoginViewController.swift */,
 				9B6CC78525DB60FD00C0CAF7 /* HomeViewController.swift */,
+				9B46D5CE25E4D12000E990CC /* AddViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -264,6 +267,7 @@
 			files = (
 				9B6CC76F25DB5F5A00C0CAF7 /* ViewController.swift in Sources */,
 				9B6CC76B25DB5F5A00C0CAF7 /* AppDelegate.swift in Sources */,
+				9B46D5CF25E4D12000E990CC /* AddViewController.swift in Sources */,
 				9B46D56725DB7DB500E990CC /* Utilities.swift in Sources */,
 				9B6CC78025DB60DA00C0CAF7 /* SignUpViewController.swift in Sources */,
 				9B6CC78325DB60F300C0CAF7 /* LoginViewController.swift in Sources */,

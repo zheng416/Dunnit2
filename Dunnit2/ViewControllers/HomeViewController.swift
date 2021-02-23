@@ -7,14 +7,31 @@
 
 import UIKit
 
-var tasks = [String]()
 class HomeViewController: UIViewController {
     
     @IBOutlet var tableView: UITableView!
     
-//    @IBAction func didTapAdd() {
-//
-//    }
+    var tasks = [myTask]()
+    
+    @IBAction func didTapAdd() {
+        // Show add vc
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        guard let vc = storyboard.instantiateViewController(identifier: "add") as? AddViewController else {
+            return
+        }
+        
+        vc.title = "New Task"
+        vc.navigationItem.largeTitleDisplayMode = .never
+        vc.completion = {title, body, date in
+            DispatchQueue.main.async {
+                self.navigationController?.popToRootViewController(animated: true)
+                let new = myTask(title: title, date: date, identifier: "id_\(title)")
+                self.tasks.append(new)
+                self.tableView.reloadData()
+            }
+        }
+        navigationController?.pushViewController(vc, animated: true)
+    }
     
     
 
@@ -22,6 +39,8 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         overrideUserInterfaceStyle = .light
         // Do any additional setup after loading the view.
+        tableView.delegate = self
+        tableView.dataSource = self
     }
     
 
@@ -40,22 +59,37 @@ class HomeViewController: UIViewController {
 
 
 
-extension ViewController: UITableViewDelegate {
+extension HomeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
-extension ViewController: UITableViewDataSource {
+extension HomeViewController: UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tasks.count
     }
     
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        
-        cell.textLabel?.text = tasks[indexPath.row]
+        let date = tasks[indexPath.row].date
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM dd, YYYY"
+        cell.textLabel?.text = tasks[indexPath.row].title
+        cell.detailTextLabel?.text = formatter.string(from: date)
         
         return cell
     }
+}
+
+struct myTask {
+    let title: String
+    let date: Date
+    let identifier: String
+    
 }

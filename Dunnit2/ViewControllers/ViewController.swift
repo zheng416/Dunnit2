@@ -38,7 +38,21 @@ class ViewController: UIViewController, LoginButtonDelegate {
             })
         } else {
             let loginButton = FBLoginButton()
-            loginButton.center = view.center
+            // Obtain all constraints for the button:
+            if let facebookButtonHeightConstraint = loginButton.constraints.first(where: { $0.firstAttribute == .height }) {
+                loginButton.removeConstraint(facebookButtonHeightConstraint)
+            }
+            loginButton.widthAnchor.constraint(equalToConstant: 500).isActive = true
+            // Iterate over array and test constraints until we find the correct one:
+//            for lc in layoutConstraintsArr { // or attribute is NSLayoutAttributeHeight etc.
+//               if ( lc.constant == 28 ){
+//                 // Then disable it...
+//                 lc.isActive = false
+//                 break
+//               }
+//            }
+            let newCenter = CGPoint(x: self.view.frame.width / 2, y: self.view.frame.height - 350)
+            loginButton.center = newCenter
             loginButton.delegate = self
             loginButton.permissions = ["public_profile", "email"]
             view.addSubview(loginButton)
