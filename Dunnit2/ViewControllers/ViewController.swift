@@ -8,6 +8,8 @@
 import UIKit
 import GoogleSignIn
 import FBSDKLoginKit
+import FirebaseAuth
+import Firebase
 
 class ViewController: UIViewController, LoginButtonDelegate {
     
@@ -16,6 +18,8 @@ class ViewController: UIViewController, LoginButtonDelegate {
     @IBOutlet weak var signUpButton: UIButton!
     
     @IBOutlet weak var loginButton: UIButton!
+    
+    @IBOutlet weak var errorLabel: UILabel!
     
     
     @IBOutlet weak var GoogleSignIn: GIDSignInButton!
@@ -26,40 +30,50 @@ class ViewController: UIViewController, LoginButtonDelegate {
         
         overrideUserInterfaceStyle = .light
         GIDSignIn.sharedInstance()?.presentingViewController = self
+
         setUpElements()
         if let token = AccessToken.current,
                 !token.isExpired {
             let token = token.tokenString
-        
-            let request = FBSDKLoginKit.GraphRequest(graphPath: "me", parameters: ["fields": "email, name"], tokenString: token, version: nil, httpMethod: .get)
             
-            request.start(completionHandler: {connection, result, error in
-                print("\(result)")
-            })
-        } else {
-            let loginButton = FBLoginButton()
-            // Obtain all constraints for the button:
-            if let facebookButtonHeightConstraint = loginButton.constraints.first(where: { $0.firstAttribute == .height }) {
-                loginButton.removeConstraint(facebookButtonHeightConstraint)
+            let credential = FacebookAuthProvider.credential(withAccessToken: AccessToken.current!.tokenString)
+        
+            
+            Auth.auth().signIn(with: credential) { (authResult, error) in
+              if let error = error {
+                let authError = error as NSError
+                // There was an error creating the user
+                self.showError("Error creating user \(authError)")
+            
+                return
+              }
+                // Transition to the home screen
+                self.transitionToHome()
             }
-            loginButton.widthAnchor.constraint(equalToConstant: 500).isActive = true
-            // Iterate over array and test constraints until we find the correct one:
-//            for lc in layoutConstraintsArr { // or attribute is NSLayoutAttributeHeight etc.
-//               if ( lc.constant == 28 ){
-//                 // Then disable it...
-//                 lc.isActive = false
-//                 break
-//               }
-//            }
-            let newCenter = CGPoint(x: self.view.frame.width / 2, y: self.view.frame.height - 350)
-            loginButton.center = newCenter
-            loginButton.delegate = self
-            loginButton.permissions = ["public_profile", "email"]
-            view.addSubview(loginButton)
+            
+        } else {
+
+            let FBloginButton = FBLoginButton()
+            FBloginButton.center = view.center
+            FBloginButton.delegate = self
+            FBloginButton.permissions = ["public_profile", "email"]
+            view.addSubview(FBloginButton)
         }
         
        
         
+    }
+    
+    func showError(_ message:String) {
+        errorLabel.text = message
+        errorLabel.alpha = 1
+    }
+    
+    func transitionToHome() {
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "main") as UIViewController
+        self.view.window?.rootViewController = vc
+        self.view.window?.makeKeyAndVisible()
     }
     
     func setUpElements() {
@@ -75,14 +89,51 @@ class ViewController: UIViewController, LoginButtonDelegate {
     
     func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
         let token = result?.token?.tokenString
-    
-        let request = FBSDKLoginKit.GraphRequest(graphPath: "me", parameters: ["fields": "email, name"], tokenString: token, version: nil, httpMethod: .get)
+        print("token \(token)")
         
-        request.start(completionHandler: {connection, result, error in
-            print("\(result)")
-        })
+        if (token != nil) {
+            let request = FBSDKLoginKit.GraphRequest(graphPath: "me", parameters: ["fields": "email, name"], tokenString: token, version: nil, httpMethod: .get)
+            
+            let credential = FacebookAuthProvider.credential(withAccessToken: AccessToken.current!.tokenString)
+            print(credential)
+            
+            Auth.auth().signIn(with: credential) { (authResult, error) in
+              if let error = error {
+                let authError = error as NSError
+                // There was an error creating the user
+                self.showError("Error creating user \(authError)")
+                // ...
+                return
+              }
+                
+                // Save to firestore
+                let db = Firestore.firestore()
+                request.start(completionHandler: {connection, result, error in
+                    if (error == nil) {
+                        guard let userDict = result as? [String:Any] else {
+                                            return
+                        }
+                        let db = Firestore.firestore()
+                        db.collection("users").addDocument(data: ["name" : userDict["name"], "uid" : userDict["id"], "email": userDict["email"]]) { (error) in
+                            
+                            if error != nil {
+                                // Show error message
+                                self.showError("Error saving user data")
+                            }
+                        }
+                    }
+                })
+                
+                // Transition to the home screen
+                self.transitionToHome()
+            }
+        }
+    
+//        let request = FBSDKLoginKit.GraphRequest(graphPath: "me", parameters: ["fields": "email, name"], tokenString: token, version: nil, httpMethod: .get)
+//
+//        request.start(completionHandler: {connection, result, error in
+//            print("\(result)")
+//        })
     }
-
-
 }
 
