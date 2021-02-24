@@ -52,6 +52,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
             }
             
         } else {
+
             let FBloginButton = FBLoginButton()
             FBloginButton.center = view.center
             FBloginButton.delegate = self
