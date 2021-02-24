@@ -45,6 +45,10 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="vS7-ur-LcG" id="Nma-Ak-sC0"/>
+                                    <outlet property="delegate" destination="vS7-ur-LcG" id="3Gr-VT-dpP"/>
+                                </connections>
                             </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="TxW-zn-0BW"/>
