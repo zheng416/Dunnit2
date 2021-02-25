@@ -11,7 +11,8 @@ import FBSDKLoginKit
 import FirebaseAuth
 import Firebase
 
-class ViewController: UIViewController, LoginButtonDelegate {
+class ViewController: UIViewController /*, LoginButtonDelegate*/ {
+    
     
     
 
@@ -29,10 +30,10 @@ class ViewController: UIViewController, LoginButtonDelegate {
         // Do any additional setup after loading the view.
         
         overrideUserInterfaceStyle = .light
-        GIDSignIn.sharedInstance()?.presentingViewController = self
+        // setupGoogleButton()
 
         setUpElements()
-        if let token = AccessToken.current,
+        /*if let token = AccessToken.current,
                 !token.isExpired {
             let token = token.tokenString
         
@@ -62,11 +63,26 @@ class ViewController: UIViewController, LoginButtonDelegate {
             FBloginButton.delegate = self
             FBloginButton.permissions = ["public_profile", "email"]
             view.addSubview(FBloginButton)
-        }
+        }*/
         
        
         
     }
+    
+    /*func setupGoogleButton() {
+        let customButton = UIButton(type: .system)
+        customButton.frame = CGRect(x: 16, y: 116 + 66 + 66, width: view.frame.width - 32, height: 50)
+        customButton.backgroundColor = .orange
+        customButton.setTitle("Google Sign In", for: .normal)
+        customButton.layer.cornerRadius = 20
+        customButton.addTarget(self, action: #selector (handleGoogleSignIn), for: .touchUpInside)
+        view.addSubview(customButton)
+        GIDSignIn.sharedInstance()?.presentingViewController = self
+    }
+    
+    @objc func handleGoogleSignIn() {
+        GIDSignIn.sharedInstance().signIn()
+    }*/
     
     func showError(_ message:String) {
         errorLabel.text = message
@@ -87,7 +103,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
         Utilities.styleHollowButton(loginButton)
     }
     
-    func loginButtonDidLogOut(_ loginButton: FBLoginButton) {
+    /* func loginButtonDidLogOut(_ loginButton: FBLoginButton) {
         
     }
     
@@ -99,7 +115,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
         request.start(completionHandler: {connection, result, error in
             print("\(result)")
         })
-    }
+    } */
     
 //    func createNewUser(email: String, api_id: UInt, name: String) {
 //        Auth.auth().createUser(withEmail: email, password: password) { (result, err) in

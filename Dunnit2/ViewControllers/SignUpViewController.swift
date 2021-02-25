@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import GoogleSignIn
+import FBSDKLoginKit
 import FirebaseAuth
 import Firebase
 
@@ -27,7 +29,30 @@ class SignUpViewController: UIViewController {
         super.viewDidLoad()
         overrideUserInterfaceStyle = .light
         // Do any additional setup after loading the view.
+        setupGoogleButton()
         setUpElements()
+    }
+    
+    func setupGoogleButton() {
+        let googleIcon = UIImage(named: "google.png")
+        let customButton = UIButton(type: .system)
+        customButton.setImage(googleIcon, for: UIControl.State.normal)
+        customButton.imageView?.contentMode = .scaleAspectFit
+        customButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: -200, bottom: 10, right: 0)
+        customButton.frame = CGRect(x: 40, y: 630, width: view.frame.width - 72, height: 50)
+        customButton.backgroundColor = UIColor(red: 45/255, green: 89/255, blue: 134/255, alpha: 0.8)
+        customButton.setTitle("Sign up with Google", for: .normal)
+        customButton.titleEdgeInsets = UIEdgeInsets(top: 10, left: -475, bottom: 10, right: 0)
+        customButton.setTitleColor(.white, for: .normal)
+        customButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        customButton.layer.cornerRadius = 25
+        customButton.addTarget(self, action: #selector (handleGoogleSignIn), for: .touchUpInside)
+        view.addSubview(customButton)
+        GIDSignIn.sharedInstance()?.presentingViewController = self
+    }
+    
+    @objc func handleGoogleSignIn() {
+        GIDSignIn.sharedInstance().signIn()
     }
     
     func setUpElements() {
