@@ -30,7 +30,6 @@ class ViewController: UIViewController, LoginButtonDelegate {
         
         overrideUserInterfaceStyle = .light
         GIDSignIn.sharedInstance()?.presentingViewController = self
-        
 
         setUpElements()
         if let token = AccessToken.current,
@@ -60,7 +59,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
             FBloginButton.permissions = ["public_profile", "email"]
             view.addSubview(FBloginButton)
         }
-        self.transitionToHome()
+        
        
         
     }

@@ -14,22 +14,7 @@ import FBSDKCoreKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
-    func transitionToHome() {
-        var window: UIWindow?
-        window = UIWindow()
-        //let initialViewController: UIViewController
-                let storyboard = UIStoryboard(name: "Home", bundle: nil)
-        let mainViewController = storyboard.instantiateViewController(withIdentifier: "main")
-        //view.window?.rootViewController = mainViewController
-        guard var homeViewController = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController
-        else {
-            print("not Success");
-            return
-        }
-        print("Success");
-       // window?.rootViewController = mainViewController
-        //window?.makeKeyAndVisible()
-    }
+
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -60,15 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 //        }
     
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-        // Perform any operations on signed in user here.
-        let userId = user.userID                  // For client-side use only!
-        let idToken = user.authentication.idToken // Safe to send to the server
-        let fullName = user.profile.name
-        let givenName = user.profile.givenName
-        let familyName = user.profile.familyName
-        let email = user.profile.email
         print("User email: \(user.profile.email ?? "No Email")")
-        transitionToHome()
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {

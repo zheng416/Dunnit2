@@ -74,8 +74,8 @@
         <!--Login View Controller-->
         <scene sceneID="mHx-4G-q1e">
             <objects>
-                <viewController storyboardIdentifier="login" useStoryboardIdentifierAsRestorationIdentifier="YES" id="QOg-8v-lxd" customClass="LoginViewController" customModule="Dunnit2" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" restorationIdentifier="login" id="RQ0-7E-rkk">
+                <viewController id="QOg-8v-lxd" customClass="LoginViewController" customModule="Dunnit2" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="RQ0-7E-rkk">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
