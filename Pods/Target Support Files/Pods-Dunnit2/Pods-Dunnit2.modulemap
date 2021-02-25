@@ -1,0 +1,6 @@
+framework module Pods_Dunnit2 {
+  umbrella header "Pods-Dunnit2-umbrella.h"
+
+  export *
+  module * { export * }
+}
