@@ -117,7 +117,7 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="50" id="Y4x-4L-UOJ"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" title="Login"/>
                                         <connections>
                                             <action selector="loginTapped:" destination="QOg-8v-lxd" eventType="touchUpInside" id="pIR-sI-XYj"/>
@@ -151,6 +151,11 @@
                             <constraint firstItem="BL9-bT-klM" firstAttribute="trailing" secondItem="ne3-ZW-vKl" secondAttribute="trailing" constant="40" id="a2U-lA-BDw"/>
                             <constraint firstItem="ne3-ZW-vKl" firstAttribute="leading" secondItem="BL9-bT-klM" secondAttribute="leading" constant="40" id="eQm-wb-tLA"/>
                         </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                <integer key="value" value="25"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
                     </view>
                     <navigationItem key="navigationItem" title="Sign In" id="geX-Fp-lcf"/>
                     <connections>
@@ -251,7 +256,7 @@
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" red="0.34564482242842698" green="0.46340103077511319" blue="0.70443309437144885" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                        <color key="barTintColor" red="0.16216762585446159" green="0.22761217992459817" blue="0.38919577396707694" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <color key="barTintColor" red="0.35156753660000001" green="0.45571583510000002" blue="0.59217447040000004" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <textAttributes key="titleTextAttributes">
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                             <color key="textColor" red="0.96896521772696931" green="0.95258230021375789" blue="0.98449977119976184" alpha="0.79854902052721444" colorSpace="custom" customColorSpace="displayP3"/>
