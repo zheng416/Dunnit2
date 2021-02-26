@@ -157,5 +157,4 @@ class ViewController: UIViewController /*, LoginButtonDelegate*/ {
 //            print("\(result)")
 //        })
     }
-}
 
