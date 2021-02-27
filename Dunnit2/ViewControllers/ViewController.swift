@@ -70,8 +70,8 @@ class ViewController: UIViewController, LoginButtonDelegate {
     }
     
     func transitionToHome() {
-        let storyboard = UIStoryboard(name: "Home", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "main") as UIViewController
+        let storyboard = UIStoryboard(name: "Settings", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "settings") as UIViewController
         self.view.window?.rootViewController = vc
         self.view.window?.makeKeyAndVisible()
     }
