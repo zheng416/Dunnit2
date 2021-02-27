@@ -178,7 +178,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="gQP-l5-f1S">
-                                <rect key="frame" x="40" y="263" width="334" height="300.5"/>
+                                <rect key="frame" x="40" y="238" width="334" height="300.5"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="iBn-vw-7mc">
                                         <rect key="frame" x="0.0" y="0.0" width="334" height="50"/>
@@ -231,7 +231,7 @@
                         <constraints>
                             <constraint firstItem="Lbt-RQ-uDA" firstAttribute="trailing" secondItem="gQP-l5-f1S" secondAttribute="trailing" constant="40" id="MnO-8U-UGN"/>
                             <constraint firstItem="gQP-l5-f1S" firstAttribute="leading" secondItem="Lbt-RQ-uDA" secondAttribute="leading" constant="40" id="WKE-WK-gpG"/>
-                            <constraint firstItem="gQP-l5-f1S" firstAttribute="top" secondItem="Lbt-RQ-uDA" secondAttribute="top" constant="175" id="qLB-rn-ueL"/>
+                            <constraint firstItem="gQP-l5-f1S" firstAttribute="top" secondItem="Lbt-RQ-uDA" secondAttribute="top" constant="150" id="qLB-rn-ueL"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Sign Up" id="xUU-Pu-TJS"/>
