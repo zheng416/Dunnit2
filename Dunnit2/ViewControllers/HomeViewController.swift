@@ -110,8 +110,8 @@ extension HomeViewController {
             
             self.getData()
         }
-        // doneAction.image = UIImage(named: "")
-        doneAction.backgroundColor = .cyan
+        doneAction.image = UIImage(systemName: "checkmark.circle")
+        doneAction.backgroundColor = .systemGreen
         return indexPath.section == 0 ? UISwipeActionsConfiguration(actions: [doneAction]) : nil
     }
     
@@ -123,8 +123,8 @@ extension HomeViewController {
             
             self.getData()
         }
-        // deleteAction.image = UIImage(named: "")
-        deleteAction.backgroundColor = .red
+        deleteAction.image = UIImage(systemName: "trash")
+        deleteAction.backgroundColor = .systemRed
         return UISwipeActionsConfiguration(actions: [deleteAction])
     }
 }
