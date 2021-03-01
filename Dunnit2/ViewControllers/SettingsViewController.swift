@@ -42,7 +42,7 @@ class SettingsViewController: UITableViewController {
         
         let user = getUser()
         globalUser = user
-        
+
         nameLabel.text =  user["name"] as! String
         emailLabel.text = user["email"] as! String
         soundToggle.isOn = user["sound"] as! Bool
