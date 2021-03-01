@@ -26,6 +26,9 @@
 		9B6CC78025DB60DA00C0CAF7 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC77F25DB60DA00C0CAF7 /* SignUpViewController.swift */; };
 		9B6CC78325DB60F300C0CAF7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC78225DB60F300C0CAF7 /* LoginViewController.swift */; };
 		9B6CC78625DB60FD00C0CAF7 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC78525DB60FD00C0CAF7 /* HomeViewController.swift */; };
+		9BBAE66125ED7DE1003CC28B /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE66025ED7DE1003CC28B /* SettingsViewController.swift */; };
+		9BBAE66425ED7DF1003CC28B /* EditNameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE66325ED7DF1003CC28B /* EditNameViewController.swift */; };
+		9BBAE66725ED7DFA003CC28B /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9BBAE66625ED7DF9003CC28B /* Settings.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +53,9 @@
 		9B6CC77F25DB60DA00C0CAF7 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		9B6CC78225DB60F300C0CAF7 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		9B6CC78525DB60FD00C0CAF7 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		9BBAE66025ED7DE1003CC28B /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		9BBAE66325ED7DF1003CC28B /* EditNameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditNameViewController.swift; sourceTree = "<group>"; };
+		9BBAE66625ED7DF9003CC28B /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
 		C32BCD4DFEF6F40DC7EADA4A /* Pods_Dunnit2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dunnit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA084741BFBD77730308FAB1 /* Pods-Dunnit2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dunnit2.release.xcconfig"; path = "Target Support Files/Pods-Dunnit2/Pods-Dunnit2.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -93,6 +99,7 @@
 				9B6CC78925DB612A00C0CAF7 /* ViewControllers */,
 				9B6CC77025DB5F5A00C0CAF7 /* Main.storyboard */,
 				9B46D5CB25E4228300E990CC /* Home.storyboard */,
+				9BBAE66625ED7DF9003CC28B /* Settings.storyboard */,
 				9B6CC77325DB5F5F00C0CAF7 /* Assets.xcassets */,
 				9B6CC77525DB5F5F00C0CAF7 /* LaunchScreen.storyboard */,
 				9B6CC77825DB5F5F00C0CAF7 /* Info.plist */,
@@ -107,12 +114,14 @@
 		9B6CC78925DB612A00C0CAF7 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				9BBAE66025ED7DE1003CC28B /* SettingsViewController.swift */,
 				9B6CC76E25DB5F5A00C0CAF7 /* ViewController.swift */,
 				9B6CC77F25DB60DA00C0CAF7 /* SignUpViewController.swift */,
 				9B6CC78225DB60F300C0CAF7 /* LoginViewController.swift */,
 				9B6CC78525DB60FD00C0CAF7 /* HomeViewController.swift */,
 				9B46D5CE25E4D12000E990CC /* AddViewController.swift */,
 				9B46D62525ED436500E990CC /* MenuViewController.swift */,
+				9BBAE66325ED7DF1003CC28B /* EditNameViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -206,6 +215,7 @@
 				9B6CC77725DB5F5F00C0CAF7 /* LaunchScreen.storyboard in Resources */,
 				9B46D5CC25E4228400E990CC /* Home.storyboard in Resources */,
 				9B6CC77425DB5F5F00C0CAF7 /* Assets.xcassets in Resources */,
+				9BBAE66725ED7DFA003CC28B /* Settings.storyboard in Resources */,
 				9B6CC77225DB5F5A00C0CAF7 /* Main.storyboard in Resources */,
 				9B46D56A25DB8BBD00E990CC /* GoogleService-Info.plist in Resources */,
 			);
@@ -286,6 +296,8 @@
 				9B6CC78025DB60DA00C0CAF7 /* SignUpViewController.swift in Sources */,
 				9B46D62625ED436500E990CC /* MenuViewController.swift in Sources */,
 				9B6CC78325DB60F300C0CAF7 /* LoginViewController.swift in Sources */,
+				9BBAE66425ED7DF1003CC28B /* EditNameViewController.swift in Sources */,
+				9BBAE66125ED7DE1003CC28B /* SettingsViewController.swift in Sources */,
 				9B6CC76D25DB5F5A00C0CAF7 /* SceneDelegate.swift in Sources */,
 				9B6CC78625DB60FD00C0CAF7 /* HomeViewController.swift in Sources */,
 				9B46D62925ED49E400E990CC /* SlideInTransition.swift in Sources */,
