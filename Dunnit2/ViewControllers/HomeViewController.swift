@@ -10,6 +10,10 @@ import CoreData
 
 class HomeViewController: UIViewController {
     
+    let transition = SlideInTransition()
+    var topView: UIView?
+
+    
     @IBOutlet var tableView: UITableView!
     
     var taskStore = [[TaskEntity](), [TaskEntity]()]
@@ -20,6 +24,56 @@ class HomeViewController: UIViewController {
         taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
         
         tableView.reloadData()
+    }
+    
+    @IBAction func didTapMenu(_ sender: UIBarButtonItem) {
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        guard let menuViewController = storyboard.instantiateViewController(withIdentifier: "MenuViewController") as? MenuViewController else { return }
+        menuViewController.didTapMenuType = { menuType in
+            self.transitionToNew(menuType)
+        }
+        menuViewController.modalPresentationStyle = .overCurrentContext
+        menuViewController.transitioningDelegate = self
+        present(menuViewController, animated: true)
+    }
+    
+    func transitionToNew(_ menuType: MenuType) {
+        let title = String(describing: menuType).capitalized
+        self.title = title
+        
+        topView?.removeFromSuperview()
+        switch menuType {
+        
+        // Switch VIEW CONTROLLERS
+        // let profileVC = ProfileViewController()
+        // view.addSubview(profileVC.view)
+        // self.topView = profileVC.view
+        // addChild(profileVC)
+        
+        
+        case .shared:
+            let view = UIView()
+            view.backgroundColor = .yellow
+            view.frame = self.view.bounds
+            self.view.addSubview(view)
+            self.topView = view
+        case .settings:
+            let view = UIView()
+            view.backgroundColor = .blue
+            view.frame = self.view.bounds
+            self.view.addSubview(view)
+            self.topView = view
+//        case .myList:
+//            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+//            guard let vc = storyboard.instantiateViewController(identifier: "ListVC") as? ListViewController else {
+//                return
+//            }
+//             view.addSubview(profileVC.view)
+//             self.topView = profileVC.view
+//             addChild(profileVC)
+        default:
+            break
+        }
     }
     
     @IBAction func didTapAdd() {
@@ -126,6 +180,18 @@ extension HomeViewController {
         deleteAction.image = UIImage(systemName: "trash")
         deleteAction.backgroundColor = .systemRed
         return UISwipeActionsConfiguration(actions: [deleteAction])
+    }
+}
+
+extension HomeViewController: UIViewControllerTransitioningDelegate {
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        transition.isPresenting = true
+        return transition
+    }
+    
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        transition.isPresenting = false
+        return transition
     }
 }
 

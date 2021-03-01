@@ -15,6 +15,8 @@
 		9B46D5CF25E4D12000E990CC /* AddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B46D5CE25E4D12000E990CC /* AddViewController.swift */; };
 		9B46D5D325E6D91100E990CC /* TaskModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9B46D5D125E6D91100E990CC /* TaskModel.xcdatamodeld */; };
 		9B46D5FA25E6DD5800E990CC /* DatabaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B46D5F925E6DD5800E990CC /* DatabaseHelper.swift */; };
+		9B46D62625ED436500E990CC /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B46D62525ED436500E990CC /* MenuViewController.swift */; };
+		9B46D62925ED49E400E990CC /* SlideInTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B46D62825ED49E400E990CC /* SlideInTransition.swift */; };
 		9B6CC76B25DB5F5A00C0CAF7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC76A25DB5F5A00C0CAF7 /* AppDelegate.swift */; };
 		9B6CC76D25DB5F5A00C0CAF7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC76C25DB5F5A00C0CAF7 /* SceneDelegate.swift */; };
 		9B6CC76F25DB5F5A00C0CAF7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC76E25DB5F5A00C0CAF7 /* ViewController.swift */; };
@@ -35,6 +37,8 @@
 		9B46D5CE25E4D12000E990CC /* AddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddViewController.swift; sourceTree = "<group>"; };
 		9B46D5D225E6D91100E990CC /* TaskModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TaskModel.xcdatamodel; sourceTree = "<group>"; };
 		9B46D5F925E6DD5800E990CC /* DatabaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseHelper.swift; sourceTree = "<group>"; };
+		9B46D62525ED436500E990CC /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
+		9B46D62825ED49E400E990CC /* SlideInTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideInTransition.swift; sourceTree = "<group>"; };
 		9B6CC76725DB5F5A00C0CAF7 /* Dunnit2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dunnit2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B6CC76A25DB5F5A00C0CAF7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9B6CC76C25DB5F5A00C0CAF7 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -95,6 +99,7 @@
 				9B46D56925DB8BBD00E990CC /* GoogleService-Info.plist */,
 				9B46D5D125E6D91100E990CC /* TaskModel.xcdatamodeld */,
 				9B46D5F925E6DD5800E990CC /* DatabaseHelper.swift */,
+				9B46D62825ED49E400E990CC /* SlideInTransition.swift */,
 			);
 			path = Dunnit2;
 			sourceTree = "<group>";
@@ -107,6 +112,7 @@
 				9B6CC78225DB60F300C0CAF7 /* LoginViewController.swift */,
 				9B6CC78525DB60FD00C0CAF7 /* HomeViewController.swift */,
 				9B46D5CE25E4D12000E990CC /* AddViewController.swift */,
+				9B46D62525ED436500E990CC /* MenuViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -278,9 +284,11 @@
 				9B46D5CF25E4D12000E990CC /* AddViewController.swift in Sources */,
 				9B46D56725DB7DB500E990CC /* Utilities.swift in Sources */,
 				9B6CC78025DB60DA00C0CAF7 /* SignUpViewController.swift in Sources */,
+				9B46D62625ED436500E990CC /* MenuViewController.swift in Sources */,
 				9B6CC78325DB60F300C0CAF7 /* LoginViewController.swift in Sources */,
 				9B6CC76D25DB5F5A00C0CAF7 /* SceneDelegate.swift in Sources */,
 				9B6CC78625DB60FD00C0CAF7 /* HomeViewController.swift in Sources */,
+				9B46D62925ED49E400E990CC /* SlideInTransition.swift in Sources */,
 				9B46D59125DC73CE00E990CC /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
