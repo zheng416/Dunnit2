@@ -179,5 +179,64 @@ class DataBaseHelper {
         }
     }
     
+    func updateSound(soundOn:Bool, email: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        let predicate = NSPredicate(format: "email = %@", email)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let foundUser = try managedContext.fetch(fetchRequest) as! [UserEntity]
+            foundUser.first?.sound = soundOn
+            try managedContext.save()
+            print("Updated Sound.")
+        } catch {
+            print("Update error.")
+        }
+    }
+    
+    func updateNotifications(notificationsOn:Bool, email: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        let predicate = NSPredicate(format: "email = %@", email)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let foundUser = try managedContext.fetch(fetchRequest) as! [UserEntity]
+            foundUser.first?.notifications = notificationsOn
+            try managedContext.save()
+            print("Updated notifications.")
+        } catch {
+            print("Update error.")
+        }
+    }
+    
+    func updateDark(darkMode:Bool, email: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        let predicate = NSPredicate(format: "email = %@", email)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let foundUser = try managedContext.fetch(fetchRequest) as! [UserEntity]
+            foundUser.first?.darkMode = darkMode
+            try managedContext.save()
+            print("Updated darkMode.")
+        } catch {
+            print("Update error.")
+        }
+    }
+    
+    
+    
     
 }

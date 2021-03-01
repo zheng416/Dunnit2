@@ -112,6 +112,9 @@
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wok-Ie-5Cf">
                                                     <rect key="frame" x="345" y="6" width="49" height="31"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <connections>
+                                                        <action selector="toggleSound" destination="its-6W-0SN" eventType="valueChanged" id="feq-DS-8ph"/>
+                                                    </connections>
                                                 </switch>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -133,6 +136,9 @@
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aH6-qc-pf3">
                                                     <rect key="frame" x="345" y="6" width="49" height="31"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <connections>
+                                                        <action selector="toggleNotifications" destination="its-6W-0SN" eventType="valueChanged" id="BkV-OZ-T2P"/>
+                                                    </connections>
                                                 </switch>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -154,6 +160,9 @@
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rN5-pV-sOF">
                                                     <rect key="frame" x="345" y="6" width="49" height="31"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <connections>
+                                                        <action selector="toggleDark" destination="its-6W-0SN" eventType="valueChanged" id="zDc-P8-KG1"/>
+                                                    </connections>
                                                 </switch>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -240,8 +249,11 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Settings" id="bvm-Br-hxd"/>
                     <connections>
+                        <outlet property="darkModeToggle" destination="rN5-pV-sOF" id="6a9-MA-ZfZ"/>
                         <outlet property="emailLabel" destination="NgW-vI-X01" id="ein-oT-gPv"/>
                         <outlet property="nameLabel" destination="JBX-Fn-lyy" id="EP0-iW-p26"/>
+                        <outlet property="notificationsToggle" destination="aH6-qc-pf3" id="VWB-uN-DPF"/>
+                        <outlet property="soundToggle" destination="Wok-Ie-5Cf" id="zOm-3a-WxV"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="P1C-5x-Lmt" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
