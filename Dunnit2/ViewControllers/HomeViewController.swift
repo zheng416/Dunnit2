@@ -58,11 +58,12 @@ class HomeViewController: UIViewController {
             self.view.addSubview(view)
             self.topView = view
         case .settings:
-            let view = UIView()
-            view.backgroundColor = .blue
-            view.frame = self.view.bounds
-            self.view.addSubview(view)
-            self.topView = view
+            let storyboard = UIStoryboard(name: "Settings", bundle: nil)
+            let settingVC = storyboard.instantiateViewController(withIdentifier: "settings")
+            view.addSubview(settingVC.view)
+            self.topView = settingVC.view
+            addChild(settingVC)
+            navigationItem.rightBarButtonItem?.isEnabled = false
 //        case .myList:
 //            let storyboard = UIStoryboard(name: "Home", bundle: nil)
 //            guard let vc = storyboard.instantiateViewController(identifier: "ListVC") as? ListViewController else {
@@ -72,6 +73,8 @@ class HomeViewController: UIViewController {
 //             self.topView = profileVC.view
 //             addChild(profileVC)
         default:
+            print("Default")
+            navigationItem.rightBarButtonItem?.isEnabled = true
             break
         }
     }
