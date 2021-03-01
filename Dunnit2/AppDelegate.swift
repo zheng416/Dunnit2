@@ -12,7 +12,7 @@ import GoogleSignIn
 import FBSDKCoreKit
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 
@@ -22,8 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         
         
         
-        GIDSignIn.sharedInstance()?.clientID = "617395248965-6mubcp9nhela7iuplf28kglbqh3bu1li.apps.googleusercontent.com"
-        GIDSignIn.sharedInstance()?.delegate = self
+        
         
         ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
         return true
@@ -44,19 +43,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 //
 //        }
     
-    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-        /*print("User email: \(user.profile.email ?? "No Email")")*/
-        if let err = error {
-            print("Failed to log into Google: ", err)
-            return
-        }
-        
-        print("Sucessfully logged into Google", user)
-    }
+//    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+//        /*print("User email: \(user.profile.email ?? "No Email")")*/
+//        if let err = error {
+//            print("Failed to log into Google: ", err)
+//            return
+//        }
+//        print("Sucessfully logged into Google", user)
+//        self.present
+//    }
     
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        return GIDSignIn.sharedInstance().handle(url)
-    }
+    
+    
+//    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+//        return GIDSignIn.sharedInstance().handle(url)
+//    }
 
     // MARK: UISceneSession Lifecycle
 
@@ -115,6 +116,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         }
     }
 
+    @available(iOS 9.0, *)
+        func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool {
+            return GIDSignIn.sharedInstance().handle(url)
+        }
 
 }
 

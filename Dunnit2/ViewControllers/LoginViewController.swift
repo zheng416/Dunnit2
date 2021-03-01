@@ -52,6 +52,7 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
     
     @objc func handleGoogleSignIn() {
         GIDSignIn.sharedInstance().signIn()
+//            self.transitionToHome()
     }
     
     func setupFacebookButton() {
@@ -119,10 +120,10 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
     }
 
     func transitionToHome() {
-        let homeViewController = storyboard?.instantiateViewController(identifier: Constants.Storyboard.homeViewController) as? HomeViewController
-        
-        view.window?.rootViewController = homeViewController
-        view.window?.makeKeyAndVisible()
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "main") as UIViewController
+        self.view.window?.rootViewController = vc
+        self.view.window?.makeKeyAndVisible()
     }
 
     @IBAction func loginTapped(_ sender: Any) {

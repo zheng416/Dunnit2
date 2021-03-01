@@ -55,6 +55,10 @@ class SignUpViewController: UIViewController, LoginButtonDelegate {
     
     @objc func handleGoogleSignIn() {
         GIDSignIn.sharedInstance().signIn()
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "main") as UIViewController
+        self.view.window?.rootViewController = vc
+        self.view.window?.makeKeyAndVisible()
     }
     
     func setUpElements() {

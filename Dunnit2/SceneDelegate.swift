@@ -6,8 +6,10 @@
 //
 
 import UIKit
+import GoogleSignIn
+import FirebaseAuth
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, GIDSignInDelegate {
 
     var window: UIWindow?
 
@@ -17,6 +19,45 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
+        
+        let loginStory = UIStoryboard(name: "Main", bundle: nil)
+        let homeStory = UIStoryboard(name: "Home", bundle: nil)
+        print("HIIIEKDBKBDKJBKJDBCKSBD")
+        if let windowScene = scene as? UIWindowScene {
+            self.window = UIWindow(windowScene: windowScene)
+            if Auth.auth().currentUser != nil {
+                print("HEREEEEEEEEEEEEEEEEEEEEEEEEEE", Auth.auth().currentUser)
+                // redirect to home controller
+                self.window!.rootViewController = homeStory.instantiateViewController(withIdentifier: "main")
+                self.window?.makeKeyAndVisible()
+            } else {
+                // redirect to login controller
+                self.window!.rootViewController = loginStory.instantiateViewController(withIdentifier: "welcome")
+                self.window?.makeKeyAndVisible()
+            }
+        }
+        GIDSignIn.sharedInstance()?.clientID = "617395248965-6mubcp9nhela7iuplf28kglbqh3bu1li.apps.googleusercontent.com"
+        GIDSignIn.sharedInstance()?.delegate = self
+    }
+    
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        /*print("User email: \(user.profile.email ?? "No Email")")*/
+        if error != nil {
+                    return
+                }
+
+                guard let authentication = user.authentication else { return }
+                let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken, accessToken: authentication.accessToken)
+                Auth.auth().signIn(with: credential) { (authResult, error) in
+                    if let error = error {
+                        print(error.localizedDescription)
+                        return
+                    }
+                    let storyboard =  UIStoryboard(name: "Home", bundle: nil)
+                    // redirect the user to the home controller
+                    self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "main")
+                    self.window!.makeKeyAndVisible()
+                }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
