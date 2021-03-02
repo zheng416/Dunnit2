@@ -40,6 +40,9 @@ class SettingsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if (DataBaseHelper.shareInstance.checkIfUserExists() == false) {
+            DataBaseHelper.shareInstance.createNewUser(name: "Andrew", email: "andrew123@gmail.com")
+        }
         let user = getUser()
         globalUser = user
 
@@ -78,6 +81,21 @@ class SettingsViewController: UITableViewController {
         }
         
         globalUser = self.getUser()
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("selected row is :\(indexPath)")
+        
+        // Hardcoded rowIndex
+        let logoutIndex = [4,0] as IndexPath
+        
+        if (indexPath == logoutIndex) {
+            print("Logout?")
+            // TODO: Clear storage, clear access token
+            
+            DataBaseHelper.shareInstance.logout(email: globalUser["email"] as! String)
+            
+        }
     }
 
 }

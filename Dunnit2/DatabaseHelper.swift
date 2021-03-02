@@ -154,13 +154,13 @@ class DataBaseHelper {
         }
     }
     
-    func deleteUser(name: String) {
+    func deleteUser(email: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
-        fetchRequest.predicate = NSPredicate(format: "name = %@", name)
+        fetchRequest.predicate = NSPredicate(format: "email = %@", email)
         
         do {
             let test = try managedContext.fetch(fetchRequest)
@@ -169,7 +169,62 @@ class DataBaseHelper {
             managedContext.delete(objectToDelete)
             
             do {
-                print("Deleted.")
+                print("Deleted user.")
+                try managedContext.save()
+            } catch {
+                print(error)
+            }
+        } catch {
+            print(error)
+        }
+    }
+    
+    func checkIfUserExists() -> Bool{
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return false}
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        
+        do {
+            let users = try managedContext.fetch(fetchRequest)
+            print("length = \(users.count)")
+            if (users.count != 1) {
+                print("Too many users, contact Andrew to solve this!")
+                return false
+            } else {
+                return true
+            }
+            
+        } catch {
+            print(error)
+            return false
+        }
+        
+        return false
+    }
+    
+    func logout(email: String) {
+        // Delete user instance
+        deleteUser(email: email)
+        
+        // Remove all tasks
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchTaskRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
+        
+        do {
+            let tasks = try managedContext.fetch(fetchTaskRequest)
+            
+            for task in tasks {
+                print(task)
+                managedContext.delete(task as! NSManagedObject)
+            }
+            
+            do {
+                print("Cleared local tasks too.")
                 try managedContext.save()
             } catch {
                 print(error)
