@@ -52,7 +52,23 @@ class EditNameViewController: UIViewController, UITextFieldDelegate {
     @IBAction func buttonTapped() {
         nameField.resignFirstResponder()
         // Save stuff here?
-        if let name = nameField.text {
+        if nameField.text?.count ?? 0 <= 0 {
+            let dialogMessage = UIAlertController(title: "", message: "Password must be more than 0 characters", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+                print("Ok button 0 characters tapped")
+            })
+            dialogMessage.addAction(ok)
+            self.present(dialogMessage, animated: true, completion: nil)
+        }
+        else if nameField.text?.count ?? 20 >= 20 {
+            let dialogMessage = UIAlertController(title: "", message: "Password must be less than 20 characters", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+                print("Ok button 20 characters tapped")
+            })
+            dialogMessage.addAction(ok)
+            self.present(dialogMessage, animated: true, completion: nil)
+        }
+        else if let name = nameField.text {
             print("Text is \(name)")
             // Update name here
             let dialogMessage = UIAlertController(title: "", message: "Saved Changes", preferredStyle: .alert)
