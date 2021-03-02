@@ -7,7 +7,7 @@
 
 import UIKit
 import CoreData
-
+import Firebase
 class HomeViewController: UIViewController {
     
     let transition = SlideInTransition()
@@ -19,11 +19,11 @@ class HomeViewController: UIViewController {
     var taskStore = [[TaskEntity](), [TaskEntity]()]
     
     func getData() {
-        let tasks = DataBaseHelper.shareInstance.fetch()
-        
-        taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
-        
-        tableView.reloadData()
+        let tasks = DataBaseHelper.shareInstance.fetch(completion: { message in
+            // WHEN you get a callback from the completion handler,
+            self.taskStore = [message.filter{$0.isDone == false}, message.filter{$0.isDone == true}]
+            self.tableView.reloadData()
+        })
     }
     
     @IBAction func didTapMenu(_ sender: UIBarButtonItem) {
