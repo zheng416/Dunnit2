@@ -60,8 +60,8 @@ class EditNameViewController: UIViewController, UITextFieldDelegate {
             dialogMessage.addAction(ok)
             self.present(dialogMessage, animated: true, completion: nil)
         }
-        else if nameField.text?.count ?? 20 >= 20 {
-            let dialogMessage = UIAlertController(title: "", message: "Password must be less than 20 characters", preferredStyle: .alert)
+        else if nameField.text?.count ?? 21 > 20 {
+            let dialogMessage = UIAlertController(title: "", message: "Password cannot be more than 20 characters", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
                 print("Ok button 20 characters tapped")
             })
