@@ -35,10 +35,23 @@ class DataBaseHelper {
     }
     func save(title: String, body: String, date: Date, isDone: Bool) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        
+        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
         let managedContext = appDelegate.persistentContainer.viewContext
         //print(result.title!,result.body!,result.date!,result.isDone)
+        var email = ""
+        do{
+            let users = try managedContext.fetch(fetchUser)
+            if users.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            email = (users[0] as! UserEntity).email!
+        }
+        catch{
+            print("cannnot find user")
+        }
         let docData: [String: Any] = [
+            "email" : email,
             "user" : "test",
             "body" : body,
             "title": title,
@@ -106,17 +119,28 @@ class DataBaseHelper {
         let managedContext = appDelegate.persistentContainer.viewContext
         var titlelist = [String]()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
+        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
         do {
             fetchingImage = try managedContext.fetch(fetchRequest) as! [TaskEntity]
             for result in fetchingImage as [TaskEntity] {
                 print(result.title!,result.body!,result.date!,result.isDone)
                 titlelist.append(result.title!)
             }
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            let email = (user[0] as! UserEntity).email
             print("Ckecking for duplicate Data.")
-            self.db.collection("task").getDocuments() { (querySnapshot, err) in
+            self.db.collection("task").whereField("email", isEqualTo: email).getDocuments() { (querySnapshot, err) in
                 if let err = err {
                     print("Error getting documents: \(err)")
                 } else {
+                    if (querySnapshot?.count == 0){
+                        print("Not task found")
+                        return
+                    }
                     for document in querySnapshot!.documents {
                         let title = document.get("title")!
                         if titlelist.contains(title as! String){
