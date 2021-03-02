@@ -57,13 +57,12 @@ class EditNameViewController: UIViewController, UITextFieldDelegate {
             // Update name here
             
             DispatchQueue.main.async {
-                // TODO: Add routing after hit done
-                
-                // Create a new user should be used in create account
-    
                 let user = self.getUser()
                 // Update Name based on email
                 DataBaseHelper.shareInstance.updateName(name: name, email: user["email"] as! String)
+                self.getUser()
+                self.navigationController?.popViewController(animated: true)
+                
             }
         }
     }
@@ -71,9 +70,18 @@ class EditNameViewController: UIViewController, UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         nameField.resignFirstResponder()
         // Save stuff here?
-        if let text = nameField.text {
-            print("Text is \(text)")
+        if let name = nameField.text {
+            print("Text is \(name)")
             // Update name here
+            
+            DispatchQueue.main.async {
+                let user = self.getUser()
+                // Update Name based on email
+                DataBaseHelper.shareInstance.updateName(name: name, email: user["email"] as! String)
+                self.getUser()
+                self.navigationController?.popViewController(animated: true)
+                
+            }
         }
         return true
     }

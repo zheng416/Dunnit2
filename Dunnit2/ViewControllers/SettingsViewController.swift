@@ -6,6 +6,7 @@
 //
 import Foundation
 import UIKit
+import FirebaseAuth
 
 class SettingsViewController: UITableViewController {
     
@@ -41,12 +42,11 @@ class SettingsViewController: UITableViewController {
         return endUser
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
+    func loadLabelValues() {
         if (DataBaseHelper.shareInstance.checkIfUserExists() == false) {
             DataBaseHelper.shareInstance.createNewUser(name: "Andrew", email: "andrew123@gmail.com")
         }
+        
         let user = getUser()
         if user.isEmpty{
             print("user is empty")
@@ -59,6 +59,16 @@ class SettingsViewController: UITableViewController {
         soundToggle.isOn = user["sound"] as! Bool
         notificationsToggle.isOn = user["notifications"] as! Bool
         darkModeToggle.isOn = user["darkMode"] as! Bool
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        loadLabelValues()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        loadLabelValues()
     }
     
     @IBAction func toggleSound(){
@@ -92,16 +102,30 @@ class SettingsViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("selected row is :\(indexPath)")
+//        print("selected row is :\(indexPath)")
         
         // Hardcoded rowIndex
         let logoutIndex = [4,0] as IndexPath
         
         if (indexPath == logoutIndex) {
             print("Logout?")
-            // TODO: Clear storage, clear access token
-            
+            // Clear storage
             DataBaseHelper.shareInstance.logout(email: globalUser["email"] as! String)
+            
+            // Clear local firebase auth
+            do {
+                try Auth.auth().signOut()
+                //TODO: FB Sign in still working?
+                
+            } catch let signOutError as NSError {
+              print ("Error signing out: %@", signOutError)
+            }
+            
+            // Redirect to login page
+            let loginStory = UIStoryboard(name: "Main", bundle: nil)
+            let startVC = loginStory.instantiateViewController(withIdentifier: "welcome")
+            let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as! SceneDelegate
+            sceneDelegate.window?.rootViewController = startVC
             
         }
     }

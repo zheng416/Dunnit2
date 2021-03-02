@@ -29,8 +29,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, GIDSignInDelegate {
             if Auth.auth().currentUser != nil {
                 print("HEREEEEEEEEEEEEEEEEEEEEEEEEEE", Auth.auth().currentUser)
 //                 redirect to home controller
-//                self.window!.rootViewController = homeStory.instantiateViewController(withIdentifier: "main")
-                self.window!.rootViewController = settingsStory.instantiateViewController(withIdentifier: "settings")
+                self.window!.rootViewController = homeStory.instantiateViewController(withIdentifier: "main")
+//                self.window!.rootViewController = settingsStory.instantiateViewController(withIdentifier: "settings")
                 self.window?.makeKeyAndVisible()
             } else {
                 // redirect to login controller
