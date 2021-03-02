@@ -20,7 +20,11 @@ class SettingsViewController: UITableViewController {
     
     //  Access databse functions
     func getUser() -> [String: Any] {
-        let user = DataBaseHelper.shareInstance.fetchUser()
+        var user = DataBaseHelper.shareInstance.fetchUser()
+        if user.isEmpty{
+            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
+            user = DataBaseHelper.shareInstance.fetchUser()
+        }
         
         // Unpack user entity to dictionary
         var endUser = [String:Any]()
@@ -41,6 +45,10 @@ class SettingsViewController: UITableViewController {
         super.viewDidLoad()
         
         let user = getUser()
+        if user.isEmpty{
+            print("user is empty")
+            return
+        }
         globalUser = user
 
         nameLabel.text =  user["name"] as! String
