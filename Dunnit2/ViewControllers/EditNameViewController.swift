@@ -52,10 +52,31 @@ class EditNameViewController: UIViewController, UITextFieldDelegate {
     @IBAction func buttonTapped() {
         nameField.resignFirstResponder()
         // Save stuff here?
-        if let name = nameField.text {
+        if nameField.text?.count ?? 0 <= 0 {
+            let dialogMessage = UIAlertController(title: "", message: "Password must be more than 0 characters", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+                print("Ok button 0 characters tapped")
+            })
+            dialogMessage.addAction(ok)
+            self.present(dialogMessage, animated: true, completion: nil)
+        }
+        else if nameField.text?.count ?? 21 > 20 {
+            let dialogMessage = UIAlertController(title: "", message: "Password cannot be more than 20 characters", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+                print("Ok button 20 characters tapped")
+            })
+            dialogMessage.addAction(ok)
+            self.present(dialogMessage, animated: true, completion: nil)
+        }
+        else if let name = nameField.text {
             print("Text is \(name)")
             // Update name here
-            
+            let dialogMessage = UIAlertController(title: "", message: "Saved Changes", preferredStyle: .alert)
+            self.present(dialogMessage, animated: true, completion: nil)
+            let when = DispatchTime.now() + .seconds(1)
+            DispatchQueue.main.asyncAfter(deadline: when) {
+                dialogMessage.dismiss(animated: true, completion: nil)
+            }
             DispatchQueue.main.async {
                 // TODO: Add routing after hit done
                 

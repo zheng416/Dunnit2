@@ -41,7 +41,7 @@ class SignUpViewController: UIViewController, LoginButtonDelegate {
         customButton.setImage(googleTinted, for: UIControl.State.normal)
         customButton.imageView?.contentMode = .scaleAspectFit
         customButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: -200, bottom: 10, right: 0)
-        customButton.frame = CGRect(x: 40, y: 630, width: view.frame.width - 72, height: 50)
+        customButton.frame = CGRect(x: 40, y: 560, width: view.frame.width - 72, height: 50)
         customButton.backgroundColor = UIColor(red: 45/255, green: 89/255, blue: 134/255, alpha: 0.8)
         customButton.setTitle("Sign up with Google", for: .normal)
         customButton.titleEdgeInsets = UIEdgeInsets(top: 10, left: -475, bottom: 10, right: 0)
@@ -101,7 +101,7 @@ class SignUpViewController: UIViewController, LoginButtonDelegate {
             customButton.setImage(facebookTinted, for: UIControl.State.normal)
             customButton.imageView?.contentMode = .scaleAspectFit
             customButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: -150, bottom: 10, right: 0)
-            customButton.frame = CGRect(x: 40, y: 700, width: view.frame.width - 72, height: 50)
+            customButton.frame = CGRect(x: 40, y: 630, width: view.frame.width - 72, height: 50)
             customButton.backgroundColor = UIColor(red: 45/255, green: 89/255, blue: 134/255, alpha: 0.8)
             customButton.setTitle("Sign up with Facebook", for: .normal)
             customButton.titleEdgeInsets = UIEdgeInsets(top: 10, left: -375, bottom: 10, right: 0)
@@ -163,7 +163,12 @@ class SignUpViewController: UIViewController, LoginButtonDelegate {
             showError(error!)
         }
         else {
-            
+            let dialogMessage = UIAlertController(title: "", message: "Successfully Signed Up", preferredStyle: .alert)
+            self.present(dialogMessage, animated: true, completion: nil)
+            let when = DispatchTime.now() + .seconds(3)
+            DispatchQueue.main.asyncAfter(deadline: when) {
+                dialogMessage.dismiss(animated: true, completion: nil)
+            }
             // Create cleaned versions of the data
             let name = nameTextField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
             let email = emailTextField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
