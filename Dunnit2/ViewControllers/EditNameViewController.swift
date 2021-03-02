@@ -55,7 +55,12 @@ class EditNameViewController: UIViewController, UITextFieldDelegate {
         if let name = nameField.text {
             print("Text is \(name)")
             // Update name here
-            
+            let dialogMessage = UIAlertController(title: "", message: "Saved Changes", preferredStyle: .alert)
+            self.present(dialogMessage, animated: true, completion: nil)
+            let when = DispatchTime.now() + .seconds(1)
+            DispatchQueue.main.asyncAfter(deadline: when) {
+                dialogMessage.dismiss(animated: true, completion: nil)
+            }
             DispatchQueue.main.async {
                 // TODO: Add routing after hit done
                 
