@@ -16,11 +16,23 @@ func getBoolFromAny(paramAny: Any)->Bool {
     let result = "\(paramAny)"
     return result == "1"
 }
-
 class DataBaseHelper {
-    
     static let shareInstance = DataBaseHelper()
     let db = Firestore.firestore()
+    func FBfetchuname(email:String,completion: @escaping (String)->Void) {
+        db.collection("user").whereField("email", isEqualTo: email).getDocuments { (docs, err) in
+            if let err = err{
+                print("cannot fetch user name from firebase: \(err)")
+                return
+            }
+            else {
+                for doc in docs!.documents{
+                    completion(doc.get("name") as! String)
+                }
+            }
+        }
+        return
+    }
     func save(title: String, body: String, date: Date, isDone: Bool) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
@@ -175,7 +187,7 @@ class DataBaseHelper {
         return fetchingImage
     }
     
-    func createNewUser(name: String, email: String, darkMode: Bool = false, notifications: Bool = true, sound: Bool = true ) {
+    func createNewUser(name: String="", email: String, darkMode: Bool = false, notifications: Bool = true, sound: Bool = true ) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -214,7 +226,6 @@ class DataBaseHelper {
             print("Update error.")
         }
     }
-    
     func deleteUser(email: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
