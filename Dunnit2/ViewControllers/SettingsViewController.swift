@@ -20,7 +20,11 @@ class SettingsViewController: UITableViewController {
     
     //  Access databse functions
     func getUser() -> [String: Any] {
-        let user = DataBaseHelper.shareInstance.fetchUser()
+        var user = DataBaseHelper.shareInstance.fetchUser()
+        if user.isEmpty{
+            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
+            user = DataBaseHelper.shareInstance.fetchUser()
+        }
         
         // Unpack user entity to dictionary
         var endUser = [String:Any]()
@@ -40,7 +44,14 @@ class SettingsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if (DataBaseHelper.shareInstance.checkIfUserExists() == false) {
+            DataBaseHelper.shareInstance.createNewUser(name: "Andrew", email: "andrew123@gmail.com")
+        }
         let user = getUser()
+        if user.isEmpty{
+            print("user is empty")
+            return
+        }
         globalUser = user
 
         nameLabel.text =  user["name"] as! String
@@ -78,6 +89,21 @@ class SettingsViewController: UITableViewController {
         }
         
         globalUser = self.getUser()
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("selected row is :\(indexPath)")
+        
+        // Hardcoded rowIndex
+        let logoutIndex = [4,0] as IndexPath
+        
+        if (indexPath == logoutIndex) {
+            print("Logout?")
+            // TODO: Clear storage, clear access token
+            
+            DataBaseHelper.shareInstance.logout(email: globalUser["email"] as! String)
+            
+        }
     }
 
 }

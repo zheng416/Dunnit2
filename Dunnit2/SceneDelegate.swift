@@ -22,21 +22,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, GIDSignInDelegate {
         
         let loginStory = UIStoryboard(name: "Main", bundle: nil)
         let homeStory = UIStoryboard(name: "Home", bundle: nil)
-        print("HIIIEKDBKBDKJBKJDBCKSBD")
+        let settingsStory = UIStoryboard(name:"Settings",bundle: nil)
         if let windowScene = scene as? UIWindowScene {
             self.window = UIWindow(windowScene: windowScene)
-            if Auth.auth().currentUser != nil {
-                print("HEREEEEEEEEEEEEEEEEEEEEEEEEEE", Auth.auth().currentUser)
+            if !DataBaseHelper.shareInstance.fetchUser().isEmpty {
+                print("HEREEEEEEEEEEEEEEEEEEEEEEEEEE", Auth.auth().currentUser!)
 //                 redirect to home controller
                 self.window!.rootViewController = homeStory.instantiateViewController(withIdentifier: "main")
-//                let storyboard = UIStoryboard(name: "Settings", bundle: nil)
-//                self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "settings")
-                self.window?.makeKeyAndVisible()
+//                self.window!.rootViewController = settingsStory.instantiateViewController(withIdentifier: "settings")
             } else {
                 // redirect to login controller
+//                                self.window!.rootViewController = homeStory.instantiateViewController(withIdentifier: "main")
                 self.window!.rootViewController = loginStory.instantiateViewController(withIdentifier: "welcome")
-                self.window?.makeKeyAndVisible()
             }
+            self.window?.makeKeyAndVisible()
         }
         GIDSignIn.sharedInstance()?.clientID = "617395248965-6mubcp9nhela7iuplf28kglbqh3bu1li.apps.googleusercontent.com"
         GIDSignIn.sharedInstance()?.delegate = self

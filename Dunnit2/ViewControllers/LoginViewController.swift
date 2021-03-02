@@ -149,11 +149,14 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                 DispatchQueue.main.asyncAfter(deadline: when) {
                     dialogMessage.dismiss(animated: true, completion: nil)
                 }
+                DataBaseHelper.shareInstance.createNewUser(email: email)
+                DataBaseHelper.shareInstance.FBfetchuname(email: email, completion: {name in
+                    DataBaseHelper.shareInstance.updateName(name: name, email: email)
+                } )
                 let storyboard = UIStoryboard(name: "Home", bundle: nil)
                 let vc = storyboard.instantiateViewController(withIdentifier: "main") as UIViewController
                 self.view.window?.rootViewController = vc
                 self.view.window?.makeKeyAndVisible()
-                
             }
         }
         
@@ -180,6 +183,7 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                 // ...
                 return
               }
+                
                 
                 // Save to firestore
                 let db = Firestore.firestore()

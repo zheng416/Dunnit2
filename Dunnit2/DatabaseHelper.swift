@@ -8,28 +8,71 @@
 import Foundation
 import CoreData
 import UIKit
+import Firebase
+import FirebaseCore
+import FirebaseFirestore
 
+func getBoolFromAny(paramAny: Any)->Bool {
+    let result = "\(paramAny)"
+    return result == "1"
+}
 class DataBaseHelper {
-    
     static let shareInstance = DataBaseHelper()
-    
+    let db = Firestore.firestore()
+    func FBfetchuname(email:String,completion: @escaping (String)->Void) {
+        db.collection("user").whereField("email", isEqualTo: email).getDocuments { (docs, err) in
+            if let err = err{
+                print("cannot fetch user name from firebase: \(err)")
+                return
+            }
+            else {
+                for doc in docs!.documents{
+                    completion(doc.get("name") as! String)
+                }
+            }
+        }
+        return
+    }
     func save(title: String, body: String, date: Date, isDone: Bool) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
-        
+        //print(result.title!,result.body!,result.date!,result.isDone)
+        let docData: [String: Any] = [
+            "user" : "test",
+            "body" : body,
+            "title": title,
+            "date":date,
+            "isDone" : isDone
+        ]
+        db.collection("task").document("test"+title).setData(docData) { err in
+            if let err = err {
+                print("Error writing document: \(err)")
+            } else {
+                print("Document successfully written!")
+            }
+        }
         let instance = TaskEntity(context: managedContext)
         instance.title = title
         instance.body = body
         instance.date = date
         instance.isDone = isDone
-        
+        print(instance.date!)
         do {
             print("Saved.")
             try managedContext.save()
         } catch let error as NSError {
             print("Could not save. \(error), \(error.userInfo)")
         }
+        /*db.collection("task").getDocuments() { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                for document in querySnapshot!.documents {
+                    print("\(document.documentID) => \(document.data())")
+                }
+            }
+        }*/
         
     }
     
@@ -43,7 +86,6 @@ class DataBaseHelper {
         
         do {
             let test = try managedContext.fetch(fetchRequest)
-            
             let objectToDelete = test[0] as! NSManagedObject
             managedContext.delete(objectToDelete)
             
@@ -57,23 +99,54 @@ class DataBaseHelper {
             print(error)
         }
     }
-    
-    func fetch() -> [TaskEntity] {
+    func fetch(completion: @escaping (_ message: [TaskEntity]) -> Void) {
         var fetchingImage = [TaskEntity]()
-        
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
-        
+        var newImage = [TaskEntity]()
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let managedContext = appDelegate.persistentContainer.viewContext
-        
+        var titlelist = [String]()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
-        
         do {
-            print("All Data.")
             fetchingImage = try managedContext.fetch(fetchRequest) as! [TaskEntity]
+            for result in fetchingImage as [TaskEntity] {
+                print(result.title!,result.body!,result.date!,result.isDone)
+                titlelist.append(result.title!)
+            }
+            print("Ckecking for duplicate Data.")
+            self.db.collection("task").getDocuments() { (querySnapshot, err) in
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                } else {
+                    for document in querySnapshot!.documents {
+                        let title = document.get("title")!
+                        if titlelist.contains(title as! String){
+                            continue
+                        }
+                        let instance = TaskEntity(context: managedContext)
+                        instance.title = title as? String
+                        instance.body = document.get("body")! as? String
+                        instance.date = (document.get("date")! as! Timestamp).dateValue() as? Date
+                        instance.isDone = getBoolFromAny(paramAny: document.get("isDone")!)
+                        print(title)
+                        do{
+                            try managedContext.save()//print("save to local.")
+                        }
+                        catch{
+                            print("loading error")
+                        }
+                    }
+            }
+            do{
+                completion(try managedContext.fetch(fetchRequest) as! [TaskEntity])
+            }
+            catch{
+                print("error fetching after save data")
+            }
+            }
+            print("finish")
         } catch {
             print(error)
         }
-        return fetchingImage
     }
     
     func update(title:String, isDone: Bool) {
@@ -114,7 +187,7 @@ class DataBaseHelper {
         return fetchingImage
     }
     
-    func createNewUser(name: String, email: String, darkMode: Bool = false, notifications: Bool = true, sound: Bool = true ) {
+    func createNewUser(name: String="", email: String, darkMode: Bool = false, notifications: Bool = true, sound: Bool = true ) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -153,14 +226,13 @@ class DataBaseHelper {
             print("Update error.")
         }
     }
-    
-    func deleteUser(name: String) {
+    func deleteUser(email: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
-        fetchRequest.predicate = NSPredicate(format: "name = %@", name)
+        fetchRequest.predicate = NSPredicate(format: "email = %@", email)
         
         do {
             let test = try managedContext.fetch(fetchRequest)
@@ -169,7 +241,62 @@ class DataBaseHelper {
             managedContext.delete(objectToDelete)
             
             do {
-                print("Deleted.")
+                print("Deleted user.")
+                try managedContext.save()
+            } catch {
+                print(error)
+            }
+        } catch {
+            print(error)
+        }
+    }
+    
+    func checkIfUserExists() -> Bool{
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return false}
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        
+        do {
+            let users = try managedContext.fetch(fetchRequest)
+            print("length = \(users.count)")
+            if (users.count != 1) {
+                print("Too many users, contact Andrew to solve this!")
+                return false
+            } else {
+                return true
+            }
+            
+        } catch {
+            print(error)
+            return false
+        }
+        
+        return false
+    }
+    
+    func logout(email: String) {
+        // Delete user instance
+        deleteUser(email: email)
+        
+        // Remove all tasks
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchTaskRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
+        
+        do {
+            let tasks = try managedContext.fetch(fetchTaskRequest)
+            
+            for task in tasks {
+                print(task)
+                managedContext.delete(task as! NSManagedObject)
+            }
+            
+            do {
+                print("Cleared local tasks too.")
                 try managedContext.save()
             } catch {
                 print(error)
