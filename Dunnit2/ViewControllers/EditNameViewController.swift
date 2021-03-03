@@ -53,7 +53,7 @@ class EditNameViewController: UIViewController, UITextFieldDelegate {
         nameField.resignFirstResponder()
         // Save stuff here?
         if nameField.text?.count ?? 0 <= 0 {
-            let dialogMessage = UIAlertController(title: "", message: "Password must be more than 0 characters", preferredStyle: .alert)
+            let dialogMessage = UIAlertController(title: "", message: "Name must be more than 0 characters", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
                 print("Ok button 0 characters tapped")
             })
@@ -61,7 +61,7 @@ class EditNameViewController: UIViewController, UITextFieldDelegate {
             self.present(dialogMessage, animated: true, completion: nil)
         }
         else if nameField.text?.count ?? 21 > 20 {
-            let dialogMessage = UIAlertController(title: "", message: "Password cannot be more than 20 characters", preferredStyle: .alert)
+            let dialogMessage = UIAlertController(title: "", message: "Name cannot be more than 20 characters", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
                 print("Ok button 20 characters tapped")
             })

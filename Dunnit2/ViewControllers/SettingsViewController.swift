@@ -109,6 +109,35 @@ class SettingsViewController: UITableViewController {
         
         if (indexPath == logoutIndex) {
             print("Logout?")
+            let dialogMessage = UIAlertController(title: "", message: "Would you like to logout?", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .default) {
+                UIAlertAction in
+                // Clear storage
+                DataBaseHelper.shareInstance.logout(email: self.globalUser["email"] as! String)
+                
+                // Clear local firebase auth
+                do {
+                    try Auth.auth().signOut()
+                    //TODO: FB Sign in still working?
+                    
+                } catch let signOutError as NSError {
+                  print ("Error signing out: %@", signOutError)
+                }
+                
+                // Redirect to login page
+                let loginStory = UIStoryboard(name: "Main", bundle: nil)
+                let startVC = loginStory.instantiateViewController(withIdentifier: "welcome")
+                let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as! SceneDelegate
+                sceneDelegate.window?.rootViewController = startVC
+            }
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel) {
+                UIAlertAction in
+                NSLog("Cancel Pressed")
+            }
+            dialogMessage.addAction(ok)
+            dialogMessage.addAction(cancel)
+            self.present(dialogMessage, animated: true, completion: nil)
+            /*
             // Clear storage
             DataBaseHelper.shareInstance.logout(email: globalUser["email"] as! String)
             
@@ -126,6 +155,7 @@ class SettingsViewController: UITableViewController {
             let startVC = loginStory.instantiateViewController(withIdentifier: "welcome")
             let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as! SceneDelegate
             sceneDelegate.window?.rootViewController = startVC
+            */
             
         }
     }
