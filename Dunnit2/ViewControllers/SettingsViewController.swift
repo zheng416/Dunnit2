@@ -7,6 +7,8 @@
 import Foundation
 import UIKit
 import FirebaseAuth
+import GoogleSignIn
+import FBSDKLoginKit
 
 class SettingsViewController: UITableViewController {
     
@@ -43,9 +45,9 @@ class SettingsViewController: UITableViewController {
     }
     
     func loadLabelValues() {
-        if (DataBaseHelper.shareInstance.checkIfUserExists() == false) {
-            DataBaseHelper.shareInstance.createNewUser(name: "Andrew", email: "andrew123@gmail.com")
-        }
+//        if (DataBaseHelper.shareInstance.checkIfUserExists() == false) {
+//            DataBaseHelper.shareInstance.createNewUser(name: "Andrew", email: "andrew123@gmail.com")
+//        }
         
         let user = getUser()
         if user.isEmpty{
@@ -118,6 +120,9 @@ class SettingsViewController: UITableViewController {
                 // Clear local firebase auth
                 do {
                     try Auth.auth().signOut()
+                    GIDSignIn.sharedInstance().signOut()
+                    let loginManager = LoginManager()
+                    loginManager.logOut() // this is an instance function
                     //TODO: FB Sign in still working?
                     
                 } catch let signOutError as NSError {

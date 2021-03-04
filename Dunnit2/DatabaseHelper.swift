@@ -35,7 +35,46 @@ class DataBaseHelper {
         }
         return
     }
-    func save(title: String, body: String, date: Date, isDone: Bool, list: String) {
+
+    func saveUserInFB(name:String, email:String, uid:String,completion:@escaping(Bool)->Void) {
+        db.collection("users").addDocument(data: ["name" : name, "uid" : uid, "email": email]) { (error) in
+            
+            if error != nil {
+                // Show error message
+                print("Error saving user data\(error)")
+                return
+            }
+            completion(true)
+        }
+    }
+    func saveuser(email: String, name: String, uid:String,completion: @escaping(Bool)->Void) {
+        db.collection("users").whereField("email", isEqualTo: email).getDocuments { (users,err) in
+            if err != nil{
+                print("cannot fetch user name from firebase: \(err)")
+                completion(false)
+            }
+            else {
+                print("number of users found: \(users?.count)")
+                if users!.count > 1{
+                    print("multiple users found")
+                    completion(false)
+                }
+                else if users!.count == 0{
+                    print("no user was found in the database, create new user: \(name)")
+                    self.saveUserInFB(name: name, email: email, uid: uid, completion: {result in
+                        if result{
+                           completion(true)
+                        }
+                    })
+                }
+                else if users!.count == 1{
+                    print("user already exists, no need to create new user")
+                    completion(true)
+                }
+            }
+        }
+    }
+    func save(title: String, body: String, date: Date, isDone: Bool) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
         let managedContext = appDelegate.persistentContainer.viewContext

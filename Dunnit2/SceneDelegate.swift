@@ -42,23 +42,38 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, GIDSignInDelegate {
     }
     
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-        /*print("User email: \(user.profile.email ?? "No Email")")*/
         if error != nil {
                     return
                 }
-
+                
                 guard let authentication = user.authentication else { return }
                 let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken, accessToken: authentication.accessToken)
+                let uid = GIDSignIn.sharedInstance()?.currentUser.userID
+                let name = GIDSignIn.sharedInstance()?.currentUser.profile.name
+                let email = GIDSignIn.sharedInstance()?.currentUser.profile.email
+                
                 Auth.auth().signIn(with: credential) { (authResult, error) in
                     if let error = error {
                         print(error.localizedDescription)
                         return
                     }
-                    let storyboard =  UIStoryboard(name: "Home", bundle: nil)
-                    // redirect the user to the home controller
-                    self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "main")
-                    self.window!.makeKeyAndVisible()
+                    DataBaseHelper.shareInstance.saveuser(email: email!, name: name!, uid: uid!, completion: {result in
+                        if result{
+                            print("Google INFO \(name) \(email)")
+                            DataBaseHelper.shareInstance.createNewUser(name: name as! String, email: email as! String)
+                            
+                            let storyboard =  UIStoryboard(name: "Home", bundle: nil)
+                            // redirect the user to the home controller
+                            self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "main")
+                            self.window!.makeKeyAndVisible()
+                            return
+                        }
+                        print("some error encounter with user in the database")
+                        return
+                    })
+
                 }
+        return
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
