@@ -20,15 +20,17 @@ class DataBaseHelper {
     static let shareInstance = DataBaseHelper()
     let db = Firestore.firestore()
     func FBfetchuname(email:String,completion: @escaping (String)->Void) {
-        db.collection("user").whereField("email", isEqualTo: email).getDocuments { (docs, err) in
+        db.collection("users").whereField("email", isEqualTo: email).getDocuments { (docs, err) in
             if let err = err{
                 print("cannot fetch user name from firebase: \(err)")
                 return
             }
             else {
-                for doc in docs!.documents{
-                    completion(doc.get("name") as! String)
-                }
+                print("email for the database", email)
+                print(docs?.documents)
+                let name = docs?.documents[0].get("name")
+                print("name fethced from database",name)
+                completion(name as! String)
             }
         }
         return

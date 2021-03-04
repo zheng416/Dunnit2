@@ -151,8 +151,11 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                 }
                 DataBaseHelper.shareInstance.createNewUser(email: email)
                 DataBaseHelper.shareInstance.FBfetchuname(email: email, completion: {name in
+                    print("name",name)
                     DataBaseHelper.shareInstance.updateName(name: name, email: email)
                 } )
+                print("finishe update")
+
                 let storyboard = UIStoryboard(name: "Home", bundle: nil)
                 let vc = storyboard.instantiateViewController(withIdentifier: "main") as UIViewController
                 self.view.window?.rootViewController = vc
