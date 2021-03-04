@@ -52,15 +52,6 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
     
     @objc func handleGoogleSignIn() {
         GIDSignIn.sharedInstance().signIn()
-        /*let uid = GIDSignIn.sharedInstance()?.currentUser.userID
-        let name = GIDSignIn.sharedInstance()?.currentUser.profile.name
-        let email = GIDSignIn.sharedInstance()?.currentUser.profile.email
-        DataBaseHelper.shareInstance.createNewUser(email: email as! String)
-        DataBaseHelper.shareInstance.FBfetchuname(email: email as! String, completion: {name in
-            print("name",name)
-            DataBaseHelper.shareInstance.updateName(name: name, email: email as! String)
-        } )*/
-//            self.transitionToHome()
     }
     
     func setupFacebookButton() {
@@ -162,12 +153,16 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                     print("name",name)
                     DataBaseHelper.shareInstance.updateName(name: name, email: email)
                 } )
-                print("finishe update")
+                DataBaseHelper.shareInstance.fetchDBTask (completion: {success in
+                    if success{
+                        print("Loaded data from database")
+                        // Transition to the home screen
+                        self.transitionToHome()
 
-                let storyboard = UIStoryboard(name: "Home", bundle: nil)
-                let vc = storyboard.instantiateViewController(withIdentifier: "main") as UIViewController
-                self.view.window?.rootViewController = vc
-                self.view.window?.makeKeyAndVisible()
+                    }
+                    print("cannot load data from database")
+                    return
+                })
             }
         }
         
@@ -207,8 +202,16 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                             print("name",name)
                             DataBaseHelper.shareInstance.updateName(name: name, email: userDict["email"] as! String)
                         } )
-                        // Transition to the home screen
-                        self.transitionToHome()
+                        DataBaseHelper.shareInstance.fetchDBTask (completion: {success in
+                            if success{
+                                print("Loaded data from database")
+                                // Transition to the home screen
+                                self.transitionToHome()
+
+                            }
+                            print("cannot load data from database")
+                            return
+                        })
                     } else {
                         print("ERROR IN FB LOGIN \(error)")
                     }

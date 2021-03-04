@@ -19,13 +19,11 @@ class HomeViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
     
     var taskStore = [[TaskEntity](), [TaskEntity]()]
-    
+    //local
     func getData() {
-        let tasks = DataBaseHelper.shareInstance.fetch(completion: { message in
-            // WHEN you get a callback from the completion handler,
-            self.taskStore = [message.filter{$0.isDone == false}, message.filter{$0.isDone == true}]
-            self.tableView.reloadData()
-        })
+        let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
+        taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+        tableView.reloadData()
     }
     
     @IBAction func didTapMenu(_ sender: UIBarButtonItem) {
