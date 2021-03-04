@@ -138,10 +138,21 @@ class DataBaseHelper {
         fetchRequest.predicate = NSPredicate(format: "title = %@", title)
         
         do {
+            
             let test = try managedContext.fetch(fetchRequest)
             let objectToDelete = test[0] as! NSManagedObject
+            // Database access
+            // TODO: Change the document title in both write and delete
+            db.collection("task").document("test"+title).delete() { err in
+                if let err = err {
+                    print("Error removing document named \("test"+title): \(err)")
+                } else {
+                    print("Document \("test"+title) successfully deleted!")
+                }
+            }
             managedContext.delete(objectToDelete)
-            
+
+
             do {
                 print("Deleted.")
                 try managedContext.save()
@@ -152,7 +163,24 @@ class DataBaseHelper {
             print(error)
         }
     }
-    func fetch(completion: @escaping (_ message: [TaskEntity]) -> Void) {
+    func fetchLocalTask() -> [TaskEntity] {
+            var fetchingImage = [TaskEntity]()
+            
+            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
+            
+            let managedContext = appDelegate.persistentContainer.viewContext
+            
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
+            
+            do {
+                print("All Data.")
+                fetchingImage = try managedContext.fetch(fetchRequest) as! [TaskEntity]
+            } catch {
+                print(error)
+            }
+            return fetchingImage
+    }
+    func fetchDBTask(completion: @escaping (_ message: Bool) -> Void) {
         var fetchingImage = [TaskEntity]()
         var newImage = [TaskEntity]()
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
@@ -169,6 +197,7 @@ class DataBaseHelper {
             let user = try managedContext.fetch(fetchUser)
             if user.count > 1{
                 print("multiple user was found ")
+                completion(false)
                 return
             }
             if (user.isEmpty || user.count == 0){
@@ -182,8 +211,8 @@ class DataBaseHelper {
                     print("Error getting documents: \(err)")
                 } else {
                     if (querySnapshot?.count == 0){
-                        print("Not task found")
-                        return
+                        print("No task found")
+                        completion(true)
                     }
                     for document in querySnapshot!.documents {
                         let title = document.get("title")!
@@ -201,19 +230,22 @@ class DataBaseHelper {
                         }
                         catch{
                             print("loading error")
+                            completion(false)
                         }
                     }
             }
             do{
-                completion(try managedContext.fetch(fetchRequest) as! [TaskEntity])
+                completion(true)
             }
             catch{
                 print("error fetching after save data")
+                completion(false)
             }
             }
             print("finish")
         } catch {
             print(error)
+            completion(false)
         }
     }
     
