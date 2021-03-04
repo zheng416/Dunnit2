@@ -74,7 +74,7 @@ class DataBaseHelper {
             }
         }
     }
-    func save(title: String, body: String, date: Date, isDone: Bool) {
+    func save(title: String, body: String, date: Date, isDone: Bool, list: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
         let managedContext = appDelegate.persistentContainer.viewContext
