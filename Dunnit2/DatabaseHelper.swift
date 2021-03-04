@@ -35,6 +35,7 @@ class DataBaseHelper {
         }
         return
     }
+
     func saveUserInFB(name:String, email:String, uid:String,completion:@escaping(Bool)->Void) {
         db.collection("users").addDocument(data: ["name" : name, "uid" : uid, "email": email]) { (error) in
             
@@ -96,7 +97,8 @@ class DataBaseHelper {
             "body" : body,
             "title": title,
             "date":date,
-            "isDone" : isDone
+            "isDone" : isDone,
+            "list": list
         ]
         db.collection("task").document("test"+title).setData(docData) { err in
             if let err = err {
@@ -110,6 +112,7 @@ class DataBaseHelper {
         instance.body = body
         instance.date = date
         instance.isDone = isDone
+        instance.list = list
         print(instance.date!)
         do {
             print("Saved.")
