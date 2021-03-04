@@ -197,7 +197,6 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                 
                 
                 // Save to firestore
-
                 request.start(completionHandler: {connection, result, error in
                     if (error == nil) {
                         guard let userDict = result as? [String:Any] else {
@@ -208,11 +207,12 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                             print("name",name)
                             DataBaseHelper.shareInstance.updateName(name: name, email: userDict["email"] as! String)
                         } )
+                        // Transition to the home screen
+                        self.transitionToHome()
+                    } else {
+                        print("ERROR IN FB LOGIN \(error)")
                     }
                 })
-                
-                // Transition to the home screen
-                self.transitionToHome()
             }
         }
     }

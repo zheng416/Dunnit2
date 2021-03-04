@@ -43,9 +43,9 @@ class SettingsViewController: UITableViewController {
     }
     
     func loadLabelValues() {
-        if (DataBaseHelper.shareInstance.checkIfUserExists() == false) {
-            DataBaseHelper.shareInstance.createNewUser(name: "Andrew", email: "andrew123@gmail.com")
-        }
+//        if (DataBaseHelper.shareInstance.checkIfUserExists() == false) {
+//            DataBaseHelper.shareInstance.createNewUser(name: "Andrew", email: "andrew123@gmail.com")
+//        }
         
         let user = getUser()
         if user.isEmpty{
