@@ -52,6 +52,14 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
     
     @objc func handleGoogleSignIn() {
         GIDSignIn.sharedInstance().signIn()
+        /*let uid = GIDSignIn.sharedInstance()?.currentUser.userID
+        let name = GIDSignIn.sharedInstance()?.currentUser.profile.name
+        let email = GIDSignIn.sharedInstance()?.currentUser.profile.email
+        DataBaseHelper.shareInstance.createNewUser(email: email as! String)
+        DataBaseHelper.shareInstance.FBfetchuname(email: email as! String, completion: {name in
+            print("name",name)
+            DataBaseHelper.shareInstance.updateName(name: name, email: email as! String)
+        } )*/
 //            self.transitionToHome()
     }
     
@@ -189,25 +197,22 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                 
                 
                 // Save to firestore
-                let db = Firestore.firestore()
                 request.start(completionHandler: {connection, result, error in
                     if (error == nil) {
                         guard let userDict = result as? [String:Any] else {
                                             return
                         }
-                        let db = Firestore.firestore()
-                        db.collection("users").addDocument(data: ["name" : userDict["name"], "uid" : userDict["id"], "email": userDict["email"]]) { (error) in
-                            
-                            if error != nil {
-                                // Show error message
-                                self.showError("Error saving user data")
-                            }
-                        }
+                        DataBaseHelper.shareInstance.createNewUser(email: userDict["email"] as! String)
+                        DataBaseHelper.shareInstance.FBfetchuname(email: userDict["email"] as! String, completion: {name in
+                            print("name",name)
+                            DataBaseHelper.shareInstance.updateName(name: name, email: userDict["email"] as! String)
+                        } )
+                        // Transition to the home screen
+                        self.transitionToHome()
+                    } else {
+                        print("ERROR IN FB LOGIN \(error)")
                     }
                 })
-                
-                // Transition to the home screen
-                self.transitionToHome()
             }
         }
     }

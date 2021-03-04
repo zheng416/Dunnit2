@@ -55,10 +55,6 @@ class SignUpViewController: UIViewController, LoginButtonDelegate {
     
     @objc func handleGoogleSignIn() {
         GIDSignIn.sharedInstance().signIn()
-        let storyboard = UIStoryboard(name: "Home", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "main") as UIViewController
-        self.view.window?.rootViewController = vc
-        self.view.window?.makeKeyAndVisible()
     }
     
     func setUpElements() {
@@ -185,23 +181,26 @@ class SignUpViewController: UIViewController, LoginButtonDelegate {
                 else {
                     // User was created successfully, now store name
                     print("storing to database")
-                    DataBaseHelper.shareInstance.createNewUser(email: email)
-                    DataBaseHelper.shareInstance.FBfetchuname(email: email, completion: {name in
-                        DataBaseHelper.shareInstance.updateName(name: name, email: email)
-                    } )
+
                     let db = Firestore.firestore()
                     
                     db.collection("users").addDocument(data: ["name" : name, "uid" : result!.user.uid,"email": email]) { (error) in
-                        
                         if error != nil {
                             // Show error message
                             print(error)
                             self.showError("Error saving user data")
+                        } else {
+                            DataBaseHelper.shareInstance.createNewUser(name: name, email: email)
+//                            DataBaseHelper.shareInstance.FBfetchuname(email: email, completion: {name in
+//                                DataBaseHelper.shareInstance.updateName(name: name, email: email)
+//                            } )
+                            
+                            // Transition to the home screen
+                            self.transitionToHome()
                         }
                     }
                     
-                    // Transition to the home screen
-                    self.transitionToHome()
+
                     
                 }
             }
@@ -259,13 +258,18 @@ class SignUpViewController: UIViewController, LoginButtonDelegate {
                             if error != nil {
                                 // Show error message
                                 self.showError("Error saving user data")
+                                return
                             }
+                            
+                            DataBaseHelper.shareInstance.createNewUser(name: userDict["name"] as! String, email: userDict["email"] as! String)
+                            
+                            // Transition to the home screen
+                            self.transitionToHome()
                         }
                     }
                 })
                 
-                // Transition to the home screen
-                self.transitionToHome()
+                
             }
         }
     }
