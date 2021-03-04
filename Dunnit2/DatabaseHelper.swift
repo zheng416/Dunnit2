@@ -20,15 +20,17 @@ class DataBaseHelper {
     static let shareInstance = DataBaseHelper()
     let db = Firestore.firestore()
     func FBfetchuname(email:String,completion: @escaping (String)->Void) {
-        db.collection("user").whereField("email", isEqualTo: email).getDocuments { (docs, err) in
+        db.collection("users").whereField("email", isEqualTo: email).getDocuments { (docs, err) in
             if let err = err{
                 print("cannot fetch user name from firebase: \(err)")
                 return
             }
             else {
-                for doc in docs!.documents{
-                    completion(doc.get("name") as! String)
-                }
+                print("email for the database", email)
+                print(docs?.documents)
+                let name = docs?.documents[0].get("name")
+                print("name fethced from database",name)
+                completion(name as! String)
             }
         }
         return
@@ -129,6 +131,10 @@ class DataBaseHelper {
             let user = try managedContext.fetch(fetchUser)
             if user.count > 1{
                 print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
                 return
             }
             let email = (user[0] as! UserEntity).email
