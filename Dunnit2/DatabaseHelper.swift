@@ -131,6 +131,10 @@ class DataBaseHelper {
                 print("multiple user was found ")
                 return
             }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
             let email = (user[0] as! UserEntity).email
             print("Ckecking for duplicate Data.")
             self.db.collection("task").whereField("email", isEqualTo: email).getDocuments() { (querySnapshot, err) in

@@ -184,12 +184,18 @@ class SignUpViewController: UIViewController, LoginButtonDelegate {
                 }
                 else {
                     // User was created successfully, now store name
+                    print("storing to database")
+                    DataBaseHelper.shareInstance.createNewUser(email: email)
+                    DataBaseHelper.shareInstance.FBfetchuname(email: email, completion: {name in
+                        DataBaseHelper.shareInstance.updateName(name: name, email: email)
+                    } )
                     let db = Firestore.firestore()
                     
-                    db.collection("users").addDocument(data: ["name" : name, "uid" : result!.user.uid]) { (error) in
+                    db.collection("users").addDocument(data: ["name" : name, "uid" : result!.user.uid,"email": email]) { (error) in
                         
                         if error != nil {
                             // Show error message
+                            print(error)
                             self.showError("Error saving user data")
                         }
                     }
@@ -240,6 +246,7 @@ class SignUpViewController: UIViewController, LoginButtonDelegate {
               }
                 
                 // Save to firestore
+
                 let db = Firestore.firestore()
                 request.start(completionHandler: {connection, result, error in
                     if (error == nil) {
