@@ -92,6 +92,7 @@ class HomeViewController: UIViewController {
             print("Default")
             navigationItem.rightBarButtonItem?.isEnabled = true
             menu = MenuType.all
+            getData()
             break
         }
     }
@@ -133,7 +134,7 @@ class HomeViewController: UIViewController {
         vc.completion = {title, body, date in
             DispatchQueue.main.async {
                 self.navigationController?.popToRootViewController(animated: true)
-                DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false)
+                DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false, list: "all")
                 self.getData()
             }
         }

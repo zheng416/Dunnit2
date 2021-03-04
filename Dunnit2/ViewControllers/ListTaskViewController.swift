@@ -17,7 +17,7 @@ class ListTaskViewController: UIViewController {
     func getData() {
         let tasks = DataBaseHelper.shareInstance.fetch(completion: { message in
             // WHEN you get a callback from the completion handler,
-            self.taskListStore = [message.filter{$0.isDone == false}, message.filter{$0.isDone == true}]
+            self.taskListStore = [message.filter{$0.isDone == false && $0.list == self.titleList}, message.filter{$0.isDone == true && $0.list == self.titleList}]
             self.tableTaskView.reloadData()
         })
         print(tasks)
@@ -27,7 +27,26 @@ class ListTaskViewController: UIViewController {
         super.viewDidLoad()
         self.title = titleList
         getData()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
         // Do any additional setup after loading the view.
+    }
+    
+    @objc func didTapAddButton() {
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        guard let vc = storyboard.instantiateViewController(identifier: "add") as? AddViewController else {
+            return
+        }
+        vc.title = "New Task"
+        vc.navigationItem.largeTitleDisplayMode = .never
+        vc.completion = {title, body, date in
+            DispatchQueue.main.async {
+                self.navigationController?.popViewController(animated: true)
+                DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false, list: self.titleList!)
+                self.getData()
+            }
+        }
+        navigationController?.pushViewController(vc, animated: true)
+        
     }
     
 
