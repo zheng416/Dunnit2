@@ -16,10 +16,17 @@ class ListsViewController: UIViewController {
     func getLists() {
         listStore = DataBaseHelper.shareInstance.fetchLists()
         listTableView.reloadData()
+        
+    }
+    
+    @objc func loadList(notification: NSNotification){
+        //load data here
+        getLists()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(loadList), name: NSNotification.Name(rawValue: "load"), object: nil)
         getLists()
 
         // Do any additional setup after loading the view.
