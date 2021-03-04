@@ -31,6 +31,7 @@
 		9BBAE66725ED7DFA003CC28B /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9BBAE66625ED7DF9003CC28B /* Settings.storyboard */; };
 		9BBAE66C25EDA714003CC28B /* ListsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE66B25EDA714003CC28B /* ListsViewController.swift */; };
 		9BBAE66F25EEAC3E003CC28B /* AddListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE66E25EEAC3D003CC28B /* AddListViewController.swift */; };
+		9BBAE67625F15EB7003CC28B /* ListTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE67525F15EB6003CC28B /* ListTaskViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +61,7 @@
 		9BBAE66625ED7DF9003CC28B /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
 		9BBAE66B25EDA714003CC28B /* ListsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsViewController.swift; sourceTree = "<group>"; };
 		9BBAE66E25EEAC3D003CC28B /* AddListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddListViewController.swift; sourceTree = "<group>"; };
+		9BBAE67525F15EB6003CC28B /* ListTaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTaskViewController.swift; sourceTree = "<group>"; };
 		C32BCD4DFEF6F40DC7EADA4A /* Pods_Dunnit2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dunnit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA084741BFBD77730308FAB1 /* Pods-Dunnit2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dunnit2.release.xcconfig"; path = "Target Support Files/Pods-Dunnit2/Pods-Dunnit2.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -128,6 +130,7 @@
 				9BBAE66325ED7DF1003CC28B /* EditNameViewController.swift */,
 				9BBAE66B25EDA714003CC28B /* ListsViewController.swift */,
 				9BBAE66E25EEAC3D003CC28B /* AddListViewController.swift */,
+				9BBAE67525F15EB6003CC28B /* ListTaskViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -294,6 +297,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9B46D5D325E6D91100E990CC /* TaskModel.xcdatamodeld in Sources */,
+				9BBAE67625F15EB7003CC28B /* ListTaskViewController.swift in Sources */,
 				9B6CC76F25DB5F5A00C0CAF7 /* ViewController.swift in Sources */,
 				9BBAE66C25EDA714003CC28B /* ListsViewController.swift in Sources */,
 				9B6CC76B25DB5F5A00C0CAF7 /* AppDelegate.swift in Sources */,

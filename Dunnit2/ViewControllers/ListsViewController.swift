@@ -38,7 +38,14 @@ class ListsViewController: UIViewController {
 
 extension ListsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+        performSegue(withIdentifier: "showTask", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let destination = segue.destination as? ListTaskViewController {
+            destination.titleList = listStore[(listTableView.indexPathForSelectedRow?.row)!].title
+            listTableView.deselectRow(at: listTableView.indexPathForSelectedRow!, animated: true)
+        }
     }
 }
 
