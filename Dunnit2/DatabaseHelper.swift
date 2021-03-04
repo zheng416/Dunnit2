@@ -236,6 +236,65 @@ class DataBaseHelper {
         }
     }
     
+    func saveList(title: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let instance = ListEntity(context: managedContext)
+        instance.title = title
+        
+        do {
+            print("Saving List.")
+            try managedContext.save()
+        } catch {
+            print("Could not save")
+        }
+        
+    }
+    
+    func fetchLists() -> [ListEntity] {
+        var fetchingImage = [ListEntity]()
+        
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
+        
+        do {
+            print("Fetching Lists.")
+            fetchingImage = try managedContext.fetch(fetchRequest) as! [ListEntity]
+        } catch {
+            print(error)
+        }
+        return fetchingImage
+    }
+    
+    func deleteList(title: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
+        fetchRequest.predicate = NSPredicate(format: "title = %@", title)
+        
+        do {
+            let test = try managedContext.fetch(fetchRequest)
+            
+            let objectToDelete = test[0] as! NSManagedObject
+            managedContext.delete(objectToDelete)
+            
+            do {
+                print("Deleted.")
+                try managedContext.save()
+            } catch {
+                print(error)
+            }
+        } catch {
+            print(error)
+        }
+    }
     
     
     

@@ -12,6 +12,8 @@ class HomeViewController: UIViewController {
     
     let transition = SlideInTransition()
     var topView: UIView?
+    
+    var menu: MenuType?
 
     
     @IBOutlet var tableView: UITableView!
@@ -57,12 +59,15 @@ class HomeViewController: UIViewController {
             view.frame = self.view.bounds
             self.view.addSubview(view)
             self.topView = view
+            menu = MenuType.shared
+            navigationItem.rightBarButtonItem?.isEnabled = true
         case .settings:
             let storyboard = UIStoryboard(name: "Settings", bundle: nil)
             let settingVC = storyboard.instantiateViewController(withIdentifier: "settings")
             view.addSubview(settingVC.view)
             self.topView = settingVC.view
             addChild(settingVC)
+            menu = MenuType.settings
             navigationItem.rightBarButtonItem?.isEnabled = false
 //        case .myList:
 //            let storyboard = UIStoryboard(name: "Home", bundle: nil)
@@ -72,9 +77,21 @@ class HomeViewController: UIViewController {
 //             view.addSubview(profileVC.view)
 //             self.topView = profileVC.view
 //             addChild(profileVC)
+        
+        case .myList:
+            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+            let listVC = storyboard.instantiateViewController(withIdentifier: "listsVC")
+            view.addSubview(listVC.view)
+            self.topView = listVC.view
+            addChild(listVC)
+            self.title = "My Lists"
+            navigationItem.rightBarButtonItem?.isEnabled = true
+            menu = MenuType.myList
+            
         default:
             print("Default")
             navigationItem.rightBarButtonItem?.isEnabled = true
+            menu = MenuType.all
             break
         }
     }
@@ -83,6 +100,29 @@ class HomeViewController: UIViewController {
         // Show add vc
         let storyboard = UIStoryboard(name: "Home", bundle: nil)
         guard let vc = storyboard.instantiateViewController(identifier: "add") as? AddViewController else {
+            return
+        }
+        
+        
+        if (menu == MenuType.myList) {
+            // Do Stuff
+            print(menu!)
+            guard let addlistVC = storyboard.instantiateViewController(identifier: "addListVC") as? AddListViewController else {
+                return
+            }
+            guard let listsVC = storyboard.instantiateViewController(identifier: "listsVC") as? ListsViewController else {
+                return
+            }
+            
+            addlistVC.title = "New List"
+//            addlistVC.navigationItem.largeTitleDisplayMode = .never
+            addlistVC.completion = {title in
+                DispatchQueue.main.async {
+                    self.navigationController?.popToRootViewController(animated: true)
+                    DataBaseHelper.shareInstance.saveList(title: title)
+                }
+            }
+            navigationController?.pushViewController(addlistVC, animated: true)
             return
         }
 
@@ -153,7 +193,7 @@ extension HomeViewController: UITableViewDataSource {
         formatter.dateFormat = "MMM dd, YYYY"
         cell.textLabel?.text = taskStore[indexPath.section][indexPath.row].title
         cell.detailTextLabel?.text = formatter.string(from: date)
-        
+        print(cell)
         return cell
     }
 }
