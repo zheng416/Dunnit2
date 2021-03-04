@@ -49,6 +49,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, GIDSignInDelegate {
 
                 guard let authentication = user.authentication else { return }
                 let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken, accessToken: authentication.accessToken)
+                let uid = GIDSignIn.sharedInstance()?.currentUser.userID
+                let name = GIDSignIn.sharedInstance()?.currentUser.profile.name
+                let email = GIDSignIn.sharedInstance()?.currentUser.profile.email
+                DataBaseHelper.shareInstance.createNewUser(email: email as! String)
+                DataBaseHelper.shareInstance.FBfetchuname(email: email as! String, completion: {name in
+                    print("name",name)
+                    DataBaseHelper.shareInstance.updateName(name: name, email: email as! String)
+                } )
                 Auth.auth().signIn(with: credential) { (authResult, error) in
                     if let error = error {
                         print(error.localizedDescription)

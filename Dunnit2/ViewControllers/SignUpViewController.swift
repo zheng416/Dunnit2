@@ -55,6 +55,19 @@ class SignUpViewController: UIViewController, LoginButtonDelegate {
     
     @objc func handleGoogleSignIn() {
         GIDSignIn.sharedInstance().signIn()
+        /*let uid = GIDSignIn.sharedInstance()?.currentUser.userID
+        let name = GIDSignIn.sharedInstance()?.currentUser.profile.name
+        let email = GIDSignIn.sharedInstance()?.currentUser.profile.email
+        let db = Firestore.firestore()
+        
+        db.collection("users").addDocument(data: ["name" : name, "uid" : uid,"email": email]) { (error) in
+            
+            if error != nil {
+                // Show error message
+                print(error)
+                self.showError("Error saving user data")
+            }
+        }*/
         let storyboard = UIStoryboard(name: "Home", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "main") as UIViewController
         self.view.window?.rootViewController = vc
