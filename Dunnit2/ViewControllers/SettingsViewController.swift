@@ -7,6 +7,8 @@
 import Foundation
 import UIKit
 import FirebaseAuth
+import GoogleSignIn
+import FBSDKLoginKit
 
 class SettingsViewController: UITableViewController {
     
@@ -118,6 +120,9 @@ class SettingsViewController: UITableViewController {
                 // Clear local firebase auth
                 do {
                     try Auth.auth().signOut()
+                    GIDSignIn.sharedInstance().signOut()
+                    let loginManager = LoginManager()
+                    loginManager.logOut() // this is an instance function
                     //TODO: FB Sign in still working?
                     
                 } catch let signOutError as NSError {
