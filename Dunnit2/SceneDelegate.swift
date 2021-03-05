@@ -61,6 +61,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, GIDSignInDelegate {
                         if result{
                             print("Google INFO \(name) \(email)")
                             DataBaseHelper.shareInstance.createNewUser(name: name as! String, email: email as! String)
+                            DataBaseHelper.shareInstance.fetchListsDB(completion: {success in
+                                if success {
+                                    print("fetched taskslist from database!")
+                                }
+                            })
                             DataBaseHelper.shareInstance.fetchDBTask (completion: {success in
                                 if success{
                                     print("Loaded data from database")
