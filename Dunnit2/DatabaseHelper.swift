@@ -629,6 +629,24 @@ class DataBaseHelper {
                     print("Document \(title) successfully deleted!")
                 }
             }
+            
+            db.collection("task").whereField("list", isEqualTo: title).getDocuments() { (querySnapshot, err) in
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                } else {
+                    if (querySnapshot?.count == 0){
+                        print("No lists found")
+                    }
+                    for document in querySnapshot!.documents {
+                        let toBeDeletedTask = document.get("title") as! String
+                        
+                        print("toBeDeletedTask: \(toBeDeletedTask)")
+                        self.db.collection("task").document("test"+toBeDeletedTask).delete()
+                        
+                    }
+                }
+            }
+            
             managedContext.delete(objectToDelete)
             do {
                 print("Deleted.")
