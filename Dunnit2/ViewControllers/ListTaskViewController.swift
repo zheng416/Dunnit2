@@ -74,10 +74,20 @@ extension ListTaskViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath)
         let date = taskListStore[indexPath.section][indexPath.row].date!
+        let colorHex = taskListStore[indexPath.section][indexPath.row].color
+        print("Color HEX stuff")
+        print(colorHex)
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM dd, YYYY"
         cell.textLabel?.text = taskListStore[indexPath.section][indexPath.row].title
         cell.detailTextLabel?.text = formatter.string(from: date)
+        if (colorHex == nil) {
+            cell.backgroundColor = .white
+        }
+        else {
+            print("HELLOOOOOOOOOOOOOOO")
+            cell.backgroundColor = UIColor(hexString: colorHex!)
+        }
         print(cell)
         return cell
     }
