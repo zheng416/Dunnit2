@@ -8,6 +8,55 @@
 import UIKit
 import CoreData
 import Firebase
+
+
+extension UIColor {
+    var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        if getRed(&r, green: &g, blue: &b, alpha: &a) {
+            return (r,g,b,a)
+        }
+        return (0, 0, 0, 0)
+    }
+
+    // hue, saturation, brightness and alpha components from UIColor**
+    var hsba: (hue: CGFloat, saturation: CGFloat, brightness: CGFloat, alpha: CGFloat) {
+        var hue: CGFloat = 0, saturation: CGFloat = 0, brightness: CGFloat = 0, alpha: CGFloat = 0
+        if getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha) {
+            return (hue, saturation, brightness, alpha)
+        }
+        return (0,0,0,0)
+    }
+
+    var htmlRGB: String {
+        return String(format: "#%02x%02x%02x", Int(rgba.red * 255), Int(rgba.green * 255), Int(rgba.blue * 255))
+    }
+
+    var htmlRGBA: String {
+        return String(format: "#%02x%02x%02x%02x", Int(rgba.red * 255), Int(rgba.green * 255), Int(rgba.blue * 255), Int(rgba.alpha * 255) )
+    }
+}
+
+extension UIColor {
+    convenience init(hexString: String) {
+        let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int = UInt64()
+        Scanner(string: hex).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // RGBA (32-bit)
+            (r, g, b, a) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (255, 0, 0, 0)
+        }
+        self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
+    }
+}
+
 class HomeViewController: UIViewController {
     
     let transition = SlideInTransition()
@@ -129,10 +178,12 @@ class HomeViewController: UIViewController {
 
         vc.title = "New Task"
         vc.navigationItem.largeTitleDisplayMode = .never
-        vc.completion = {title, body, date in
+        vc.completion = {title, body, date, color in
             DispatchQueue.main.async {
                 self.navigationController?.popToRootViewController(animated: true)
-                DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false, list: "all")
+                DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false, list: "all", color: UIColor(cgColor: color).htmlRGBA)
+                print("PRINT THE COLOR")
+                print(UIColor(cgColor: color).htmlRGBA)
                 self.getData()
             }
         }
@@ -210,10 +261,20 @@ extension HomeViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let date = taskStore[indexPath.section][indexPath.row].date!
+        let colorHex = taskStore[indexPath.section][indexPath.row].color
+        print("Color HEX stuff")
+        print(colorHex)
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM dd, YYYY"
         cell.textLabel?.text = taskStore[indexPath.section][indexPath.row].title
         cell.detailTextLabel?.text = formatter.string(from: date)
+        if (colorHex == nil) {
+            cell.backgroundColor = .white
+        }
+        else {
+            print("HELLOOOOOOOOOOOOOOO")
+            cell.backgroundColor = UIColor(hexString: colorHex!)
+        }
         print(cell)
         return cell
     }
