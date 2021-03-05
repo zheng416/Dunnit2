@@ -616,7 +616,9 @@ class DataBaseHelper {
         let managedContext = appDelegate.persistentContainer.viewContext
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
+        let fetchTaskRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
         fetchRequest.predicate = NSPredicate(format: "title = %@", title)
+        fetchTaskRequest.predicate = NSPredicate(format: "list = %@", title)
         
         do {
             let test = try managedContext.fetch(fetchRequest)
@@ -632,6 +634,13 @@ class DataBaseHelper {
                 }
             }
             
+            let taskContext = try managedContext.fetch(fetchTaskRequest)
+            
+            for task in taskContext {
+                print("task \(task)")
+                managedContext.delete(task as! NSManagedObject)
+            }
+            
             db.collection("task").whereField("list", isEqualTo: title).getDocuments() { (querySnapshot, err) in
                 if let err = err {
                     print("Error getting documents: \(err)")
@@ -641,15 +650,14 @@ class DataBaseHelper {
                     }
                     for document in querySnapshot!.documents {
                         let toBeDeletedTask = document.get("title") as! String
-                        
+
                         print("toBeDeletedTask: \(toBeDeletedTask)")
                         self.db.collection("task").document("test"+toBeDeletedTask).delete()
-                        
+
                     }
                 }
             }
             
-            managedContext.delete(objectToDelete)
             do {
                 print("Deleted.")
                 try managedContext.save()
