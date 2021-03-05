@@ -42,42 +42,48 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, GIDSignInDelegate {
     }
     
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-        /*print("User email: \(user.profile.email ?? "No Email")")*/
         if error != nil {
                     return
                 }
-
+                
                 guard let authentication = user.authentication else { return }
                 let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken, accessToken: authentication.accessToken)
+                let uid = GIDSignIn.sharedInstance()?.currentUser.userID
+                let name = GIDSignIn.sharedInstance()?.currentUser.profile.name
+                let email = GIDSignIn.sharedInstance()?.currentUser.profile.email
+                
                 Auth.auth().signIn(with: credential) { (authResult, error) in
                     if let error = error {
                         print(error.localizedDescription)
                         return
                     }
-                    let storyboard =  UIStoryboard(name: "Home", bundle: nil)
-                    // redirect the user to the home controller
-                    self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "main")
-                    self.window!.makeKeyAndVisible()
+                    DataBaseHelper.shareInstance.saveuser(email: email!, name: name!, uid: uid!, completion: {result in
+                        if result{
+                            print("Google INFO \(name) \(email)")
+                            DataBaseHelper.shareInstance.createNewUser(name: name as! String, email: email as! String)
+                            DataBaseHelper.shareInstance.fetchListsDB(completion: {success in
+                                if success {
+                                    print("fetched taskslist from database!")
+                                }
+                            })
+                            DataBaseHelper.shareInstance.fetchDBTask (completion: {success in
+                                if success{
+                                    print("Loaded data from database")
+                                    // Transition to the home screen
+                                    let storyboard =  UIStoryboard(name: "Home", bundle: nil)
+                                    // redirect the user to the home controller
+                                    self.window!.rootViewController = storyboard.instantiateViewController(withIdentifier: "main")
+                                    self.window!.makeKeyAndVisible()
+                                    return
+                                }
+                                print("cannot load data from database")
+                                return
+                            })
+                        }
+                        
+                    })
                 }
     }
-
-    func sceneDidDisconnect(_ scene: UIScene) {
-        // Called as the scene is being released by the system.
-        // This occurs shortly after the scene enters the background, or when its session is discarded.
-        // Release any resources associated with this scene that can be re-created the next time the scene connects.
-        // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
-    }
-
-    func sceneDidBecomeActive(_ scene: UIScene) {
-        // Called when the scene has moved from an inactive state to an active state.
-        // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
-    }
-
-    func sceneWillResignActive(_ scene: UIScene) {
-        // Called when the scene will move from an active state to an inactive state.
-        // This may occur due to temporary interruptions (ex. an incoming phone call).
-    }
-
     func sceneWillEnterForeground(_ scene: UIScene) {
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.

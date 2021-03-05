@@ -19,13 +19,11 @@ class HomeViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
     
     var taskStore = [[TaskEntity](), [TaskEntity]()]
-    
+    //local
     func getData() {
-        let tasks = DataBaseHelper.shareInstance.fetch(completion: { message in
-            // WHEN you get a callback from the completion handler,
-            self.taskStore = [message.filter{$0.isDone == false}, message.filter{$0.isDone == true}]
-            self.tableView.reloadData()
-        })
+        let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
+        taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+        tableView.reloadData()
     }
     
     @IBAction func didTapMenu(_ sender: UIBarButtonItem) {
@@ -92,6 +90,7 @@ class HomeViewController: UIViewController {
             print("Default")
             navigationItem.rightBarButtonItem?.isEnabled = true
             menu = MenuType.all
+            getData()
             break
         }
     }
@@ -117,10 +116,12 @@ class HomeViewController: UIViewController {
             addlistVC.title = "New List"
 //            addlistVC.navigationItem.largeTitleDisplayMode = .never
             addlistVC.completion = {title in
-                DispatchQueue.main.async {
+//                DispatchQueue.main.async {
                     self.navigationController?.popToRootViewController(animated: true)
                     DataBaseHelper.shareInstance.saveList(title: title)
-                }
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "load"), object: nil)
+//                    listsVC.viewWillAppear(true)
+//                }
             }
             navigationController?.pushViewController(addlistVC, animated: true)
             return
@@ -131,7 +132,7 @@ class HomeViewController: UIViewController {
         vc.completion = {title, body, date in
             DispatchQueue.main.async {
                 self.navigationController?.popToRootViewController(animated: true)
-                DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false)
+                DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false, list: "all")
                 self.getData()
             }
         }

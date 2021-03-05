@@ -52,7 +52,6 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
     
     @objc func handleGoogleSignIn() {
         GIDSignIn.sharedInstance().signIn()
-//            self.transitionToHome()
     }
     
     func setupFacebookButton() {
@@ -154,12 +153,21 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                     print("name",name)
                     DataBaseHelper.shareInstance.updateName(name: name, email: email)
                 } )
-                print("finishe update")
+                DataBaseHelper.shareInstance.fetchListsDB(completion: {success in
+                    if success {
+                        print("fetched taskslist from database!")
+                    }
+                })
+                DataBaseHelper.shareInstance.fetchDBTask (completion: {success in
+                    if success{
+                        print("Loaded data from database")
+                        // Transition to the home screen
+                        self.transitionToHome()
 
-                let storyboard = UIStoryboard(name: "Home", bundle: nil)
-                let vc = storyboard.instantiateViewController(withIdentifier: "main") as UIViewController
-                self.view.window?.rootViewController = vc
-                self.view.window?.makeKeyAndVisible()
+                    }
+                    print("cannot load data from database")
+                    return
+                })
             }
         }
         
@@ -189,25 +197,35 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                 
                 
                 // Save to firestore
-                let db = Firestore.firestore()
                 request.start(completionHandler: {connection, result, error in
                     if (error == nil) {
                         guard let userDict = result as? [String:Any] else {
                                             return
                         }
-                        let db = Firestore.firestore()
-                        db.collection("users").addDocument(data: ["name" : userDict["name"], "uid" : userDict["id"], "email": userDict["email"]]) { (error) in
-                            
-                            if error != nil {
-                                // Show error message
-                                self.showError("Error saving user data")
+                        DataBaseHelper.shareInstance.createNewUser(email: userDict["email"] as! String)
+                        DataBaseHelper.shareInstance.FBfetchuname(email: userDict["email"] as! String, completion: {name in
+                            print("name",name)
+                            DataBaseHelper.shareInstance.updateName(name: name, email: userDict["email"] as! String)
+                        } )
+                        DataBaseHelper.shareInstance.fetchListsDB(completion: {success in
+                            if success {
+                                print("fetched taskslist from database!")
                             }
-                        }
+                        })
+                        DataBaseHelper.shareInstance.fetchDBTask (completion: {success in
+                            if success{
+                                print("Loaded data from database")
+                                // Transition to the home screen
+                                self.transitionToHome()
+
+                            }
+                            print("cannot load data from database")
+                            return
+                        })
+                    } else {
+                        print("ERROR IN FB LOGIN \(error)")
                     }
                 })
-                
-                // Transition to the home screen
-                self.transitionToHome()
             }
         }
     }
