@@ -153,6 +153,11 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                     print("name",name)
                     DataBaseHelper.shareInstance.updateName(name: name, email: email)
                 } )
+                DataBaseHelper.shareInstance.fetchListsDB(completion: {success in
+                    if success {
+                        print("fetched taskslist from database!")
+                    }
+                })
                 DataBaseHelper.shareInstance.fetchDBTask (completion: {success in
                     if success{
                         print("Loaded data from database")
@@ -202,6 +207,11 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                             print("name",name)
                             DataBaseHelper.shareInstance.updateName(name: name, email: userDict["email"] as! String)
                         } )
+                        DataBaseHelper.shareInstance.fetchListsDB(completion: {success in
+                            if success {
+                                print("fetched taskslist from database!")
+                            }
+                        })
                         DataBaseHelper.shareInstance.fetchDBTask (completion: {success in
                             if success{
                                 print("Loaded data from database")

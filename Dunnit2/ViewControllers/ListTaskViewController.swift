@@ -16,7 +16,8 @@ class ListTaskViewController: UIViewController {
     
     func getData() {
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
-        taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+        taskListStore = [tasks.filter{$0.isDone == false && $0.list == self.titleList}, tasks.filter{$0.isDone == true && $0.list == self.titleList}]
+
         tableTaskView.reloadData()
     }
     

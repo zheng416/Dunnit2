@@ -383,13 +383,15 @@ class DataBaseHelper {
         // Delete user instance
         deleteUser(email: email)
         
-        // Remove all tasks
+        
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
         
         let fetchTaskRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
+        let fetchListRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
         
+        // Remove all tasks
         do {
             let tasks = try managedContext.fetch(fetchTaskRequest)
             
@@ -400,6 +402,25 @@ class DataBaseHelper {
             
             do {
                 print("Cleared local tasks too.")
+                try managedContext.save()
+            } catch {
+                print(error)
+            }
+        } catch {
+            print(error)
+        }
+        
+
+        // Remove all taskLists
+        do {
+            let lists = try managedContext.fetch(fetchListRequest)
+            
+            for list in lists {
+                managedContext.delete(list as! NSManagedObject)
+            }
+            
+            do {
+                print("Cleared local lists too.")
                 try managedContext.save()
             } catch {
                 print(error)
@@ -474,13 +495,97 @@ class DataBaseHelper {
         let instance = ListEntity(context: managedContext)
         instance.title = title
         
+        // Get user's email
         do {
-            print("Saving List.")
+            let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            let email = (user[0] as! UserEntity).email
+        
+            db.collection("taskLists").addDocument(data: ["title" : title, "email": email! as! String]) { (error) in
+                if error != nil {
+                    // Show error message
+                    print("Error saving user data\(error)")
+                    return
+                }
+                print("Saved list \(title) to DB")
+            }
+            print("Saving List \(title) local.")
             try managedContext.save()
         } catch {
             print("Could not save")
         }
         
+    }
+    
+    func fetchListsDB(completion: @escaping (_ message: Bool) -> Void) {
+        var fetchingImage = [ListEntity]()
+
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        var titlelist = [String]()
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
+        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        do {
+            fetchingImage = try managedContext.fetch(fetchRequest) as! [ListEntity]
+            for result in fetchingImage as [ListEntity] {
+                titlelist.append(result.title!)
+            }
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                completion(false)
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            let email = (user[0] as! UserEntity).email
+            print("Ckecking for duplicate Data.")
+            self.db.collection("taskLists").whereField("email", isEqualTo: email).getDocuments() { (querySnapshot, err) in
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                } else {
+                    if (querySnapshot?.count == 0){
+                        print("No lists found")
+                        completion(true)
+                    }
+                    for document in querySnapshot!.documents {
+                        let title = document.get("title")!
+                        if titlelist.contains(title as! String){
+                            continue
+                        }
+                        let instance = ListEntity(context: managedContext)
+                        instance.title = title as? String
+                        do{
+                            try managedContext.save()//print("save to local.")
+                        }
+                        catch{
+                            print("loading error")
+                            completion(false)
+                        }
+                    }
+                }
+                do {
+                    completion(true)
+                }
+                catch {
+                    print("error fetching after save data")
+                    completion(false)
+                }
+            }
+        } catch {
+            print(error)
+            completion(false)
+        }
     }
     
     func fetchLists() -> [ListEntity] {
@@ -514,7 +619,14 @@ class DataBaseHelper {
             
             let objectToDelete = test[0] as! NSManagedObject
             managedContext.delete(objectToDelete)
-            
+            print("------ \(test), \(title)")
+            db.collection("taskLists").document("\(title)").delete() { err in
+                if err != nil {
+                    print("Error removing document named \(title): \(err)")
+                } else {
+                    print("Document \(title) successfully deleted!")
+                }
+            }
             do {
                 print("Deleted.")
                 try managedContext.save()
