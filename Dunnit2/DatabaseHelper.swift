@@ -508,15 +508,17 @@ class DataBaseHelper {
                 return
             }
             let email = (user[0] as! UserEntity).email
-        
-            db.collection("taskLists").addDocument(data: ["title" : title, "email": email! as! String]) { (error) in
-                if error != nil {
+            
+            let docData: [String: Any] = ["title" : title, "email": email! as! String]
+            db.collection("taskLists").document(title).setData(docData) { err in
+                if err != nil {
                     // Show error message
-                    print("Error saving user data\(error)")
+                    print("Error saving user data\(err)")
                     return
                 }
                 print("Saved list \(title) to DB")
             }
+        
             print("Saving List \(title) local.")
             try managedContext.save()
         } catch {
@@ -627,6 +629,7 @@ class DataBaseHelper {
                     print("Document \(title) successfully deleted!")
                 }
             }
+            managedContext.delete(objectToDelete)
             do {
                 print("Deleted.")
                 try managedContext.save()
