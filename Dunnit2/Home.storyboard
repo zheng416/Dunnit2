@@ -16,23 +16,35 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" text="Title" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="icN-Um-TM2">
-                                <rect key="frame" x="20" y="89" width="240" height="68"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Title" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="icN-Um-TM2">
+                                <rect key="frame" x="20" y="144" width="240" height="68"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="240" id="6GL-S7-tAr"/>
+                                    <constraint firstAttribute="height" constant="68" id="e8F-x1-tWh"/>
+                                </constraints>
                                 <color key="textColor" systemColor="labelColor"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="40"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" text="Month Date, Year" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="2hV-4D-7X2">
-                                <rect key="frame" x="20" y="165" width="204" height="73.5"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Month Date, Year" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="2hV-4D-7X2">
+                                <rect key="frame" x="20" y="220" width="204" height="73.5"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="204" id="FwQ-tz-xfY"/>
+                                    <constraint firstAttribute="height" constant="73.5" id="RpL-Su-gSI"/>
+                                </constraints>
                                 <color key="textColor" systemColor="labelColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="uJd-gP-3h9">
-                                <rect key="frame" x="20" y="246" width="374" height="198"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="uJd-gP-3h9">
+                                <rect key="frame" x="20" y="301" width="374" height="198"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="374" id="6rd-dw-mAP"/>
+                                    <constraint firstAttribute="height" constant="198" id="nPz-iW-dik"/>
+                                </constraints>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <color key="textColor" systemColor="labelColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -42,23 +54,23 @@
                         <viewLayoutGuide key="safeArea" id="q9A-s3-K3N"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="2hV-4D-7X2" firstAttribute="leading" secondItem="q9A-s3-K3N" secondAttribute="leading" constant="20" id="88E-2T-dHE"/>
-                            <constraint firstItem="uJd-gP-3h9" firstAttribute="top" secondItem="2hV-4D-7X2" secondAttribute="bottom" constant="7.5" id="8Ln-Ue-ts6"/>
-                            <constraint firstItem="2hV-4D-7X2" firstAttribute="top" secondItem="icN-Um-TM2" secondAttribute="bottom" constant="8" symbolic="YES" id="Icy-Ud-SCg"/>
-                            <constraint firstItem="icN-Um-TM2" firstAttribute="leading" secondItem="q9A-s3-K3N" secondAttribute="leading" constant="20" id="Lbw-Bc-qW4"/>
-                            <constraint firstItem="q9A-s3-K3N" firstAttribute="trailing" secondItem="uJd-gP-3h9" secondAttribute="trailing" constant="20" id="Tag-ig-a9k"/>
-                            <constraint firstItem="q9A-s3-K3N" firstAttribute="trailing" secondItem="2hV-4D-7X2" secondAttribute="trailing" constant="190" id="TdU-gk-w7v"/>
-                            <constraint firstItem="q9A-s3-K3N" firstAttribute="bottom" secondItem="uJd-gP-3h9" secondAttribute="bottom" constant="418" id="aM0-aO-gEr"/>
-                            <constraint firstItem="uJd-gP-3h9" firstAttribute="leading" secondItem="q9A-s3-K3N" secondAttribute="leading" constant="20" id="dSC-C9-7S4"/>
-                            <constraint firstItem="q9A-s3-K3N" firstAttribute="trailing" secondItem="icN-Um-TM2" secondAttribute="trailing" constant="154" id="qIk-8t-xZz"/>
-                            <constraint firstItem="icN-Um-TM2" firstAttribute="top" secondItem="q9A-s3-K3N" secondAttribute="top" constant="45" id="upT-Hz-cOe"/>
+                            <constraint firstItem="2hV-4D-7X2" firstAttribute="top" secondItem="icN-Um-TM2" secondAttribute="bottom" constant="8" symbolic="YES" id="3Q8-oJ-aCT"/>
+                            <constraint firstItem="q9A-s3-K3N" firstAttribute="trailing" secondItem="uJd-gP-3h9" secondAttribute="trailing" constant="20" id="7PE-nh-GyU"/>
+                            <constraint firstItem="2hV-4D-7X2" firstAttribute="leading" secondItem="q9A-s3-K3N" secondAttribute="leading" constant="20" id="90z-WH-jTF"/>
+                            <constraint firstItem="uJd-gP-3h9" firstAttribute="top" secondItem="2hV-4D-7X2" secondAttribute="bottom" constant="7.5" id="Gg9-FK-sa8"/>
+                            <constraint firstItem="icN-Um-TM2" firstAttribute="top" secondItem="q9A-s3-K3N" secondAttribute="top" constant="4" id="Kgv-cF-vMx"/>
+                            <constraint firstItem="icN-Um-TM2" firstAttribute="leading" secondItem="q9A-s3-K3N" secondAttribute="leading" constant="20" id="Qdi-KH-IJ7"/>
+                            <constraint firstItem="q9A-s3-K3N" firstAttribute="trailing" secondItem="icN-Um-TM2" secondAttribute="trailing" constant="154" id="dyi-Jc-RUg"/>
+                            <constraint firstItem="q9A-s3-K3N" firstAttribute="trailing" secondItem="2hV-4D-7X2" secondAttribute="trailing" constant="190" id="lBh-I3-f3X"/>
+                            <constraint firstItem="uJd-gP-3h9" firstAttribute="leading" secondItem="q9A-s3-K3N" secondAttribute="leading" constant="20" id="nfu-B9-e7T"/>
+                            <constraint firstItem="q9A-s3-K3N" firstAttribute="bottom" secondItem="uJd-gP-3h9" secondAttribute="bottom" constant="363" id="xwE-uk-eSY"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="izN-Gp-JZz"/>
                     <connections>
-                        <outlet property="bodyfield" destination="uJd-gP-3h9" id="SP7-BT-ohO"/>
-                        <outlet property="datefield" destination="2hV-4D-7X2" id="kV1-fc-8Us"/>
-                        <outlet property="titlefield" destination="icN-Um-TM2" id="vjS-zt-WUe"/>
+                        <outlet property="bodyField" destination="uJd-gP-3h9" id="FoZ-5p-jhE"/>
+                        <outlet property="dateField" destination="2hV-4D-7X2" id="t2H-Jz-dgF"/>
+                        <outlet property="titleField" destination="icN-Um-TM2" id="gwU-1z-lK8"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dOq-ve-fr9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

@@ -171,14 +171,15 @@ extension HomeViewController: UITableViewDelegate {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let destination = segue.destination as? DescriptionViewController {
-            destination.titleStr = taskStore[(tableView.indexPathForSelectedRow?.section)!][(tableView.indexPathForSelectedRow?.row)!].title
-            let date = taskStore[(tableView.indexPathForSelectedRow?.section)!][(tableView.indexPathForSelectedRow?.row)!].date!
+        if let indexPath = tableView.indexPathForSelectedRow {
+            let destination = segue.destination as? DescriptionViewController
+            destination?.titleStr = taskStore[indexPath.section][indexPath.row].title
+            let date = taskStore[indexPath.section][indexPath.row].date!
             let formatter = DateFormatter()
             formatter.dateFormat = "MMM dd, YYYY"
-            destination.dateStr = formatter.string(from: date)
-            destination.bodyStr = taskStore[(tableView.indexPathForSelectedRow?.section)!][(tableView.indexPathForSelectedRow?.row)!].body
-            tableView.deselectRow(at: tableView.indexPathForSelectedRow!, animated: true)
+            destination?.dateStr = formatter.string(from: date)
+            destination?.bodyStr = taskStore[indexPath.section][indexPath.row].body
+            tableView.deselectRow(at: indexPath, animated: true)
         }
     }
 }
