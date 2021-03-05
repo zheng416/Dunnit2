@@ -174,12 +174,19 @@ extension HomeViewController: UITableViewDelegate {
         if let indexPath = tableView.indexPathForSelectedRow {
             let destination = segue.destination as? DescriptionViewController
             destination?.titleStr = taskStore[indexPath.section][indexPath.row].title
-            let date = taskStore[indexPath.section][indexPath.row].date!
-            let formatter = DateFormatter()
-            formatter.dateFormat = "MMM dd, YYYY"
-            destination?.dateStr = formatter.string(from: date)
+            destination?.dateVal = taskStore[indexPath.section][indexPath.row].date!
             destination?.bodyStr = taskStore[indexPath.section][indexPath.row].body
             tableView.deselectRow(at: indexPath, animated: true)
+            destination?.completion = {title, body, date in
+                DispatchQueue.main.async {
+                    /*DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false)*/
+                    self.taskStore[indexPath.section][indexPath.row].title = title
+                    self.taskStore[indexPath.section][indexPath.row].date = date
+                    self.taskStore[indexPath.section][indexPath.row].body = body
+                    self.navigationController?.popViewController(animated: true)
+                    self.getData()
+                }
+            }
         }
     }
 }

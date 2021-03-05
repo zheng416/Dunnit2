@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5DA410AB25F1494D005D3E0B /* DescriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA410AA25F1494D005D3E0B /* DescriptionViewController.swift */; };
+		5DA410AE25F1BE6B005D3E0B /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA410AD25F1BE6B005D3E0B /* EditViewController.swift */; };
 		7A054B71794EC5CF1EC95F59 /* Pods_Dunnit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C32BCD4DFEF6F40DC7EADA4A /* Pods_Dunnit2.framework */; };
 		9B46D56725DB7DB500E990CC /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B46D56625DB7DB500E990CC /* Utilities.swift */; };
 		9B46D56A25DB8BBD00E990CC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9B46D56925DB8BBD00E990CC /* GoogleService-Info.plist */; };
@@ -36,6 +37,7 @@
 
 /* Begin PBXFileReference section */
 		5DA410AA25F1494D005D3E0B /* DescriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptionViewController.swift; sourceTree = "<group>"; };
+		5DA410AD25F1BE6B005D3E0B /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
 		6ACBC333C343F4E6DF719209 /* Pods-Dunnit2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dunnit2.debug.xcconfig"; path = "Target Support Files/Pods-Dunnit2/Pods-Dunnit2.debug.xcconfig"; sourceTree = "<group>"; };
 		9B46D56625DB7DB500E990CC /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		9B46D56925DB8BBD00E990CC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 				9BBAE66B25EDA714003CC28B /* ListsViewController.swift */,
 				9BBAE66E25EEAC3D003CC28B /* AddListViewController.swift */,
 				5DA410AA25F1494D005D3E0B /* DescriptionViewController.swift */,
+				5DA410AD25F1BE6B005D3E0B /* EditViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -300,6 +303,7 @@
 				9B6CC76F25DB5F5A00C0CAF7 /* ViewController.swift in Sources */,
 				9BBAE66C25EDA714003CC28B /* ListsViewController.swift in Sources */,
 				9B6CC76B25DB5F5A00C0CAF7 /* AppDelegate.swift in Sources */,
+				5DA410AE25F1BE6B005D3E0B /* EditViewController.swift in Sources */,
 				9B46D5FA25E6DD5800E990CC /* DatabaseHelper.swift in Sources */,
 				9BBAE66F25EEAC3E003CC28B /* AddListViewController.swift in Sources */,
 				9B46D5CF25E4D12000E990CC /* AddViewController.swift in Sources */,

@@ -77,41 +77,64 @@
             </objects>
             <point key="canvasLocation" x="1276.8115942028987" y="-636.16071428571422"/>
         </scene>
-        <!--View Controller-->
+        <!--Edit View Controller-->
         <scene sceneID="5s0-Ez-Eun">
             <objects>
-                <viewController id="KzR-c9-kHx" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="editTask" id="KzR-c9-kHx" customClass="EditViewController" customModule="Dunnit2" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="tve-24-S7O">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Title" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="MyU-cm-fKp">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Title" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="MyU-cm-fKp">
                                 <rect key="frame" x="10" y="70" width="394" height="52"/>
                                 <constraints>
+                                    <constraint firstAttribute="width" constant="394" id="HJP-oY-6GN"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="52" id="bU8-0f-4JI"/>
                                     <constraint firstAttribute="height" constant="52" id="doS-h2-b2s"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <textField opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Body" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="a0g-LV-FgS">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Body" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="a0g-LV-FgS">
                                 <rect key="frame" x="10" y="142" width="394" height="52"/>
                                 <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="52" id="3O4-Dv-7OX"/>
+                                    <constraint firstAttribute="width" constant="394" id="Sg6-bH-Dnk"/>
                                     <constraint firstAttribute="height" constant="52" id="YpR-L4-MEa"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <datePicker contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="L3i-ZV-r7K">
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="L3i-ZV-r7K">
                                 <rect key="frame" x="10" y="214" width="414" height="216"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="216" id="aJX-QP-0JP"/>
+                                    <constraint firstAttribute="width" constant="414" id="pKt-j2-TvL"/>
+                                </constraints>
                             </datePicker>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="3xa-zE-tGq"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="a0g-LV-FgS" firstAttribute="top" secondItem="MyU-cm-fKp" secondAttribute="bottom" constant="20" id="2Fc-J3-QHM"/>
+                            <constraint firstItem="MyU-cm-fKp" firstAttribute="leading" secondItem="3xa-zE-tGq" secondAttribute="leading" constant="10" id="Bbc-QN-Kx6"/>
                             <constraint firstItem="a0g-LV-FgS" firstAttribute="top" secondItem="MyU-cm-fKp" secondAttribute="bottom" constant="20" id="Cxf-Sn-cs0"/>
+                            <constraint firstItem="3xa-zE-tGq" firstAttribute="bottom" secondItem="L3i-ZV-r7K" secondAttribute="bottom" constant="432" id="Xm1-rk-fhz"/>
+                            <constraint firstItem="a0g-LV-FgS" firstAttribute="leading" secondItem="3xa-zE-tGq" secondAttribute="leading" constant="10" id="Zko-ax-94a"/>
+                            <constraint firstAttribute="trailing" secondItem="L3i-ZV-r7K" secondAttribute="trailing" constant="-10" id="aPq-Sf-Cx3"/>
                             <constraint firstItem="L3i-ZV-r7K" firstAttribute="top" secondItem="a0g-LV-FgS" secondAttribute="bottom" constant="20" id="dCE-HB-Ydv"/>
+                            <constraint firstItem="MyU-cm-fKp" firstAttribute="top" secondItem="3xa-zE-tGq" secondAttribute="top" constant="26" id="dGj-yi-sSC"/>
+                            <constraint firstItem="3xa-zE-tGq" firstAttribute="trailing" secondItem="a0g-LV-FgS" secondAttribute="trailing" constant="10" id="gZf-Ii-cz4"/>
+                            <constraint firstItem="L3i-ZV-r7K" firstAttribute="top" secondItem="a0g-LV-FgS" secondAttribute="bottom" constant="20" id="h2v-xu-TdS"/>
+                            <constraint firstItem="L3i-ZV-r7K" firstAttribute="leading" secondItem="3xa-zE-tGq" secondAttribute="leading" constant="10" id="mxs-mB-Oeu"/>
+                            <constraint firstItem="3xa-zE-tGq" firstAttribute="trailing" secondItem="MyU-cm-fKp" secondAttribute="trailing" constant="10" id="sSx-zL-jEU"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="bodyField" destination="a0g-LV-FgS" id="wNL-GE-9Wr"/>
+                        <outlet property="dateField" destination="L3i-ZV-r7K" id="WwW-Sn-GMc"/>
+                        <outlet property="titleField" destination="MyU-cm-fKp" id="UPR-hd-bbr"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gOc-oK-7Iy" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
