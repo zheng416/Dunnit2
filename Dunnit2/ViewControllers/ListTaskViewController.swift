@@ -36,10 +36,10 @@ class ListTaskViewController: UIViewController {
         }
         vc.title = "New Task"
         vc.navigationItem.largeTitleDisplayMode = .never
-        vc.completion = {title, body, date in
+        vc.completion = {title, body, date, color in
             DispatchQueue.main.async {
                 self.navigationController?.popViewController(animated: true)
-                DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false, list: self.titleList!)
+                DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false, list: self.titleList!, color: UIColor(cgColor: color).htmlRGBA)
                 self.getData()
             }
         }

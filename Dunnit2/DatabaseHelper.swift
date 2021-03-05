@@ -74,7 +74,7 @@ class DataBaseHelper {
             }
         }
     }
-    func save(title: String, body: String, date: Date, isDone: Bool, list: String) {
+    func save(title: String, body: String, date: Date, isDone: Bool, list: String, color: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -98,7 +98,8 @@ class DataBaseHelper {
             "title": title,
             "date":date,
             "isDone" : isDone,
-            "list": list
+            "list": list,
+            "color": color
         ]
         db.collection("task").document("test"+title).setData(docData) { err in
             if let err = err {
@@ -113,6 +114,7 @@ class DataBaseHelper {
         instance.date = date
         instance.isDone = isDone
         instance.list = list
+        instance.color = color
         print(instance.date!)
         do {
             print("Saved.")
