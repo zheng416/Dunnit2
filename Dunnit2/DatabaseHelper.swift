@@ -101,7 +101,9 @@ class DataBaseHelper {
             "list": list,
             "color": color
         ]
-        db.collection("task").document("test"+title).setData(docData) { err in
+        
+        let dbKey = "\(email)+\(title)"
+        db.collection("task").document(dbKey).setData(docData) { err in
             if let err = err {
                 print("Error writing document: \(err)")
             } else {
@@ -122,16 +124,6 @@ class DataBaseHelper {
         } catch let error as NSError {
             print("Could not save. \(error), \(error.userInfo)")
         }
-        /*db.collection("task").getDocuments() { (querySnapshot, err) in
-            if let err = err {
-                print("Error getting documents: \(err)")
-            } else {
-                for document in querySnapshot!.documents {
-                    print("\(document.documentID) => \(document.data())")
-                }
-            }
-        }*/
-        
     }
     
     func deleteData(title: String) {
@@ -142,17 +134,32 @@ class DataBaseHelper {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
         fetchRequest.predicate = NSPredicate(format: "title = %@", title)
         
+        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        
         do {
             
             let test = try managedContext.fetch(fetchRequest)
             let objectToDelete = test[0] as! NSManagedObject
+            
+            // Get user email
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            let email = (user[0] as! UserEntity).email
+            
             // Database access
-            // TODO: Change the document title in both write and delete
-            db.collection("task").document("test"+title).delete() { err in
+            let dbKey = "\(email ?? "")+\(title)"
+            db.collection("task").document(dbKey).delete() { err in
                 if let err = err {
-                    print("Error removing document named \("test"+title): \(err)")
+                    print("Error removing document named \(dbKey): \(err)")
                 } else {
-                    print("Document \("test"+title) successfully deleted!")
+                    print("Document \(dbKey) successfully deleted!")
                 }
             }
             managedContext.delete(objectToDelete)
@@ -229,6 +236,8 @@ class DataBaseHelper {
                         instance.body = document.get("body")! as? String
                         instance.date = (document.get("date")! as! Timestamp).dateValue() as? Date
                         instance.isDone = getBoolFromAny(paramAny: document.get("isDone")!)
+                        instance.color = document.get("color")! as? String
+                        instance.list = document.get("list")! as? String
                         print(title)
                         do{
                             try managedContext.save()//print("save to local.")
@@ -512,7 +521,9 @@ class DataBaseHelper {
             let email = (user[0] as! UserEntity).email
             
             let docData: [String: Any] = ["title" : title, "email": email! as! String]
-            db.collection("taskLists").document(title).setData(docData) { err in
+            
+            let listKey = "\(email ?? "")+\(title)"
+            db.collection("taskLists").document(listKey).setData(docData) { err in
                 if err != nil {
                     // Show error message
                     print("Error saving user data\(err)")
@@ -617,6 +628,7 @@ class DataBaseHelper {
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
         let fetchTaskRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
+        let fetchUserRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
         fetchRequest.predicate = NSPredicate(format: "title = %@", title)
         fetchTaskRequest.predicate = NSPredicate(format: "list = %@", title)
         
@@ -625,8 +637,23 @@ class DataBaseHelper {
             
             let objectToDelete = test[0] as! NSManagedObject
             managedContext.delete(objectToDelete)
-            print("------ \(test), \(title)")
-            db.collection("taskLists").document("\(title)").delete() { err in
+            
+            // Get user email
+            let user = try managedContext.fetch(fetchUserRequest)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            let email = (user[0] as! UserEntity).email
+            
+            // Database access
+            let listKey = "\(email ?? "")+\(title)"
+            
+            db.collection("taskLists").document(listKey).delete() { err in
                 if err != nil {
                     print("Error removing document named \(title): \(err)")
                 } else {
@@ -641,6 +668,9 @@ class DataBaseHelper {
                 managedContext.delete(task as! NSManagedObject)
             }
             
+            
+            
+            
             db.collection("task").whereField("list", isEqualTo: title).getDocuments() { (querySnapshot, err) in
                 if let err = err {
                     print("Error getting documents: \(err)")
@@ -651,8 +681,8 @@ class DataBaseHelper {
                     for document in querySnapshot!.documents {
                         let toBeDeletedTask = document.get("title") as! String
 
-                        print("toBeDeletedTask: \(toBeDeletedTask)")
-                        self.db.collection("task").document("test"+toBeDeletedTask).delete()
+                        let taskKey = "\(email ?? "")+\(toBeDeletedTask)"
+                        self.db.collection("task").document(taskKey).delete()
 
                     }
                 }
