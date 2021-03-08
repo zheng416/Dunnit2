@@ -56,8 +56,8 @@ class SettingsViewController: UITableViewController {
         }
         globalUser = user
 
-        nameLabel.text =  user["name"] as! String
-        emailLabel.text = user["email"] as! String
+        nameLabel.text =  user["name"] as? String
+        emailLabel.text = user["email"] as? String
         soundToggle.isOn = user["sound"] as! Bool
         notificationsToggle.isOn = user["notifications"] as! Bool
         darkModeToggle.isOn = user["darkMode"] as! Bool
@@ -108,6 +108,7 @@ class SettingsViewController: UITableViewController {
         
         // Hardcoded rowIndex
         let logoutIndex = [4,0] as IndexPath
+        let verifyEmailIndex = [1,1] as IndexPath
         
         if (indexPath == logoutIndex) {
             print("Logout?")
@@ -142,25 +143,25 @@ class SettingsViewController: UITableViewController {
             dialogMessage.addAction(ok)
             dialogMessage.addAction(cancel)
             self.present(dialogMessage, animated: true, completion: nil)
-            /*
-            // Clear storage
-            DataBaseHelper.shareInstance.logout(email: globalUser["email"] as! String)
+        } else if (indexPath == verifyEmailIndex){
+            print("Verify Email Button Pressed!")
             
-            // Clear local firebase auth
-            do {
-                try Auth.auth().signOut()
-                //TODO: FB Sign in still working?
+            
+            let dialogMessage = UIAlertController(title: "", message: "Would you like to verify your email?", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "Yes", style: .default) {
+                UIAlertAction in
+                // TODO: Verification for peter? Not sure what else to add here
+                print("Ok button pressed")
                 
-            } catch let signOutError as NSError {
-              print ("Error signing out: %@", signOutError)
+                
             }
-            
-            // Redirect to login page
-            let loginStory = UIStoryboard(name: "Main", bundle: nil)
-            let startVC = loginStory.instantiateViewController(withIdentifier: "welcome")
-            let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as! SceneDelegate
-            sceneDelegate.window?.rootViewController = startVC
-            */
+            let cancel = UIAlertAction(title: "No", style: .cancel) {
+                UIAlertAction in
+                NSLog("Cancel Pressed")
+            }
+            dialogMessage.addAction(ok)
+            dialogMessage.addAction(cancel)
+            self.present(dialogMessage, animated: true, completion: nil)
             
         }
     }
