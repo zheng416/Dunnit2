@@ -9,6 +9,7 @@ import UIKit
 import CoreData
 import Firebase
 
+private var sortViewController: UIView!
 
 extension UIColor {
     var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
@@ -190,6 +191,42 @@ class HomeViewController: UIViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
     
+//    @IBAction func didTapSort() {
+//        print("Sort button pressed!")
+//        // Show add vc
+//        let sortingStoryboard = UIStoryboard(name: "Home", bundle: nil)
+//        guard let vc = sortingStoryboard.instantiateViewController(identifier: "sortingvc") as? SortingViewController else {
+//            return
+//        }
+//        self.addChild(vc)
+//        vc.view.frame = self.view.frame
+//        self.view.addSubview(vc.view)
+//        vc.didMove(toParent: self)
+//    }
+    
+    
+    private func setupSortMenuItem() {
+        let saveMenu = UIMenu(title: "", children: [
+            UIAction(title: "By Time", image: UIImage(systemName: "doc.on.doc")) { action in
+                    //Copy Menu Child Selected
+                },
+             UIAction(title: "By Title", image: UIImage(systemName: "pencil")) { action in
+                    //Rename Menu Child Selected
+                },
+             UIAction(title: "Duplicate", image: UIImage(systemName: "plus.square.on.square")) { action in
+                    //Duplicate Menu Child Selected
+                },
+             UIAction(title: "Move", image: UIImage(systemName: "folder")) { action in
+                    //Move Menu Child Selected
+                },
+              ])
+        
+        
+        let saveButton = UIBarButtonItem(title: "Sort", menu: saveMenu)
+        
+        navigationItem.rightBarButtonItem = saveButton
+
+    }
     
 
     override func viewDidLoad() {
@@ -197,6 +234,7 @@ class HomeViewController: UIViewController {
         overrideUserInterfaceStyle = .light
         // Do any additional setup after loading the view.
         getData()
+        setupSortMenuItem()
 //        tableView.delegate = self
 //        tableView.dataSource = self
     }
