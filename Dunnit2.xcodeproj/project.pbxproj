@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D3B626025FB762300EFA147 /* EditTopicsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3B625F25FB762300EFA147 /* EditTopicsViewController.swift */; };
 		5DA410AB25F1494D005D3E0B /* DescriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA410AA25F1494D005D3E0B /* DescriptionViewController.swift */; };
 		5DA410AE25F1BE6B005D3E0B /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA410AD25F1BE6B005D3E0B /* EditViewController.swift */; };
 		7A054B71794EC5CF1EC95F59 /* Pods_Dunnit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C32BCD4DFEF6F40DC7EADA4A /* Pods_Dunnit2.framework */; };
@@ -37,6 +38,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5D3B625F25FB762300EFA147 /* EditTopicsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTopicsViewController.swift; sourceTree = "<group>"; };
 		5DA410AA25F1494D005D3E0B /* DescriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptionViewController.swift; sourceTree = "<group>"; };
 		5DA410AD25F1BE6B005D3E0B /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
 		6ACBC333C343F4E6DF719209 /* Pods-Dunnit2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dunnit2.debug.xcconfig"; path = "Target Support Files/Pods-Dunnit2/Pods-Dunnit2.debug.xcconfig"; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 				5DA410AA25F1494D005D3E0B /* DescriptionViewController.swift */,
 				5DA410AD25F1BE6B005D3E0B /* EditViewController.swift */,
 				9BBAE67525F15EB6003CC28B /* ListTaskViewController.swift */,
+				5D3B625F25FB762300EFA147 /* EditTopicsViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -319,6 +322,7 @@
 				9BBAE66125ED7DE1003CC28B /* SettingsViewController.swift in Sources */,
 				9B6CC76D25DB5F5A00C0CAF7 /* SceneDelegate.swift in Sources */,
 				9B6CC78625DB60FD00C0CAF7 /* HomeViewController.swift in Sources */,
+				5D3B626025FB762300EFA147 /* EditTopicsViewController.swift in Sources */,
 				5DA410AB25F1494D005D3E0B /* DescriptionViewController.swift in Sources */,
 				9B46D62925ED49E400E990CC /* SlideInTransition.swift in Sources */,
 				9B46D59125DC73CE00E990CC /* Constants.swift in Sources */,

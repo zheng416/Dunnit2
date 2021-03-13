@@ -240,6 +240,10 @@
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="t6E-ET-qJ9">
                                 <rect key="frame" x="10" y="198" width="414" height="216"/>
                             </datePicker>
+                            <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QBz-pr-ONg">
+                                <rect key="frame" x="0.0" y="418" width="414" height="162"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            </pickerView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="D3V-NB-Y31"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -259,6 +263,7 @@
                         <outlet property="bodyField" destination="omx-qT-3X5" id="DAs-mL-MBl"/>
                         <outlet property="datePicker" destination="t6E-ET-qJ9" id="kkp-jJ-jx9"/>
                         <outlet property="titlefield" destination="VSl-if-c9F" id="cZM-av-1VA"/>
+                        <outlet property="topicPicker" destination="QBz-pr-ONg" id="hyM-e8-GWb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gsZ-Ng-zhc" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

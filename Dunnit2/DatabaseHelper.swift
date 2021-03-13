@@ -699,6 +699,112 @@ class DataBaseHelper {
         }
     }
     
+    func updateTopic(email: String, red: String, orange: String, yellow: String, green: String, blue: String, purple: String, indigo: String, teal: String, pink: String, black: String) {
+        print("RED")
+        print(red)
+        print("DONE")
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TopicEntity")
+        // Save to Firebase
+        let docData: [String: Any] = ["email": email , "red": red, "orange": orange, "yellow": yellow, "green": green, "blue": blue, "purple": purple, "indigo": indigo, "teal": teal, "pink": pink, "black": black]
+        let topicKey = "\(email ?? "")+topic"
+        db.collection("topics").document(topicKey).updateData(docData) { err in
+            if err != nil {
+                // Show error message
+                print("Error saving user data\(err)")
+                return
+            }
+        }
+        // Save to local database
+        do {
+            let foundUser = try managedContext.fetch(fetchRequest) as! [TopicEntity]
+            print(foundUser)
+            foundUser.first?.red = red
+            foundUser.first?.orange = orange
+            foundUser.first?.yellow = yellow
+            foundUser.first?.green = green
+            foundUser.first?.blue = blue
+            foundUser.first?.purple = purple
+            foundUser.first?.indigo = indigo
+            foundUser.first?.teal = teal
+            foundUser.first?.pink = pink
+            foundUser.first?.black = black
+            try managedContext.save()
+            print("SAVED")
+            print(foundUser.first)
+            print("DONE")
+            print("Updated Topics.")
+        } catch {
+            print("Update error.")
+        }
+    }
     
+    func saveTopics(red: String, orange: String, yellow: String, green: String, blue: String, purple: String, indigo: String, teal: String, pink: String, black: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let instance = TopicEntity(context: managedContext)
+        instance.red = red
+        instance.orange = orange
+        instance.yellow = yellow
+        instance.green = green
+        instance.blue = blue
+        instance.purple = purple
+        instance.indigo = indigo
+        instance.teal = teal
+        instance.pink = pink
+        instance.black = black
+        
+        // Get user's email
+        do {
+            let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            let email = (user[0] as! UserEntity).email
+            
+            let docData: [String: Any] = ["email": email! , "red": red, "orange": orange, "yellow": yellow, "green": green, "blue": blue, "purple": purple, "indigo": indigo, "teal": teal, "pink": pink, "black": black]
+            
+            let topicKey = "\(email ?? "")+topic"
+            db.collection("topics").document(topicKey).setData(docData) { err in
+                if err != nil {
+                    // Show error message
+                    print("Error saving user data\(err)")
+                    return
+                }
+            }
+            try managedContext.save()
+        } catch {
+            print("Could not save")
+        }
+    }
+    
+    func fetchTopics() -> [TopicEntity] {
+        var fetchingImage = [TopicEntity]()
+        
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TopicEntity")
+        
+        do {
+            print("All Topics.")
+            fetchingImage = try managedContext.fetch(fetchRequest) as! [TopicEntity]
+        } catch {
+            print(error)
+        }
+        return fetchingImage
+    }
     
 }

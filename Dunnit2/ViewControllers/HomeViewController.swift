@@ -10,53 +10,6 @@ import CoreData
 import Firebase
 
 
-extension UIColor {
-    var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
-        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-        if getRed(&r, green: &g, blue: &b, alpha: &a) {
-            return (r,g,b,a)
-        }
-        return (0, 0, 0, 0)
-    }
-
-    // hue, saturation, brightness and alpha components from UIColor**
-    var hsba: (hue: CGFloat, saturation: CGFloat, brightness: CGFloat, alpha: CGFloat) {
-        var hue: CGFloat = 0, saturation: CGFloat = 0, brightness: CGFloat = 0, alpha: CGFloat = 0
-        if getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha) {
-            return (hue, saturation, brightness, alpha)
-        }
-        return (0,0,0,0)
-    }
-
-    var htmlRGB: String {
-        return String(format: "#%02x%02x%02x", Int(rgba.red * 255), Int(rgba.green * 255), Int(rgba.blue * 255))
-    }
-
-    var htmlRGBA: String {
-        return String(format: "#%02x%02x%02x%02x", Int(rgba.red * 255), Int(rgba.green * 255), Int(rgba.blue * 255), Int(rgba.alpha * 255) )
-    }
-}
-
-extension UIColor {
-    convenience init(hexString: String) {
-        let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int = UInt64()
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 3: // RGB (12-bit)
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // RGBA (32-bit)
-            (r, g, b, a) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (255, 0, 0, 0)
-        }
-        self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
-    }
-}
-
 class HomeViewController: UIViewController {
     
     let transition = SlideInTransition()
@@ -73,6 +26,25 @@ class HomeViewController: UIViewController {
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
         taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
         tableView.reloadData()
+    }
+    
+    func getTopics() -> [String: Any] {
+        let user = DataBaseHelper.shareInstance.fetchTopics()
+        print(user)
+        var endUser = [String:Any]()
+        for x in user as [TopicEntity] {
+            endUser["red"] = x.red
+            endUser["orange"] = x.orange
+            endUser["yellow"] = x.yellow
+            endUser["green"] = x.green
+            endUser["blue"] = x.blue
+            endUser["purple"] = x.purple
+            endUser["indigo"] = x.indigo
+            endUser["teal"] = x.teal
+            endUser["pink"] = x.pink
+            endUser["black"] = x.black
+        }
+        return endUser
     }
     
     @IBAction func didTapMenu(_ sender: UIBarButtonItem) {
@@ -181,9 +153,7 @@ class HomeViewController: UIViewController {
         vc.completion = {title, body, date, color in
             DispatchQueue.main.async {
                 self.navigationController?.popToRootViewController(animated: true)
-                DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false, list: "all", color: UIColor(cgColor: color).htmlRGBA)
-                print("PRINT THE COLOR")
-                print(UIColor(cgColor: color).htmlRGBA)
+                DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false, list: "all", color: color)
                 self.getData()
             }
         }
@@ -259,23 +229,71 @@ extension HomeViewController: UITableViewDataSource {
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let topics = getTopics()
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let viewWithTag = cell.viewWithTag(100)
+        viewWithTag?.removeFromSuperview()
         let date = taskStore[indexPath.section][indexPath.row].date!
-        let colorHex = taskStore[indexPath.section][indexPath.row].color
-        print("Color HEX stuff")
-        print(colorHex)
+        let color = taskStore[indexPath.section][indexPath.row].color
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM dd, YYYY"
         cell.textLabel?.text = taskStore[indexPath.section][indexPath.row].title
+        cell.textLabel?.sizeToFit()
         cell.detailTextLabel?.text = formatter.string(from: date)
-        if (colorHex == nil) {
-            cell.backgroundColor = .white
+        if !(color!.isEmpty) {
+            let label = UILabel()
+            label.text = " " + color! + " "
+            label.font = UIFont.boldSystemFont(ofSize: 16.0)
+            label.textColor = .white
+            label.sizeToFit()
+
+            // Add a rectangle view
+            let rectangle = UIView(frame: CGRect(x: (cell.textLabel?.frame.size.width)! + 50, y: (cell.textLabel?.frame.size.height)! - 10, width: label.frame.size.width, height: 20))
+
+            var background = UIColor.white
+            if (topics["red"] as? String) == color {
+                background = UIColor.systemRed
+            }
+            else if (topics["orange"] as? String) == color {
+                background = UIColor.systemOrange
+            }
+            else if (topics["yellow"] as? String) == color {
+                background = UIColor.systemYellow
+            }
+            else if (topics["green"] as? String) == color {
+                background = UIColor.systemGreen
+            }
+            else if (topics["blue"] as? String) == color {
+                background = UIColor.systemBlue
+            }
+            else if (topics["purple"] as? String) == color {
+                background = UIColor.systemPurple
+            }
+            else if (topics["indigo"] as? String) == color {
+                background = UIColor.systemIndigo
+            }
+            else if (topics["teal"] as? String) == color {
+                background = UIColor.systemTeal
+            }
+            else if (topics["pink"] as? String) == color {
+                background = UIColor.systemPink
+            }
+            else if (topics["black"] as? String) == color {
+                background = UIColor.black
+            }
+            
+            rectangle.backgroundColor = background
+            
+            rectangle.layer.cornerRadius = 5
+            
+            rectangle.tag = 100
+
+            // Add the label to your rectangle
+            rectangle.addSubview(label)
+
+            // Add the rectangle to your cell
+            cell.addSubview(rectangle)
         }
-        else {
-            print("HELLOOOOOOOOOOOOOOO")
-            cell.backgroundColor = UIColor(hexString: colorHex!)
-        }
-        print(cell)
         return cell
     }
 }
