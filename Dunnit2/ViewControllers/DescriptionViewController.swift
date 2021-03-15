@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DescriptionViewController: UIViewController, UITextViewDelegate {
+class DescriptionViewController: UIViewController {
 
     var titleStr: String?
     
@@ -17,13 +17,13 @@ class DescriptionViewController: UIViewController, UITextViewDelegate {
     
     var topicStr: String?
     
-    @IBOutlet var titleField: UITextView!
+    @IBOutlet var titleField: UILabel!
     
-    @IBOutlet var dateField: UITextView!
+    @IBOutlet var dateField: UILabel!
     
-    @IBOutlet var bodyField: UITextView!
+    @IBOutlet var bodyField: UILabel!
     
-    @IBOutlet var topicField: UITextView!
+    @IBOutlet var topicField: UILabel!
     
     public var completion: ((String, String, Date, String) -> Void)?
     
@@ -35,7 +35,12 @@ class DescriptionViewController: UIViewController, UITextViewDelegate {
         formatter.dateFormat = "MMM dd, YYYY"
         dateField.text = formatter.string(from: self.dateVal!)
         bodyField.text = bodyStr
-        topicField.text = topicStr
+        if !(topicStr!.isEmpty) {
+            topicField.text = "Topic: " + topicStr!
+        }
+        else {
+            topicField.text = topicStr
+        }
         // Do any additional setup after loading the view.
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(didTapEditButton))
 

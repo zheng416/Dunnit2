@@ -195,7 +195,7 @@ extension HomeViewController: UITableViewDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let indexPath = tableView.indexPathForSelectedRow {
             let destination = segue.destination as? DescriptionViewController
-            var previous = taskStore[indexPath.section][indexPath.row].title
+            let previous = taskStore[indexPath.section][indexPath.row].title
             destination?.titleStr = previous
             destination?.dateVal = taskStore[indexPath.section][indexPath.row].date!
             destination?.bodyStr = taskStore[indexPath.section][indexPath.row].body
