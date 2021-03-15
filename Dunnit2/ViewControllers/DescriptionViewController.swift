@@ -23,7 +23,9 @@ class DescriptionViewController: UIViewController, UITextViewDelegate {
     
     @IBOutlet var bodyField: UITextView!
     
-    public var completion: ((String, String, Date) -> Void)?
+    @IBOutlet var topicField: UITextView!
+    
+    public var completion: ((String, String, Date, String) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +35,7 @@ class DescriptionViewController: UIViewController, UITextViewDelegate {
         formatter.dateFormat = "MMM dd, YYYY"
         dateField.text = formatter.string(from: self.dateVal!)
         bodyField.text = bodyStr
+        topicField.text = topicStr
         // Do any additional setup after loading the view.
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(didTapEditButton))
 
@@ -56,8 +59,9 @@ class DescriptionViewController: UIViewController, UITextViewDelegate {
                 formatter.dateFormat = "MMM dd, YYYY"
                 self.dateField.text = formatter.string(from: date)
                 self.bodyField.text = body
+                self.topicField.text = color
                 /*DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false)*/
-                self.completion?(title, body, date)
+                self.completion?(title, body, date, color)
             }
         }
         navigationController?.pushViewController(vc, animated: true)

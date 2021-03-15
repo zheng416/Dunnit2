@@ -12,12 +12,12 @@
         <scene sceneID="mZB-pN-XjF">
             <objects>
                 <viewController storyboardIdentifier="description" id="my1-e3-sGj" customClass="DescriptionViewController" customModule="Dunnit2" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Qq9-Xj-yXz">
+                    <view key="view" contentMode="scaleToFill" ambiguous="YES" id="Qq9-Xj-yXz">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Title" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="icN-Um-TM2">
-                                <rect key="frame" x="20" y="144" width="240" height="68"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" text="Title" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="icN-Um-TM2">
+                                <rect key="frame" x="20" y="144" width="240" height="58"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="240" id="6GL-S7-tAr"/>
@@ -28,7 +28,7 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Month Date, Year" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="2hV-4D-7X2">
-                                <rect key="frame" x="20" y="220" width="204" height="73.5"/>
+                                <rect key="frame" x="20" y="198" width="204" height="73.5"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="204" id="FwQ-tz-xfY"/>
@@ -38,8 +38,8 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="uJd-gP-3h9">
-                                <rect key="frame" x="20" y="301" width="374" height="198"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="uJd-gP-3h9">
+                                <rect key="frame" x="20" y="320.5" width="374" height="178.5"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="374" id="6rd-dw-mAP"/>
@@ -48,6 +48,14 @@
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <color key="textColor" systemColor="labelColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" text="Topic:" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="qrk-7n-XQF">
+                                <rect key="frame" x="20" y="250" width="358" height="51"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="textColor" systemColor="labelColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                         </subviews>
@@ -59,10 +67,14 @@
                             <constraint firstItem="2hV-4D-7X2" firstAttribute="leading" secondItem="q9A-s3-K3N" secondAttribute="leading" constant="20" id="90z-WH-jTF"/>
                             <constraint firstItem="uJd-gP-3h9" firstAttribute="top" secondItem="2hV-4D-7X2" secondAttribute="bottom" constant="7.5" id="Gg9-FK-sa8"/>
                             <constraint firstItem="icN-Um-TM2" firstAttribute="top" secondItem="q9A-s3-K3N" secondAttribute="top" constant="4" id="Kgv-cF-vMx"/>
+                            <constraint firstItem="q9A-s3-K3N" firstAttribute="trailing" secondItem="2hV-4D-7X2" secondAttribute="trailing" constant="161" id="Nmm-3e-iyw"/>
                             <constraint firstItem="icN-Um-TM2" firstAttribute="leading" secondItem="q9A-s3-K3N" secondAttribute="leading" constant="20" id="Qdi-KH-IJ7"/>
+                            <constraint firstItem="uJd-gP-3h9" firstAttribute="top" secondItem="2hV-4D-7X2" secondAttribute="bottom" constant="49" id="Syn-4j-vkK"/>
                             <constraint firstItem="q9A-s3-K3N" firstAttribute="trailing" secondItem="icN-Um-TM2" secondAttribute="trailing" constant="154" id="dyi-Jc-RUg"/>
                             <constraint firstItem="q9A-s3-K3N" firstAttribute="trailing" secondItem="2hV-4D-7X2" secondAttribute="trailing" constant="190" id="lBh-I3-f3X"/>
                             <constraint firstItem="uJd-gP-3h9" firstAttribute="leading" secondItem="q9A-s3-K3N" secondAttribute="leading" constant="20" id="nfu-B9-e7T"/>
+                            <constraint firstItem="2hV-4D-7X2" firstAttribute="leading" secondItem="q9A-s3-K3N" secondAttribute="leading" constant="20" id="nko-7M-sGa"/>
+                            <constraint firstItem="2hV-4D-7X2" firstAttribute="top" secondItem="q9A-s3-K3N" secondAttribute="top" constant="58" id="qR2-6f-nY7"/>
                             <constraint firstItem="q9A-s3-K3N" firstAttribute="bottom" secondItem="uJd-gP-3h9" secondAttribute="bottom" constant="363" id="xwE-uk-eSY"/>
                         </constraints>
                     </view>
@@ -71,6 +83,7 @@
                         <outlet property="bodyField" destination="uJd-gP-3h9" id="FoZ-5p-jhE"/>
                         <outlet property="dateField" destination="2hV-4D-7X2" id="t2H-Jz-dgF"/>
                         <outlet property="titleField" destination="icN-Um-TM2" id="gwU-1z-lK8"/>
+                        <outlet property="topicField" destination="qrk-7n-XQF" id="9yV-wb-EEo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dOq-ve-fr9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

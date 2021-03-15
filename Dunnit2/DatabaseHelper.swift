@@ -282,6 +282,28 @@ class DataBaseHelper {
         }
     }
     
+    func updateData(previous:String, title:String, body:String, date: Date, color:String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
+        let predicate = NSPredicate(format: "title = %@", previous)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let foundTasks = try managedContext.fetch(fetchRequest) as! [TaskEntity]
+            foundTasks.first?.title = title
+            foundTasks.first?.body = body
+            foundTasks.first?.date = date
+            foundTasks.first?.color = color
+            try managedContext.save()
+            print("Updated.")
+        } catch {
+            print("Update error.")
+        }
+    }
+    
     // User section -- Start
     func fetchUser() -> [UserEntity] {
         var fetchingImage = [UserEntity]()

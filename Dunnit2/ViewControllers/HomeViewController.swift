@@ -195,17 +195,15 @@ extension HomeViewController: UITableViewDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let indexPath = tableView.indexPathForSelectedRow {
             let destination = segue.destination as? DescriptionViewController
-            destination?.titleStr = taskStore[indexPath.section][indexPath.row].title
+            var previous = taskStore[indexPath.section][indexPath.row].title
+            destination?.titleStr = previous
             destination?.dateVal = taskStore[indexPath.section][indexPath.row].date!
             destination?.bodyStr = taskStore[indexPath.section][indexPath.row].body
             destination?.topicStr = taskStore[indexPath.section][indexPath.row].color
             tableView.deselectRow(at: indexPath, animated: true)
-            destination?.completion = {title, body, date in
+            destination?.completion = {title, body, date, color in
                 DispatchQueue.main.async {
-                    /*DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false)*/
-                    self.taskStore[indexPath.section][indexPath.row].title = title
-                    self.taskStore[indexPath.section][indexPath.row].date = date
-                    self.taskStore[indexPath.section][indexPath.row].body = body
+                    DataBaseHelper.shareInstance.updateData(previous: previous!, title: title, body: body, date: date, color: color)
                     self.navigationController?.popViewController(animated: true)
                     self.getData()
                 }
