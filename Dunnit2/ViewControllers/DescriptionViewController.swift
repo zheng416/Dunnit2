@@ -15,6 +15,8 @@ class DescriptionViewController: UIViewController, UITextViewDelegate {
     
     var bodyStr: String?
     
+    var topicStr: String?
+    
     @IBOutlet var titleField: UITextView!
     
     @IBOutlet var dateField: UITextView!
@@ -44,9 +46,10 @@ class DescriptionViewController: UIViewController, UITextViewDelegate {
         vc.titleStr = self.titleStr
         vc.dateVal = self.dateVal
         vc.bodyStr = self.bodyStr
+        vc.topicStr = self.topicStr
         vc.title = "Edit"
         vc.navigationItem.largeTitleDisplayMode = .never
-        vc.completion = {title, body, date in
+        vc.completion = {title, body, date, color in
             DispatchQueue.main.async {
                 self.titleField.text = title
                 let formatter = DateFormatter()
