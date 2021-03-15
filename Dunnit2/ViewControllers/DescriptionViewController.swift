@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DescriptionViewController: UIViewController, UITextViewDelegate {
+class DescriptionViewController: UIViewController {
 
     var titleStr: String?
     
@@ -15,13 +15,17 @@ class DescriptionViewController: UIViewController, UITextViewDelegate {
     
     var bodyStr: String?
     
-    @IBOutlet var titleField: UITextView!
+    var topicStr: String?
     
-    @IBOutlet var dateField: UITextView!
+    @IBOutlet var titleField: UILabel!
     
-    @IBOutlet var bodyField: UITextView!
+    @IBOutlet var dateField: UILabel!
     
-    public var completion: ((String, String, Date) -> Void)?
+    @IBOutlet var bodyField: UILabel!
+    
+    @IBOutlet var topicField: UILabel!
+    
+    public var completion: ((String, String, Date, String) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +35,12 @@ class DescriptionViewController: UIViewController, UITextViewDelegate {
         formatter.dateFormat = "MMM dd, YYYY"
         dateField.text = formatter.string(from: self.dateVal!)
         bodyField.text = bodyStr
+        if !(topicStr!.isEmpty) {
+            topicField.text = "Topic: " + topicStr!
+        }
+        else {
+            topicField.text = topicStr
+        }
         // Do any additional setup after loading the view.
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(didTapEditButton))
 
@@ -44,17 +54,19 @@ class DescriptionViewController: UIViewController, UITextViewDelegate {
         vc.titleStr = self.titleStr
         vc.dateVal = self.dateVal
         vc.bodyStr = self.bodyStr
+        vc.topicStr = self.topicStr
         vc.title = "Edit"
         vc.navigationItem.largeTitleDisplayMode = .never
-        vc.completion = {title, body, date in
+        vc.completion = {title, body, date, color in
             DispatchQueue.main.async {
                 self.titleField.text = title
                 let formatter = DateFormatter()
                 formatter.dateFormat = "MMM dd, YYYY"
                 self.dateField.text = formatter.string(from: date)
                 self.bodyField.text = body
+                self.topicField.text = color
                 /*DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false)*/
-                self.completion?(title, body, date)
+                self.completion?(title, body, date, color)
             }
         }
         navigationController?.pushViewController(vc, animated: true)
