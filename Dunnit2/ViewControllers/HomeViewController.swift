@@ -20,6 +20,12 @@ class HomeViewController: UIViewController {
     
     @IBOutlet var tableView: UITableView!
     
+    @IBOutlet var searchBar: UISearchBar!
+    
+    var searchTasks = [[TaskEntity](), [TaskEntity]()]
+    
+    var searching = false
+    
     var taskStore = [[TaskEntity](), [TaskEntity]()]
     //local
     func getData() {
@@ -166,6 +172,7 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         overrideUserInterfaceStyle = .light
         // Do any additional setup after loading the view.
+        searchBar.autocapitalizationType = .none
         getData()
 //        tableView.delegate = self
 //        tableView.dataSource = self
@@ -223,6 +230,9 @@ extension HomeViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if searching {
+            return searchTasks[section].count
+        }
         return taskStore[section].count
     }
     
@@ -232,68 +242,162 @@ extension HomeViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let viewWithTag = cell.viewWithTag(100)
         viewWithTag?.removeFromSuperview()
-        let date = taskStore[indexPath.section][indexPath.row].date!
-        let color = taskStore[indexPath.section][indexPath.row].color
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM dd, YYYY"
-        cell.textLabel?.text = taskStore[indexPath.section][indexPath.row].title
-        cell.textLabel?.sizeToFit()
-        cell.detailTextLabel?.text = formatter.string(from: date)
-        if !(color!.isEmpty) {
-            let label = UILabel()
-            label.text = " " + color! + " "
-            label.font = UIFont.boldSystemFont(ofSize: 16.0)
-            label.textColor = .white
-            label.sizeToFit()
+        if searching {
+            let date = searchTasks[indexPath.section][indexPath.row].date!
+            let color = searchTasks[indexPath.section][indexPath.row].color
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMM dd, YYYY"
+            cell.textLabel?.text = searchTasks[indexPath.section][indexPath.row].title
+            cell.textLabel?.sizeToFit()
+            cell.detailTextLabel?.text = formatter.string(from: date)
+            if !(color!.isEmpty) {
+                let label = UILabel()
+                label.text = " " + color! + " "
+                label.font = UIFont.boldSystemFont(ofSize: 16.0)
+                label.textColor = .white
+                label.sizeToFit()
 
-            // Add a rectangle view
-            let rectangle = UIView(frame: CGRect(x: (cell.textLabel?.frame.size.width)! + 50, y: (cell.textLabel?.frame.size.height)! - 10, width: label.frame.size.width, height: 20))
+                // Add a rectangle view
+                let rectangle = UIView(frame: CGRect(x: (cell.textLabel?.frame.size.width)! + 50, y: (cell.textLabel?.frame.size.height)! - 10, width: label.frame.size.width, height: 20))
 
-            var background = UIColor.white
-            if (topics["red"] as? String) == color {
-                background = UIColor.systemRed
-            }
-            else if (topics["orange"] as? String) == color {
-                background = UIColor.systemOrange
-            }
-            else if (topics["yellow"] as? String) == color {
-                background = UIColor.systemYellow
-            }
-            else if (topics["green"] as? String) == color {
-                background = UIColor.systemGreen
-            }
-            else if (topics["blue"] as? String) == color {
-                background = UIColor.systemBlue
-            }
-            else if (topics["purple"] as? String) == color {
-                background = UIColor.systemPurple
-            }
-            else if (topics["indigo"] as? String) == color {
-                background = UIColor.systemIndigo
-            }
-            else if (topics["teal"] as? String) == color {
-                background = UIColor.systemTeal
-            }
-            else if (topics["pink"] as? String) == color {
-                background = UIColor.systemPink
-            }
-            else if (topics["black"] as? String) == color {
-                background = UIColor.black
-            }
-            
-            rectangle.backgroundColor = background
-            
-            rectangle.layer.cornerRadius = 5
-            
-            rectangle.tag = 100
+                var background = UIColor.white
+                if (topics["red"] as? String) == color {
+                    background = UIColor.systemRed
+                }
+                else if (topics["orange"] as? String) == color {
+                    background = UIColor.systemOrange
+                }
+                else if (topics["yellow"] as? String) == color {
+                    background = UIColor.systemYellow
+                }
+                else if (topics["green"] as? String) == color {
+                    background = UIColor.systemGreen
+                }
+                else if (topics["blue"] as? String) == color {
+                    background = UIColor.systemBlue
+                }
+                else if (topics["purple"] as? String) == color {
+                    background = UIColor.systemPurple
+                }
+                else if (topics["indigo"] as? String) == color {
+                    background = UIColor.systemIndigo
+                }
+                else if (topics["teal"] as? String) == color {
+                    background = UIColor.systemTeal
+                }
+                else if (topics["pink"] as? String) == color {
+                    background = UIColor.systemPink
+                }
+                else if (topics["black"] as? String) == color {
+                    background = UIColor.black
+                }
+                
+                rectangle.backgroundColor = background
+                
+                rectangle.layer.cornerRadius = 5
+                
+                rectangle.tag = 100
 
-            // Add the label to your rectangle
-            rectangle.addSubview(label)
+                // Add the label to your rectangle
+                rectangle.addSubview(label)
 
-            // Add the rectangle to your cell
-            cell.addSubview(rectangle)
+                // Add the rectangle to your cell
+                cell.addSubview(rectangle)
+            }
+        }
+        else {
+            let date = taskStore[indexPath.section][indexPath.row].date!
+            let color = taskStore[indexPath.section][indexPath.row].color
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMM dd, YYYY"
+            cell.textLabel?.text = taskStore[indexPath.section][indexPath.row].title
+            cell.textLabel?.sizeToFit()
+            cell.detailTextLabel?.text = formatter.string(from: date)
+            if !(color!.isEmpty) {
+                let label = UILabel()
+                label.text = " " + color! + " "
+                label.font = UIFont.boldSystemFont(ofSize: 16.0)
+                label.textColor = .white
+                label.sizeToFit()
+
+                // Add a rectangle view
+                let rectangle = UIView(frame: CGRect(x: (cell.textLabel?.frame.size.width)! + 50, y: (cell.textLabel?.frame.size.height)! - 10, width: label.frame.size.width, height: 20))
+
+                var background = UIColor.white
+                if (topics["red"] as? String) == color {
+                    background = UIColor.systemRed
+                }
+                else if (topics["orange"] as? String) == color {
+                    background = UIColor.systemOrange
+                }
+                else if (topics["yellow"] as? String) == color {
+                    background = UIColor.systemYellow
+                }
+                else if (topics["green"] as? String) == color {
+                    background = UIColor.systemGreen
+                }
+                else if (topics["blue"] as? String) == color {
+                    background = UIColor.systemBlue
+                }
+                else if (topics["purple"] as? String) == color {
+                    background = UIColor.systemPurple
+                }
+                else if (topics["indigo"] as? String) == color {
+                    background = UIColor.systemIndigo
+                }
+                else if (topics["teal"] as? String) == color {
+                    background = UIColor.systemTeal
+                }
+                else if (topics["pink"] as? String) == color {
+                    background = UIColor.systemPink
+                }
+                else if (topics["black"] as? String) == color {
+                    background = UIColor.black
+                }
+                
+                rectangle.backgroundColor = background
+                
+                rectangle.layer.cornerRadius = 5
+                
+                rectangle.tag = 100
+
+                // Add the label to your rectangle
+                rectangle.addSubview(label)
+
+                // Add the rectangle to your cell
+                cell.addSubview(rectangle)
+            }
         }
         return cell
+    }
+}
+
+extension HomeViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        var searchingTasks = [[TaskEntity](), [TaskEntity]()]
+        if (taskStore[0].count >= 1) {
+            for i in 0...taskStore[0].count - 1 {
+                if ((taskStore[0][i].title!.lowercased().hasPrefix(searchText.lowercased())) || (taskStore[0][i].color!.lowercased().hasPrefix(searchText.lowercased()))) {
+                    searchingTasks[0].append(taskStore[0][i])
+                }
+            }
+        }
+        
+        if (taskStore[1].count >= 1) {
+            for i in 0...taskStore[1].count - 1 {
+                if ((taskStore[1][i].title!.lowercased().hasPrefix(searchText.lowercased())) || (taskStore[1][i].color!.lowercased().hasPrefix(searchText.lowercased()))) {
+                    searchingTasks[1].append(taskStore[1][i])
+                }
+            }
+        }
+        searchTasks = searchingTasks
+        if !searchText.isEmpty {
+            searching = true
+        }
+        else {
+            searching = false
+        }
+        self.getData()
     }
 }
 
