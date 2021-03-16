@@ -143,7 +143,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="I0E-PR-QQk">
-                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                                <rect key="frame" x="0.0" y="145" width="414" height="717"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cell" textLabel="xQq-zn-WbC" detailTextLabel="OMl-17-b7m" style="IBUITableViewCellStyleSubtitle" id="R60-Q9-Ndw">
@@ -176,17 +176,28 @@
                                     <outlet property="delegate" destination="vS7-ur-LcG" id="3Gr-VT-dpP"/>
                                 </connections>
                             </tableView>
+                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="HZh-kO-YUx">
+                                <rect key="frame" x="0.0" y="88" width="414" height="56"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="vS7-ur-LcG" id="DSw-TY-Zte"/>
+                                </connections>
+                            </searchBar>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="TxW-zn-0BW"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="I0E-PR-QQk" firstAttribute="leading" secondItem="TxW-zn-0BW" secondAttribute="leading" id="CXX-Hz-XNz"/>
-                            <constraint firstItem="TxW-zn-0BW" firstAttribute="bottom" secondItem="I0E-PR-QQk" secondAttribute="bottom" id="Oe5-2P-bcv"/>
-                            <constraint firstItem="TxW-zn-0BW" firstAttribute="trailing" secondItem="I0E-PR-QQk" secondAttribute="trailing" id="Ydz-tn-7UN"/>
-                            <constraint firstItem="I0E-PR-QQk" firstAttribute="top" secondItem="TxW-zn-0BW" secondAttribute="top" id="v1j-MF-kba"/>
+                            <constraint firstItem="I0E-PR-QQk" firstAttribute="bottom" secondItem="TxW-zn-0BW" secondAttribute="bottom" id="0PP-fG-E2H"/>
+                            <constraint firstItem="HZh-kO-YUx" firstAttribute="top" secondItem="TxW-zn-0BW" secondAttribute="top" id="5FX-e9-vz2"/>
+                            <constraint firstItem="I0E-PR-QQk" firstAttribute="top" secondItem="HZh-kO-YUx" secondAttribute="bottom" constant="13" id="86R-0C-9wF"/>
+                            <constraint firstItem="HZh-kO-YUx" firstAttribute="leading" secondItem="TxW-zn-0BW" secondAttribute="leading" id="Djv-j0-kZm"/>
+                            <constraint firstItem="I0E-PR-QQk" firstAttribute="leading" secondItem="TxW-zn-0BW" secondAttribute="leading" id="Ix7-KV-kbe"/>
+                            <constraint firstItem="I0E-PR-QQk" firstAttribute="trailing" secondItem="TxW-zn-0BW" secondAttribute="trailing" id="KEZ-fT-gYg"/>
+                            <constraint firstItem="I0E-PR-QQk" firstAttribute="top" secondItem="HZh-kO-YUx" secondAttribute="bottom" constant="1" id="W16-QY-VKT"/>
+                            <constraint firstItem="HZh-kO-YUx" firstAttribute="trailing" secondItem="TxW-zn-0BW" secondAttribute="trailing" id="zC9-Xc-9rh"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="All" id="Cy0-io-sow">
+                    <navigationItem key="navigationItem" title="All" largeTitleDisplayMode="never" id="Cy0-io-sow">
                         <barButtonItem key="leftBarButtonItem" title="Menu" id="e1I-wR-d02">
                             <connections>
                                 <action selector="didTapMenu:" destination="vS7-ur-LcG" id="qLL-lI-9pR"/>
@@ -199,13 +210,14 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="searchBar" destination="HZh-kO-YUx" id="PYf-FB-bOQ"/>
                         <outlet property="tableView" destination="I0E-PR-QQk" id="f4l-6u-mN1"/>
                         <segue destination="my1-e3-sGj" kind="show" identifier="showInfo" id="B07-yv-zC2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aFD-Hw-mh8" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1277" y="88"/>
+            <point key="canvasLocation" x="1276.8115942028987" y="87.723214285714278"/>
         </scene>
         <!--Add View Controller-->
         <scene sceneID="75X-eq-HbX">
