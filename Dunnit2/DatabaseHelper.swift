@@ -271,6 +271,36 @@ class DataBaseHelper {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
         let predicate = NSPredicate(format: "title = %@", title)
         fetchRequest.predicate = predicate
+        var email = String()
+        do {
+            let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            email = (user[0] as! UserEntity).email!
+        } catch {
+            print("Error retrieving user")
+        }
+        
+        let docData: [String: Any] = ["isDone": isDone]
+        let taskKey = "\(email ?? "")+\(title ?? "")"
+        
+        print("Status Change")
+        print(taskKey)
+        db.collection("task").document(taskKey).updateData(docData) {
+            err in
+            if err != nil {
+                print("Error updating status")
+                return
+            }
+            print ("Status Updated")
+        }
         
         do {
             let foundTasks = try managedContext.fetch(fetchRequest) as! [TaskEntity]
@@ -670,9 +700,6 @@ class DataBaseHelper {
                 managedContext.delete(task as! NSManagedObject)
             }
             
-            
-            
-            
             db.collection("task").whereField("list", isEqualTo: title).getDocuments() { (querySnapshot, err) in
                 if let err = err {
                     print("Error getting documents: \(err)")
@@ -709,9 +736,6 @@ class DataBaseHelper {
 
         let instance = SharedEntity(context: managedContext)
         instance.email = to
-       
-        
-        // Get user's email
         do {
             let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
             let user = try managedContext.fetch(fetchUser)
@@ -739,9 +763,6 @@ class DataBaseHelper {
                 DataBaseHelper.shareInstance.updateListsShared(email: email!, shared: true, sharedWith: to, title: taskList)
                 print("DONEEEEEE Update")
             }
-        
-            print("Saving List \(taskList) local.")
-//            try managedContext.save()
         } catch {
             print("Could not save")
         }
@@ -763,9 +784,7 @@ class DataBaseHelper {
                         return
                     }
         }
-        
-        
-        
+
     }
     
     func fetchSharedDB(completion: @escaping (_ message: Bool) -> Void) {
@@ -780,8 +799,6 @@ class DataBaseHelper {
             fetchingImage = try managedContext.fetch(fetchRequest) as! [SharedEntity]
             print("countttt")
             print(fetchingImage.count)
-//            print(fetchingImage[0].email)
-//            print(fetchingImage[1].email)
             for result in fetchingImage as [SharedEntity] {
                 print(result.taskList)
                 var temp = "\(result.email!) + \(result.taskList!)"
@@ -864,7 +881,6 @@ class DataBaseHelper {
             print("Fetching SharedLists.")
             fetchingImage = try managedContext.fetch(fetchRequest) as! [SharedEntity]
             for result in fetchingImage as [SharedEntity] {
-//                var temp = "\(result.email!) + \(result.taskList!)"
                 print("Inside Loopp")
                 let owner = result.email!
                 print(owner)
@@ -907,25 +923,7 @@ class DataBaseHelper {
         var sharedTasks = [TaskEntity]()
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let managedContext = appDelegate.persistentContainer.viewContext
-//        var titlelist = [String]()
-//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
-//        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
         do {
-//            fetchingImage = try managedContext.fetch(fetchRequest) as! [TaskEntity]
-//            for result in fetchingImage as [TaskEntity] {
-//                print(result.title!,result.body!,result.date!,result.isDone)
-//                titlelist.append(result.title!)
-//            }
-//            let user = try managedContext.fetch(fetchUser)
-//            if user.count > 1{
-//                print("multiple user was found ")
-//                completion(false)
-//                return
-//            }
-//            if (user.isEmpty || user.count == 0){
-//                print("not local user was found when fetching data")
-//                return
-//            }
             let email = owner
             print("Ckecking for duplicate Data.")
             print(email)
@@ -949,13 +947,6 @@ class DataBaseHelper {
                         instance.list = document.get("list")! as? String
                         print(title)
                         sharedTasks.append(instance)
-//                        do{
-//                            try managedContext.save()//print("save to local.")
-//                        }
-//                        catch{
-//                            print("loading error")
-//                            completion(false)
-//                        }
                     }
                     completion(sharedTasks)
                 }

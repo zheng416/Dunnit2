@@ -24,8 +24,8 @@ class SharedTaskViewController: UIViewController {
                 self.listtasks = task
                 print("RETRIEVED")
                 
-                
-                
+                print(self.listtasks[0].isDone)
+                print(self.listtasks[0].isDone)
                 
                 
                 self.taskShareStore = [self.listtasks.filter{$0.isDone == false && $0.list == self.titleList}, self.listtasks.filter{$0.isDone == true && $0.list == self.titleList}]
