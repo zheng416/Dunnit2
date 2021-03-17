@@ -30,7 +30,8 @@ class HomeViewController: UIViewController {
     //local
     func getData() {
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
-        taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+        let user = DataBaseHelper.shareInstance.fetchUser()
+        taskStore = [tasks.filter{$0.isDone == false && $0.owner == user[0].email}, tasks.filter{$0.isDone == true && $0.owner == user[0].email}]
         print("ALLLLLLLLL            TASKS")
         print(tasks)
         
