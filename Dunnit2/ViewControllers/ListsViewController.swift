@@ -14,7 +14,13 @@ class ListsViewController: UIViewController {
     var listStore = [ListEntity]()
     
     func getLists() {
-        listStore = DataBaseHelper.shareInstance.fetchLists()
+        let templists = DataBaseHelper.shareInstance.fetchLists()
+        let user = DataBaseHelper.shareInstance.fetchUser()
+        print("plssssssss")
+        print(user.count)
+        print(user[0].email)
+        // print(templists.filter{$0.owner == user[0].email})
+        listStore = templists.filter{$0.owner == user[0].email}
         listTableView.reloadData()
         print("ppppp")
         print(listStore)

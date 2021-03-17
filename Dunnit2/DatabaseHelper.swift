@@ -117,6 +117,7 @@ class DataBaseHelper {
         instance.isDone = isDone
         instance.list = list
         instance.color = color
+        instance.owner = email
         print(instance.date!)
         do {
             print("Saved.")
@@ -238,6 +239,7 @@ class DataBaseHelper {
                         instance.isDone = getBoolFromAny(paramAny: document.get("isDone")!)
                         instance.color = document.get("color")! as? String
                         instance.list = document.get("list")! as? String
+                        instance.owner = document.get("email")! as? String
                         print(title)
                         do{
                             try managedContext.save()//print("save to local.")
@@ -629,11 +631,17 @@ class DataBaseHelper {
                     }
                     for document in querySnapshot!.documents {
                         let title = document.get("title")!
+                        let owner = document.get("email")!
+                        let shared = document.get("shared")!
+                        let sharedWith = document.get("sharedWith")!
                         if titlelist.contains(title as! String){
                             continue
                         }
                         let instance = ListEntity(context: managedContext)
                         instance.title = title as? String
+                        instance.owner = owner as? String
+                        instance.shared = shared as! Bool
+                        instance.sharedWith = sharedWith as? String
                         do{
                             try managedContext.save()//print("save to local.")
                         }
@@ -1057,6 +1065,7 @@ class DataBaseHelper {
                         instance.isDone = getBoolFromAny(paramAny: document.get("isDone")!)
                         instance.color = document.get("color")! as? String
                         instance.list = document.get("list")! as? String
+                        instance.owner = document.get("email")! as? String
                         print(title)
                         sharedTasks.append(instance)
                     }
