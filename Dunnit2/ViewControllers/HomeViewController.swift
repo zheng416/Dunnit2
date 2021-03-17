@@ -31,6 +31,10 @@ class HomeViewController: UIViewController {
     func getData() {
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
         taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+        print("ALLLLLLLLL            TASKS")
+        print(tasks)
+        
+        print("END        ALLLLLLLLL TASKS")
         tableView.reloadData()
     }
     
@@ -79,13 +83,14 @@ class HomeViewController: UIViewController {
         
         
         case .shared:
-            let view = UIView()
-            view.backgroundColor = .yellow
-            view.frame = self.view.bounds
-            self.view.addSubview(view)
-            self.topView = view
+            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+            let sharedVC = storyboard.instantiateViewController(withIdentifier: "sharedVC")
+            view.addSubview(sharedVC.view)
+            self.topView = sharedVC.view
+            addChild(sharedVC)
+            self.title = "Shared Lists"
+            navigationItem.rightBarButtonItem?.isEnabled = false
             menu = MenuType.shared
-            navigationItem.rightBarButtonItem?.isEnabled = true
         case .settings:
             let storyboard = UIStoryboard(name: "Settings", bundle: nil)
             let settingVC = storyboard.instantiateViewController(withIdentifier: "settings")
@@ -145,7 +150,7 @@ class HomeViewController: UIViewController {
             addlistVC.completion = {title in
 //                DispatchQueue.main.async {
                     self.navigationController?.popToRootViewController(animated: true)
-                    DataBaseHelper.shareInstance.saveList(title: title)
+                DataBaseHelper.shareInstance.saveList(title: title, shared: false, sharedWith: "")
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: "load"), object: nil)
 //                    listsVC.viewWillAppear(true)
 //                }

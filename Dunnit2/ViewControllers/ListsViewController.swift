@@ -16,6 +16,8 @@ class ListsViewController: UIViewController {
     func getLists() {
         listStore = DataBaseHelper.shareInstance.fetchLists()
         listTableView.reloadData()
+        print("ppppp")
+        print(listStore)
         
     }
     
