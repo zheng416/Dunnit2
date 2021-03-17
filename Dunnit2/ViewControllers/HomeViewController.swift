@@ -58,19 +58,21 @@ extension UIColor {
     }
 }
 
-class HomeViewController: UIViewController {
+class HomeViewController: UIViewController, UISearchBarDelegate {
     
     let transition = SlideInTransition()
     var topView: UIView?
     
     var menu: MenuType?
 
-    
     @IBOutlet var tableView: UITableView!
+    @IBOutlet weak var searchBar: UISearchBar!
     
     var taskStore = [[TaskEntity](), [TaskEntity]()]
+    var filteredTaskStore = [[TaskEntity](), [TaskEntity]()]
     //local
     func getData() {
+        
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
         taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
         tableView.reloadData()
@@ -228,6 +230,28 @@ class HomeViewController: UIViewController {
         navigationItem.rightBarButtonItem = saveButton
     }
     
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        var filteredStore = [[TaskEntity](), [TaskEntity]()]
+        
+        if searchText == "" {
+            self.getData()
+        } else {
+        
+            var filtered = [TaskEntity()]
+            
+            let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
+            filtered = tasks.filter{($0.title?.lowercased().contains(searchText.lowercased()))!}
+            
+            filteredStore = [filtered.filter{$0.isDone == false}, filtered.filter{$0.isDone == true}]
+            
+            taskStore = filteredStore
+            tableView.reloadData()
+        }
+    
+        
+        
+    }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -235,6 +259,7 @@ class HomeViewController: UIViewController {
         // Do any additional setup after loading the view.
         getData()
         setupSortMenuItem()
+        searchBar.delegate = self
 //        tableView.delegate = self
 //        tableView.dataSource = self
     }
@@ -357,10 +382,3 @@ extension HomeViewController: UIViewControllerTransitioningDelegate {
         return transition
     }
 }
-
-//struct myTask {
-//    var title: String
-//    var date: Date
-//    var identifier: String
-//    var isDone: Int
-//}
