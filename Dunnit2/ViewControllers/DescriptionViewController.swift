@@ -25,6 +25,11 @@ class DescriptionViewController: UIViewController, UITextViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("what is completeeeeeee")
+        print(completion)
+        print("")
+        print("")
+        print("CCCC")
 
         titleField.text = titleStr
         let formatter = DateFormatter()

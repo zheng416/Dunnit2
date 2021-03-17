@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20D74" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20D91" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="ListEntity" representedClassName="ListEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="owner" optional="YES" attributeType="String"/>
+        <attribute name="shared" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="sharedWith" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="SharedEntity" representedClassName="SharedEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="taskList" optional="YES" attributeType="String"/>
     </entity>
     <entity name="TaskEntity" representedClassName="TaskEntity" syncable="YES" codeGenerationType="class">
         <attribute name="body" optional="YES" attributeType="String"/>
@@ -19,7 +26,8 @@
         <attribute name="sound" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
     </entity>
     <elements>
-        <element name="ListEntity" positionX="-54" positionY="36" width="128" height="44"/>
+        <element name="ListEntity" positionX="-54" positionY="36" width="128" height="89"/>
+        <element name="SharedEntity" positionX="-54" positionY="36" width="128" height="59"/>
         <element name="TaskEntity" positionX="-63" positionY="-18" width="128" height="119"/>
         <element name="UserEntity" positionX="-54" positionY="18" width="128" height="104"/>
     </elements>

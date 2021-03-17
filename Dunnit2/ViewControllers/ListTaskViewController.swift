@@ -25,8 +25,25 @@ class ListTaskViewController: UIViewController {
         super.viewDidLoad()
         self.title = titleList
         getData()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+        navigationItem.rightBarButtonItems = [UIBarButtonItem(title: "Share", style: .plain, target: self, action: #selector(didTapShareButton)), UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))]
         // Do any additional setup after loading the view.
+    }
+    
+    @objc func didTapShareButton() {
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        guard let vc = storyboard.instantiateViewController(identifier: "share") as? SharingViewController else {
+            return
+        }
+        vc.title = "Share with"
+        vc.navigationItem.largeTitleDisplayMode = .never
+        vc.completion = {email in
+            DispatchQueue.main.async {
+                self.navigationController?.popViewController(animated: true)
+                DataBaseHelper.shareInstance.shareListDB(to: email, taskList: self.titleList!)
+                self.getData()
+            }
+        }
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func didTapAddButton() {

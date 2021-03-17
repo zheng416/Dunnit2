@@ -28,6 +28,9 @@
 		9B6CC78025DB60DA00C0CAF7 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC77F25DB60DA00C0CAF7 /* SignUpViewController.swift */; };
 		9B6CC78325DB60F300C0CAF7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC78225DB60F300C0CAF7 /* LoginViewController.swift */; };
 		9B6CC78625DB60FD00C0CAF7 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC78525DB60FD00C0CAF7 /* HomeViewController.swift */; };
+		9B7190BE25FBCD7100549805 /* SharedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7190BD25FBCD7100549805 /* SharedViewController.swift */; };
+		9B7190C125FBCF7700549805 /* SharedTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7190C025FBCF7700549805 /* SharedTaskViewController.swift */; };
+		9B7190C425FC1F0C00549805 /* SharingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7190C325FC1F0C00549805 /* SharingViewController.swift */; };
 		9BBAE66125ED7DE1003CC28B /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE66025ED7DE1003CC28B /* SettingsViewController.swift */; };
 		9BBAE66425ED7DF1003CC28B /* EditNameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE66325ED7DF1003CC28B /* EditNameViewController.swift */; };
 		9BBAE66725ED7DFA003CC28B /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9BBAE66625ED7DF9003CC28B /* Settings.storyboard */; };
@@ -60,6 +63,9 @@
 		9B6CC77F25DB60DA00C0CAF7 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		9B6CC78225DB60F300C0CAF7 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		9B6CC78525DB60FD00C0CAF7 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		9B7190BD25FBCD7100549805 /* SharedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedViewController.swift; sourceTree = "<group>"; };
+		9B7190C025FBCF7700549805 /* SharedTaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTaskViewController.swift; sourceTree = "<group>"; };
+		9B7190C325FC1F0C00549805 /* SharingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingViewController.swift; sourceTree = "<group>"; };
 		9BBAE66025ED7DE1003CC28B /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		9BBAE66325ED7DF1003CC28B /* EditNameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditNameViewController.swift; sourceTree = "<group>"; };
 		9BBAE66625ED7DF9003CC28B /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
@@ -137,6 +143,9 @@
 				5DA410AA25F1494D005D3E0B /* DescriptionViewController.swift */,
 				5DA410AD25F1BE6B005D3E0B /* EditViewController.swift */,
 				9BBAE67525F15EB6003CC28B /* ListTaskViewController.swift */,
+				9B7190BD25FBCD7100549805 /* SharedViewController.swift */,
+				9B7190C025FBCF7700549805 /* SharedTaskViewController.swift */,
+				9B7190C325FC1F0C00549805 /* SharingViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -303,9 +312,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				9B46D5D325E6D91100E990CC /* TaskModel.xcdatamodeld in Sources */,
+				9B7190C425FC1F0C00549805 /* SharingViewController.swift in Sources */,
 				9BBAE67625F15EB7003CC28B /* ListTaskViewController.swift in Sources */,
+				9B7190C125FBCF7700549805 /* SharedTaskViewController.swift in Sources */,
 				9B6CC76F25DB5F5A00C0CAF7 /* ViewController.swift in Sources */,
 				9BBAE66C25EDA714003CC28B /* ListsViewController.swift in Sources */,
+				9B7190BE25FBCD7100549805 /* SharedViewController.swift in Sources */,
 				9B6CC76B25DB5F5A00C0CAF7 /* AppDelegate.swift in Sources */,
 				5DA410AE25F1BE6B005D3E0B /* EditViewController.swift in Sources */,
 				9B46D5FA25E6DD5800E990CC /* DatabaseHelper.swift in Sources */,
