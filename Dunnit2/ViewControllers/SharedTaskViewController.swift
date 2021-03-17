@@ -95,7 +95,7 @@ extension SharedTaskViewController: UITableViewDataSource {
         }
         else {
             print("HELLOOOOOOOOOOOOOOO")
-            cell.backgroundColor = UIColor(hexString: colorHex!)
+            cell.backgroundColor = UIColor(named: colorHex!)
         }
         print(cell)
         return cell

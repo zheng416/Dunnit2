@@ -109,7 +109,7 @@ extension ListTaskViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let topics = getTopics()
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath)
         let viewWithTag = cell.viewWithTag(100)
         viewWithTag?.removeFromSuperview()
         let date = taskListStore[indexPath.section][indexPath.row].date!
