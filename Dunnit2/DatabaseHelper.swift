@@ -9,6 +9,7 @@ import Foundation
 import CoreData
 import UIKit
 import Firebase
+import FirebaseDatabase
 import FirebaseCore
 import FirebaseFirestore
 
@@ -91,7 +92,11 @@ class DataBaseHelper {
         catch{
             print("cannnot find user")
         }
+        var ref: DatabaseReference?
+        ref = Database.database().reference()
+        guard let key = ref?.child("posts").childByAutoId().key else { return }
         let docData: [String: Any] = [
+            "id" : key,
             "email" : email,
             "user" : "test",
             "body" : body,
@@ -102,8 +107,7 @@ class DataBaseHelper {
             "color": color
         ]
         
-        let dbKey = "\(email)+\(title)"
-        db.collection("task").document(dbKey).setData(docData) { err in
+        db.collection("task").document(key).setData(docData) { err in
             if let err = err {
                 print("Error writing document: \(err)")
             } else {
@@ -520,8 +524,6 @@ class DataBaseHelper {
             print(error)
             return false
         }
-        
-        return false
     }
     
     func logout(email: String) {
