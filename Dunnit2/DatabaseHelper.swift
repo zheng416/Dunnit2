@@ -117,6 +117,7 @@ class DataBaseHelper {
         instance.isDone = isDone
         instance.list = list
         instance.color = color
+        instance.owner = email
         print(instance.date!)
         do {
             print("Saved.")
@@ -238,6 +239,7 @@ class DataBaseHelper {
                         instance.isDone = getBoolFromAny(paramAny: document.get("isDone")!)
                         instance.color = document.get("color")! as? String
                         instance.list = document.get("list")! as? String
+                        instance.owner = document.get("email")! as? String
                         print(title)
                         do{
                             try managedContext.save()//print("save to local.")
@@ -271,10 +273,62 @@ class DataBaseHelper {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
         let predicate = NSPredicate(format: "title = %@", title)
         fetchRequest.predicate = predicate
+        var email = String()
+        do {
+            let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            email = (user[0] as! UserEntity).email!
+        } catch {
+            print("Error retrieving user")
+        }
+        
+        let docData: [String: Any] = ["isDone": isDone]
+        let taskKey = "\(email ?? "")+\(title ?? "")"
+        
+        print("Status Change")
+        print(taskKey)
+        db.collection("task").document(taskKey).updateData(docData) {
+            err in
+            if err != nil {
+                print("Error updating status")
+                return
+            }
+            print ("Status Updated")
+        }
         
         do {
             let foundTasks = try managedContext.fetch(fetchRequest) as! [TaskEntity]
             foundTasks.first?.isDone = isDone
+            try managedContext.save()
+            print("Updated.")
+        } catch {
+            print("Update error.")
+        }
+    }
+    
+    func updateData(previous:String, title:String, body:String, date: Date, color:String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
+        let predicate = NSPredicate(format: "title = %@", previous)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let foundTasks = try managedContext.fetch(fetchRequest) as! [TaskEntity]
+            foundTasks.first?.title = title
+            foundTasks.first?.body = body
+            foundTasks.first?.date = date
+            foundTasks.first?.color = color
             try managedContext.save()
             print("Updated.")
         } catch {
@@ -578,13 +632,15 @@ class DataBaseHelper {
         }
     }
     
-    func saveList(title: String) {
+    func saveList(title: String, shared: Bool, sharedWith: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
         
         let instance = ListEntity(context: managedContext)
         instance.title = title
+        instance.shared = shared
+        instance.sharedWith = sharedWith
         
         // Get user's email
         do {
@@ -599,8 +655,8 @@ class DataBaseHelper {
                 return
             }
             let email = (user[0] as! UserEntity).email
-            
-            let docData: [String: Any] = ["title" : title, "email": email! as! String]
+            instance.owner = email
+            let docData: [String: Any] = ["title" : title, "email": email!, "shared": shared, "sharedWith": sharedWith as! String]
             
             let listKey = "\(email ?? "")+\(title)"
             db.collection("taskLists").document(listKey).setData(docData) { err in
@@ -655,11 +711,17 @@ class DataBaseHelper {
                     }
                     for document in querySnapshot!.documents {
                         let title = document.get("title")!
+                        let owner = document.get("email")!
+                        let shared = document.get("shared")!
+                        let sharedWith = document.get("sharedWith")!
                         if titlelist.contains(title as! String){
                             continue
                         }
                         let instance = ListEntity(context: managedContext)
                         instance.title = title as? String
+                        instance.owner = owner as? String
+                        instance.shared = shared as! Bool
+                        instance.sharedWith = sharedWith as? String
                         do{
                             try managedContext.save()//print("save to local.")
                         }
@@ -748,9 +810,6 @@ class DataBaseHelper {
                 managedContext.delete(task as! NSManagedObject)
             }
             
-            
-            
-            
             db.collection("task").whereField("list", isEqualTo: title).getDocuments() { (querySnapshot, err) in
                 if let err = err {
                     print("Error getting documents: \(err)")
@@ -779,6 +838,343 @@ class DataBaseHelper {
         }
     }
     
+
+    // Save a shared list to Firebase only
+    func shareListDB(to: String, taskList: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+
+        let managedContext = appDelegate.persistentContainer.viewContext
+
+        let instance = SharedEntity(context: managedContext)
+        instance.email = to
+        do {
+            let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            let email = (user[0] as! UserEntity).email
+            
+            let docData: [String: Any] = ["owner": email!, "tasklist": taskList, "to": to]
+            
+            let listKey = "\(to )+\(taskList)"
+            db.collection("sharedLists").document(listKey).setData(docData) { err in
+                if err != nil {
+                    // Show error message
+                    print("Error saving user data\(err)")
+                    return
+                }
+                print("Saved list \(taskList) to DB")
+                
+                DataBaseHelper.shareInstance.updateListsShared(email: email!, shared: true, sharedWith: to, title: taskList)
+                print("DONEEEEEE Update")
+            }
+        } catch {
+            print("Could not save")
+        }
+    }
     
+    func updateListsShared(email: String, shared: Bool, sharedWith: String, title: String ) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+                
+                let managedContext = appDelegate.persistentContainer.viewContext
+                
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
+        
+        let docData: [String: Any] = ["email": email , "shared": shared, "sharedWith": sharedWith, "title": title]
+        let listKey = "\(email ?? "")+\(title ?? "")"
+        db.collection("taskLists").document(listKey).updateData(docData) { err in
+                    if err != nil {
+                        // Show error message
+                        print("Error saving user data\(err)")
+                        return
+                    }
+        }
+
+    }
     
+    func fetchSharedDB(completion: @escaping (_ message: Bool) -> Void) {
+        var fetchingImage = [SharedEntity]()
+
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        var titlelist = [String]()
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SharedEntity")
+        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        do {
+            fetchingImage = try managedContext.fetch(fetchRequest) as! [SharedEntity]
+            print("countttt")
+            print(fetchingImage.count)
+            for result in fetchingImage as [SharedEntity] {
+                print(result.taskList)
+                var temp = "\(result.email!) + \(result.taskList!)"
+                print("TEMPPPEPPEPEP")
+                print(temp)
+                titlelist.append(temp)
+            }
+            print("TITLELISTTTTT")
+            print(titlelist)
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                completion(false)
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            let email = (user[0] as! UserEntity).email
+            print(email)
+            print("Ckecking for duplicate Data.")
+            self.db.collection("sharedLists").whereField("to", isEqualTo: email).getDocuments() { (querySnapshot, err) in
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                } else {
+                    if (querySnapshot?.count == 0){
+                        print("No lists found")
+                        completion(true)
+                    }
+                    for document in querySnapshot!.documents {
+                        let taskList = document.get("tasklist")!
+                        let owner = document.get("owner")!
+                        print("\(owner) + \(taskList)")
+                        if titlelist.contains("\(owner) + \(taskList)" as! String){
+                            print("SAMMMMMEE")
+                            continue
+                        }
+                        let instance = SharedEntity(context: managedContext)
+                        instance.email = owner as? String
+                        instance.taskList = taskList  as? String
+                        do{
+                            try managedContext.save()//print("save to local.")
+                            print("SAVING TO DB SHARE")
+                            print(instance.email)
+                            print(instance.taskList)
+                        }
+                        catch{
+                            print("loading error")
+                            completion(false)
+                        }
+                    }
+                }
+                do {
+                    completion(true)
+                }
+                catch {
+                    print("error fetching after save data")
+                    completion(false)
+                }
+            }
+        } catch {
+            print(error)
+            completion(false)
+        }
+    }
+
+    func updateTopic(email: String, red: String, orange: String, yellow: String, green: String, blue: String, purple: String, indigo: String, teal: String, pink: String, black: String) {
+        print("RED")
+        print(red)
+        print("DONE")
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TopicEntity")
+        // Save to Firebase
+        let docData: [String: Any] = ["email": email , "red": red, "orange": orange, "yellow": yellow, "green": green, "blue": blue, "purple": purple, "indigo": indigo, "teal": teal, "pink": pink, "black": black]
+        let topicKey = "\(email ?? "")+topic"
+        db.collection("topics").document(topicKey).updateData(docData) { err in
+            if err != nil {
+                // Show error message
+                print("Error saving user data\(err)")
+                return
+            }
+        }
+        // Save to local database
+        do {
+            let foundUser = try managedContext.fetch(fetchRequest) as! [TopicEntity]
+            print(foundUser)
+            foundUser.first?.red = red
+            foundUser.first?.orange = orange
+            foundUser.first?.yellow = yellow
+            foundUser.first?.green = green
+            foundUser.first?.blue = blue
+            foundUser.first?.purple = purple
+            foundUser.first?.indigo = indigo
+            foundUser.first?.teal = teal
+            foundUser.first?.pink = pink
+            foundUser.first?.black = black
+            try managedContext.save()
+            print("SAVED")
+            print(foundUser.first)
+            print("DONE")
+            print("Updated Topics.")
+        } catch {
+            print("Update error.")
+        }
+    }
+    
+    func saveTopics(red: String, orange: String, yellow: String, green: String, blue: String, purple: String, indigo: String, teal: String, pink: String, black: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let instance = TopicEntity(context: managedContext)
+        instance.red = red
+        instance.orange = orange
+        instance.yellow = yellow
+        instance.green = green
+        instance.blue = blue
+        instance.purple = purple
+        instance.indigo = indigo
+        instance.teal = teal
+        instance.pink = pink
+        instance.black = black
+        
+        // Get user's email
+        do {
+            let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            let email = (user[0] as! UserEntity).email
+            let docData: [String: Any] = ["email": email! , "red": red, "orange": orange, "yellow": yellow, "green": green, "blue": blue, "purple": purple, "indigo": indigo, "teal": teal, "pink": pink, "black": black]
+            
+            let topicKey = "\(email ?? "")+topic"
+            db.collection("topics").document(topicKey).setData(docData) { err in
+                if err != nil {
+                    // Show error message
+                    print("Error saving user data\(err)")
+                    return
+                }
+            }
+            try managedContext.save()
+        } catch {
+            print("Could not save")
+        }
+    }          
+    
+    func fetchSharedLists(completion: @escaping (_ list: [ListEntity]) -> Void) {
+        var fetchingImage = [SharedEntity]()
+        
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SharedEntity")
+        
+        
+        var shared = [ListEntity]()
+        do {
+            print("Fetching SharedLists.")
+            fetchingImage = try managedContext.fetch(fetchRequest) as! [SharedEntity]
+            for result in fetchingImage as [SharedEntity] {
+                print("Inside Loopp")
+                let owner = result.email!
+                print(owner)
+                print(result.taskList!)
+                self.db.collection("taskLists").whereField("title", isEqualTo: result.taskList!).getDocuments() { (querySnapshot, err) in
+                    if let err = err {
+                        print("Error getting documents: \(err)")
+                    } else {
+                        if (querySnapshot?.count == 0){
+                            print("No lists found")
+                        } else {
+                            for document in querySnapshot!.documents {
+                               let instance = ListEntity(context: managedContext)
+                                instance.title = document.get("title")! as! String
+                                instance.shared = true
+                                instance.sharedWith = document.get("sharedWith")! as! String
+                                instance.owner = document.get("email") as! String
+                                shared.append(instance)
+                                print("Sleepy")
+                                print(document.get("title")!)
+
+                            }
+                            
+                        }
+                        
+                    }
+                    completion(shared)
+                }
+                print("lpppp")
+            }
+        } catch {
+            print(error)
+        }
+        print("THIS IS")
+        print(shared)
+        
+    }
+    
+    func fetchDBSharedTask(title: String, owner: String,  completion: @escaping (_ list: [TaskEntity]) -> Void) {
+        var sharedTasks = [TaskEntity]()
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        do {
+            let email = owner
+            print("Ckecking for duplicate Data.")
+            print(email)
+            print(title)
+            self.db.collection("task").whereField("email", isEqualTo: email).whereField("list", isEqualTo: title).getDocuments() { (querySnapshot, err) in
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                } else {
+                    if (querySnapshot?.count == 0){
+                        print("No task found")
+                        completion([TaskEntity]())
+                    }
+                    for document in querySnapshot!.documents {
+                        let title = document.get("title")!
+                        let instance = TaskEntity(context: managedContext)
+                        instance.title = title as? String
+                        instance.body = document.get("body")! as? String
+                        instance.date = (document.get("date")! as! Timestamp).dateValue() as? Date
+                        instance.isDone = getBoolFromAny(paramAny: document.get("isDone")!)
+                        instance.color = document.get("color")! as? String
+                        instance.list = document.get("list")! as? String
+                        instance.owner = document.get("email")! as? String
+                        print(title)
+                        sharedTasks.append(instance)
+                    }
+                    completion(sharedTasks)
+                }
+            }
+            print("finish")
+        } catch {
+            print(error)
+            completion(sharedTasks)
+        }
+    }
+
+ 
+    func fetchTopics() -> [TopicEntity] {
+        var fetchingImage = [TopicEntity]()
+        
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TopicEntity")
+        
+        do {
+            print("All Topics.")
+            fetchingImage = try managedContext.fetch(fetchRequest) as! [TopicEntity]
+        } catch {
+            print(error)
+        }
+        return fetchingImage
+    } 
 }

@@ -107,7 +107,7 @@ class SettingsViewController: UITableViewController {
         
         // Hardcoded rowIndex
         let logoutIndex = [4,0] as IndexPath
-        let verifyEmailIndex = [1,1] as IndexPath
+        let verifyEmailIndex = [1,2] as IndexPath
         
         if (indexPath == logoutIndex) {
             print("Logout?")
