@@ -355,6 +355,86 @@ class DataBaseHelper {
         return fetchingImage
     }
     
+    func fetchTaskAscendingTitle() -> [TaskEntity] {
+            var fetchingImage = [TaskEntity]()
+            
+            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
+            
+            let managedContext = appDelegate.persistentContainer.viewContext
+            
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
+            let sort = NSSortDescriptor(key: "title", ascending: true)
+            fetchRequest.sortDescriptors = [sort]
+            
+            do {
+                print("All Data.")
+                fetchingImage = try managedContext.fetch(fetchRequest) as! [TaskEntity]
+            } catch {
+                print(error)
+            }
+            return fetchingImage
+    }
+    
+    func fetchTaskDecendingTitle() -> [TaskEntity] {
+            var fetchingImage = [TaskEntity]()
+            
+            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
+            
+            let managedContext = appDelegate.persistentContainer.viewContext
+            
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
+            let sort = NSSortDescriptor(key: "title", ascending: false)
+            fetchRequest.sortDescriptors = [sort]
+            
+            do {
+                print("All Data.")
+                fetchingImage = try managedContext.fetch(fetchRequest) as! [TaskEntity]
+            } catch {
+                print(error)
+            }
+            return fetchingImage
+    }
+    
+    func fetchTaskAscendingDate() -> [TaskEntity] {
+            var fetchingImage = [TaskEntity]()
+            
+            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
+            
+            let managedContext = appDelegate.persistentContainer.viewContext
+            
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
+            let sort = NSSortDescriptor(key: "date", ascending: true)
+            fetchRequest.sortDescriptors = [sort]
+            
+            do {
+                print("All Data.")
+                fetchingImage = try managedContext.fetch(fetchRequest) as! [TaskEntity]
+            } catch {
+                print(error)
+            }
+            return fetchingImage
+    }
+    
+    func fetchTaskDecendingDate() -> [TaskEntity] {
+            var fetchingImage = [TaskEntity]()
+            
+            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
+            
+            let managedContext = appDelegate.persistentContainer.viewContext
+            
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
+            let sort = NSSortDescriptor(key: "date", ascending: false)
+            fetchRequest.sortDescriptors = [sort]
+            
+            do {
+                print("All Data.")
+                fetchingImage = try managedContext.fetch(fetchRequest) as! [TaskEntity]
+            } catch {
+                print(error)
+            }
+            return fetchingImage
+    }
+    
     func createNewUser(name: String="", email: String, darkMode: Bool = false, notifications: Bool = true, sound: Bool = true ) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
