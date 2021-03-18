@@ -58,7 +58,7 @@ extension UIColor {
     }
 }
 
-class HomeViewController: UIViewController, UISearchBarDelegate {
+class HomeViewController: UIViewController {
     
     let transition = SlideInTransition()
     var topView: UIView?
@@ -66,7 +66,6 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     var menu: MenuType?
 
     @IBOutlet var tableView: UITableView!
-    @IBOutlet weak var searchBar: UISearchBar!
     
     var taskStore = [[TaskEntity](), [TaskEntity]()]
     var filteredTaskStore = [[TaskEntity](), [TaskEntity]()]
@@ -229,29 +228,6 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         
         navigationItem.rightBarButtonItem = saveButton
     }
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        var filteredStore = [[TaskEntity](), [TaskEntity]()]
-        
-        if searchText == "" {
-            self.getData()
-        } else {
-        
-            var filtered = [TaskEntity()]
-            
-            let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
-            filtered = tasks.filter{($0.title?.lowercased().contains(searchText.lowercased()))!}
-            
-            filteredStore = [filtered.filter{$0.isDone == false}, filtered.filter{$0.isDone == true}]
-            
-            taskStore = filteredStore
-            tableView.reloadData()
-        }
-    
-        
-        
-    }
-    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -259,7 +235,6 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         // Do any additional setup after loading the view.
         getData()
         setupSortMenuItem()
-        searchBar.delegate = self
 //        tableView.delegate = self
 //        tableView.dataSource = self
     }
