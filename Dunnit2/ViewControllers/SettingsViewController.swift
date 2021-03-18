@@ -22,6 +22,7 @@ class SettingsViewController: UITableViewController {
     var globalUser = [String: Any]()
     
     //  Access databse functions
+    //helper functions
     func getUser() -> [String: Any] {
         var user = DataBaseHelper.shareInstance.fetchUser()
         if user.isEmpty{
@@ -43,6 +44,30 @@ class SettingsViewController: UITableViewController {
         
         return endUser
     }
+    func checkError(error : Error?,message: String)->Bool{
+        if let error = error{
+            print("error \(message) \(error)\n")
+            return true
+        }
+        else {
+            print("successfully \(message)\n")
+            return false
+        }
+    }
+    
+    func verifyemail(){
+        guard let user = Auth.auth().currentUser else{
+            print("no user found when trying to verify the email")
+            return
+        }
+        user.sendEmailVerification(completion: {error in
+            self.checkError(error: error, message: "sending email")
+            //Force Logout
+        })
+    }
+    
+    
+    
     
     func loadLabelValues() {
 //        if (DataBaseHelper.shareInstance.checkIfUserExists() == false) {
@@ -102,6 +127,8 @@ class SettingsViewController: UITableViewController {
         globalUser = self.getUser()
     }
     
+
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        print("selected row is :\(indexPath)")
         
@@ -150,6 +177,7 @@ class SettingsViewController: UITableViewController {
             let ok = UIAlertAction(title: "Yes", style: .default) {
                 UIAlertAction in
                 // TODO: Verification for peter? Not sure what else to add here
+                self.verifyemail()
                 print("Ok button pressed")
                 
                 

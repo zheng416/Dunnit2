@@ -39,6 +39,7 @@
 		9BBAE66C25EDA714003CC28B /* ListsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE66B25EDA714003CC28B /* ListsViewController.swift */; };
 		9BBAE66F25EEAC3E003CC28B /* AddListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE66E25EEAC3D003CC28B /* AddListViewController.swift */; };
 		9BBAE67625F15EB7003CC28B /* ListTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE67525F15EB6003CC28B /* ListTaskViewController.swift */; };
+		CE4912C42602E3B800896E14 /* UpdatePassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4912C32602E3B800896E14 /* UpdatePassViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +79,7 @@
 		9BBAE67525F15EB6003CC28B /* ListTaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTaskViewController.swift; sourceTree = "<group>"; };
 		C32BCD4DFEF6F40DC7EADA4A /* Pods_Dunnit2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dunnit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA084741BFBD77730308FAB1 /* Pods-Dunnit2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dunnit2.release.xcconfig"; path = "Target Support Files/Pods-Dunnit2/Pods-Dunnit2.release.xcconfig"; sourceTree = "<group>"; };
+		CE4912C32602E3B800896E14 /* UpdatePassViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePassViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +154,7 @@
 				9B7190C025FBCF7700549805 /* SharedTaskViewController.swift */,
 				9B7190C325FC1F0C00549805 /* SharingViewController.swift */,
 				5D3B625F25FB762300EFA147 /* EditTopicsViewController.swift */,
+				CE4912C32602E3B800896E14 /* UpdatePassViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -329,6 +332,7 @@
 				9B46D5FA25E6DD5800E990CC /* DatabaseHelper.swift in Sources */,
 				9BBAE66F25EEAC3E003CC28B /* AddListViewController.swift in Sources */,
 				9B46D5CF25E4D12000E990CC /* AddViewController.swift in Sources */,
+				CE4912C42602E3B800896E14 /* UpdatePassViewController.swift in Sources */,
 				9B46D56725DB7DB500E990CC /* Utilities.swift in Sources */,
 				9B6CC78025DB60DA00C0CAF7 /* SignUpViewController.swift in Sources */,
 				9B46D62625ED436500E990CC /* MenuViewController.swift in Sources */,
