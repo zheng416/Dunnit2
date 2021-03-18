@@ -26,7 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, GIDSignInDelegate {
         if let windowScene = scene as? UIWindowScene {
             self.window = UIWindow(windowScene: windowScene)
             if !DataBaseHelper.shareInstance.fetchUser().isEmpty {
-                print("HEREEEEEEEEEEEEEEEEEEEEEEEEEE", Auth.auth().currentUser!)
+                //print("HEREEEEEEEEEEEEEEEEEEEEEEEEEE", Auth.auth().currentUser!)
 //                 redirect to home controller
                 self.window!.rootViewController = homeStory.instantiateViewController(withIdentifier: "main")
 //                self.window!.rootViewController = settingsStory.instantiateViewController(withIdentifier: "settings")

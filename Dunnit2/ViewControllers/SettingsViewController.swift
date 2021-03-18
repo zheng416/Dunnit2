@@ -20,8 +20,28 @@ class SettingsViewController: UITableViewController {
     
     var userStore = [UserEntity]()
     var globalUser = [String: Any]()
-    
+    func checkError(error : Error?,message: String)->Bool{
+        if let error = error{
+            print("error \(message) \(error)\n")
+            return true
+        }
+        else {
+            print("successfully \(message)\n")
+            return false
+        }
+    }
     //  Access databse functions
+
+    func verifyemail(){
+        guard let user = Auth.auth().currentUser else{
+            print("no user found when trying to verify the email")
+            return
+        }
+        user.sendEmailVerification(completion: {error in
+            self.checkError(error: error, message: "sending email")
+        })
+    }
+    
     func getUser() -> [String: Any] {
         var user = DataBaseHelper.shareInstance.fetchUser()
         if user.isEmpty{
@@ -48,7 +68,14 @@ class SettingsViewController: UITableViewController {
 //        if (DataBaseHelper.shareInstance.checkIfUserExists() == false) {
 //            DataBaseHelper.shareInstance.createNewUser(name: "Andrew", email: "andrew123@gmail.com")
 //        }
-        
+        let FBuser = Auth.auth().currentUser
+        if ((FBuser?.isEmailVerified) != nil && FBuser?.isEmailVerified == true){
+            print("Email is verified")
+        }
+        else {
+            print("email is not verified")
+        }
+        print("email status: ",FBuser?.isEmailVerified,"\n")
         let user = getUser()
         if user.isEmpty{
             print("user is empty")
@@ -109,6 +136,7 @@ class SettingsViewController: UITableViewController {
         // Hardcoded rowIndex
         let logoutIndex = [4,0] as IndexPath
         let verifyEmailIndex = [1,1] as IndexPath
+        let updatePasswirdIndex = [1,0] as IndexPath
         
         if (indexPath == logoutIndex) {
             print("Logout?")
@@ -145,15 +173,14 @@ class SettingsViewController: UITableViewController {
             self.present(dialogMessage, animated: true, completion: nil)
         } else if (indexPath == verifyEmailIndex){
             print("Verify Email Button Pressed!")
-            
+
             
             let dialogMessage = UIAlertController(title: "", message: "Would you like to verify your email?", preferredStyle: .alert)
             let ok = UIAlertAction(title: "Yes", style: .default) {
                 UIAlertAction in
                 // TODO: Verification for peter? Not sure what else to add here
                 print("Ok button pressed")
-                
-                
+                self.verifyemail()
             }
             let cancel = UIAlertAction(title: "No", style: .cancel) {
                 UIAlertAction in
@@ -163,6 +190,21 @@ class SettingsViewController: UITableViewController {
             dialogMessage.addAction(cancel)
             self.present(dialogMessage, animated: true, completion: nil)
             
+        }
+        else if (indexPath == updatePasswirdIndex){
+            let dialogMessage = UIAlertController(title: "", message: "Would you update your password", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "Yes", style: .default) {
+                UIAlertAction in
+                // TODO: Verification for peter? Not sure what else to add here
+                print("Ok button pressed")
+          }
+            let cancel = UIAlertAction(title: "No", style: .cancel) {
+                UIAlertAction in
+                NSLog("Cancel Pressed")
+            }
+            dialogMessage.addAction(ok)
+            dialogMessage.addAction(cancel)
+            self.present(dialogMessage, animated: true, completion: nil)
         }
     }
 
