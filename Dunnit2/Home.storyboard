@@ -203,14 +203,6 @@
                                 <action selector="didTapMenu:" destination="vS7-ur-LcG" id="qLL-lI-9pR"/>
                             </connections>
                         </barButtonItem>
-                        <rightBarButtonItems>
-                            <barButtonItem title="Item" id="F9c-SV-qhr"/>
-                            <barButtonItem systemItem="add" id="OCT-FU-Lb3">
-                                <connections>
-                                    <action selector="didTapAdd" destination="vS7-ur-LcG" id="esl-xM-maO"/>
-                                </connections>
-                            </barButtonItem>
-                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="searchBar" destination="HZh-kO-YUx" id="PYf-FB-bOQ"/>

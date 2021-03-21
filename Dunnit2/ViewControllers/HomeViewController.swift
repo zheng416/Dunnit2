@@ -17,6 +17,7 @@ class HomeViewController: UIViewController {
     var topView: UIView?
     
     var menu: MenuType?
+    var sortMenu: UIMenu?
 
     @IBOutlet var tableView: UITableView!
     
@@ -130,7 +131,7 @@ class HomeViewController: UIViewController {
         }
     }
     
-    @IBAction func didTapAdd() {
+    @objc func didTapAddButton() {
         // Show add vc
         let storyboard = UIStoryboard(name: "Home", bundle: nil)
         guard let vc = storyboard.instantiateViewController(identifier: "add") as? AddViewController else {
@@ -176,11 +177,13 @@ class HomeViewController: UIViewController {
     
     // Dropdown menu
     private func setupSortMenuItem() {
-        let saveMenu = UIMenu(title: "", children: [
+        self.sortMenu = UIMenu(title: "", children: [
             // Sort by title
             UIAction(title: "By Ascending Title", image: UIImage(systemName: "doc.on.doc")) { action in
                 let tasks = DataBaseHelper.shareInstance.fetchTaskAscendingTitle()
                 self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                // Update user's preference local
+                // Update user's preference DB
                 self.tableView.reloadData()
             },
              UIAction(title: "By Ascending Date", image: UIImage(systemName: "pencil")) { action in
@@ -205,10 +208,6 @@ class HomeViewController: UIViewController {
                 //Move Menu Child Selected
             },
                 ])
-        
-        let saveButton = UIBarButtonItem(title: "Sort", menu: saveMenu)
-        
-        navigationItem.rightBarButtonItem = saveButton
     }
 
     override func viewDidLoad() {
@@ -218,8 +217,10 @@ class HomeViewController: UIViewController {
         searchBar.autocapitalizationType = .none
         getData()
         setupSortMenuItem()
-//        tableView.delegate = self
-//        tableView.dataSource = self
+        
+        let sortButton = UIBarButtonItem(title: "Sort", menu: self.sortMenu)
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+        navigationItem.rightBarButtonItems = [addButton, sortButton]
     }
     
 

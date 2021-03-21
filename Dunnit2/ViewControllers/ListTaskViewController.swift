@@ -40,10 +40,50 @@ class ListTaskViewController: UIViewController {
         return endUser
     }
     
+    // Dropdown menu
+    private func setupSortMenuItem() {
+        let saveMenu = UIMenu(title: "", children: [
+            // Sort by title
+            UIAction(title: "By Ascending Title", image: UIImage(systemName: "doc.on.doc")) { action in
+                let tasks = DataBaseHelper.shareInstance.fetchTaskAscendingTitle()
+                self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                // Update user's preference local
+                // Update user's preference DB
+                self.tableTaskView.reloadData()
+            },
+             UIAction(title: "By Ascending Date", image: UIImage(systemName: "pencil")) { action in
+                let tasks = DataBaseHelper.shareInstance.fetchTaskAscendingDate()
+                self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                self.tableTaskView.reloadData()
+            },
+            UIAction(title: "By Decending Title", image: UIImage(systemName: "doc.on.doc")) { action in
+                let tasks = DataBaseHelper.shareInstance.fetchTaskDecendingTitle()
+                self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                self.tableTaskView.reloadData()
+            },
+             UIAction(title: "By Decending Date", image: UIImage(systemName: "pencil")) { action in
+                let tasks = DataBaseHelper.shareInstance.fetchTaskDecendingDate()
+                self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                self.tableTaskView.reloadData()
+            },
+             UIAction(title: "By Priorities", image: UIImage(systemName: "plus.square.on.square")) { action in
+                // Duplicate Menu Child Selected
+            },
+             UIAction(title: "By Tags", image: UIImage(systemName: "folder")) { action in
+                //Move Menu Child Selected
+            },
+                ])
+        
+        let saveButton = UIBarButtonItem(title: "Sort", menu: saveMenu)
+        
+        navigationItem.rightBarButtonItem = saveButton
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = titleList
         getData()
+        setupSortMenuItem()
         navigationItem.rightBarButtonItems = [UIBarButtonItem(title: "Share", style: .plain, target: self, action: #selector(didTapShareButton)), UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))]
         // Do any additional setup after loading the view.
     }

@@ -478,6 +478,7 @@ class DataBaseHelper {
             print("Update error.")
         }
     }
+    
     func deleteUser(email: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
