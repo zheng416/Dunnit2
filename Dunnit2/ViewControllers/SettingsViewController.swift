@@ -99,9 +99,9 @@ class SettingsViewController: UITableViewController {
     
     @IBAction func toggleSound(){
         if soundToggle.isOn {
-            DataBaseHelper.shareInstance.updateSound(soundOn: true, email: globalUser["email"] as! String)
+            DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,sound: true )
         } else {
-            DataBaseHelper.shareInstance.updateSound(soundOn: false, email: globalUser["email"] as! String)
+            DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,sound: false )
         }
         
         globalUser = self.getUser()
@@ -109,9 +109,9 @@ class SettingsViewController: UITableViewController {
     
     @IBAction func toggleNotifications(){
         if notificationsToggle.isOn {
-            DataBaseHelper.shareInstance.updateNotifications(notificationsOn: true, email: globalUser["email"] as! String)
+            DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,notification: true )
         } else {
-            DataBaseHelper.shareInstance.updateNotifications(notificationsOn: false, email: globalUser["email"] as! String)
+            DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,notification: false )
         }
         
         globalUser = self.getUser()
@@ -119,9 +119,9 @@ class SettingsViewController: UITableViewController {
     
     @IBAction func toggleDark(){
         if darkModeToggle.isOn {
-            DataBaseHelper.shareInstance.updateDark(darkMode: true, email: globalUser["email"] as! String)
+            DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,darkMode: true)
         } else {
-            DataBaseHelper.shareInstance.updateDark(darkMode: false, email: globalUser["email"] as! String)
+            DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,darkMode: false)
         }
         
         globalUser = self.getUser()

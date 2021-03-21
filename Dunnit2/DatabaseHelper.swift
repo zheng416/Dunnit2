@@ -12,7 +12,24 @@ import Firebase
 import FirebaseDatabase
 import FirebaseCore
 import FirebaseFirestore
+//**************************************
+//
+// function name and use
+//
+//**************************************
 
+
+/**
+ FBfetchuname fetch the username given email
+ comForSaveUser helper for saveuser with compeletion
+ saveuser save all email, uid, email in the database
+ saveTask save the task both local and database
+ delete a task with title both local and database
+ fetchLocalTask fetch tasks from coredata
+ fetchDBTask fetch Task from database
+ updateUserLocal
+ updateUserDB
+ */
 func getBoolFromAny(paramAny: Any)->Bool {
     let result = "\(paramAny)"
     return result == "1"
@@ -20,6 +37,9 @@ func getBoolFromAny(paramAny: Any)->Bool {
 class DataBaseHelper {
     static let shareInstance = DataBaseHelper()
     let db = Firestore.firestore()
+    func loadFromDB(array:[String]) -> [String] {
+        return ["a","b"]
+    }
     func FBfetchuname(email:String,completion: @escaping (String)->Void) {
         db.collection("users").whereField("email", isEqualTo: email).getDocuments { (docs, err) in
             if let err = err{
@@ -37,12 +57,13 @@ class DataBaseHelper {
         return
     }
 
-    func saveUserInFB(name:String, email:String, uid:String,completion:@escaping(Bool)->Void) {
+    func comForSaveUser(name:String, email:String, uid:String,completion:@escaping(Bool)->Void) {
         db.collection("users").addDocument(data: ["name" : name, "uid" : uid, "email": email]) { (error) in
             
             if error != nil {
                 // Show error message
                 print("Error saving user data\(error)")
+                completion(false)
                 return
             }
             completion(true)
@@ -62,7 +83,7 @@ class DataBaseHelper {
                 }
                 else if users!.count == 0{
                     print("no user was found in the database, create new user: \(name)")
-                    self.saveUserInFB(name: name, email: email, uid: uid, completion: {result in
+                    self.comForSaveUser(name: name, email: email, uid: uid, completion: {result in
                         if result{
                            completion(true)
                         }
@@ -75,7 +96,7 @@ class DataBaseHelper {
             }
         }
     }
-    func save(title: String, body: String, date: Date, isDone: Bool, list: String, color: String) {
+    func saveTask(title: String, body: String, date: Date, isDone: Bool, list: String, color: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -115,6 +136,7 @@ class DataBaseHelper {
             }
         }
         let instance = TaskEntity(context: managedContext)
+        instance.id = key
         instance.title = title
         instance.body = body
         instance.date = date
@@ -131,13 +153,13 @@ class DataBaseHelper {
         }
     }
     
-    func deleteData(title: String) {
+    func deleteTask(id: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
-        fetchRequest.predicate = NSPredicate(format: "title = %@", title)
+        fetchRequest.predicate = NSPredicate(format: "id = %@", id)
         
         let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
         
@@ -159,12 +181,11 @@ class DataBaseHelper {
             let email = (user[0] as! UserEntity).email
             
             // Database access
-            let dbKey = "\(email ?? "")+\(title)"
-            db.collection("task").document(dbKey).delete() { err in
+            db.collection("task").document(id).delete() { err in
                 if let err = err {
-                    print("Error removing document named \(dbKey): \(err)")
+                    print("Error removing document named \(id): \(err)")
                 } else {
-                    print("Document \(dbKey) successfully deleted!")
+                    print("Document \(id) successfully deleted!")
                 }
             }
             managedContext.delete(objectToDelete)
@@ -180,6 +201,29 @@ class DataBaseHelper {
             print(error)
         }
     }
+    
+    func fetchLocalTask(key:String? = nil, ascending:Bool? = nil) -> [TaskEntity] {
+        var fetchingImage = [TaskEntity]()
+            
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
+            
+        let managedContext = appDelegate.persistentContainer.viewContext
+            
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
+        if (key != nil){
+            let sort = NSSortDescriptor(key: key, ascending: ascending ?? true)
+            fetchRequest.sortDescriptors = [sort]
+        }
+        do {
+            print("All Data.")
+            fetchingImage = try managedContext.fetch(fetchRequest) as! [TaskEntity]
+        } catch {
+            print(error)
+        }
+        return fetchingImage
+    }
+    
+    /**
     func fetchLocalTask() -> [TaskEntity] {
             var fetchingImage = [TaskEntity]()
             
@@ -196,7 +240,7 @@ class DataBaseHelper {
                 print(error)
             }
             return fetchingImage
-    }
+    }*/
     func fetchDBTask(completion: @escaping (_ message: Bool) -> Void) {
         var fetchingImage = [TaskEntity]()
         var newImage = [TaskEntity]()
@@ -269,13 +313,14 @@ class DataBaseHelper {
         }
     }
     
-    func update(title:String, isDone: Bool) {
+    //change the isDone for a task
+    func updateDBTask(id:String, body: String?, color: String?, date:Date?, isDone: Bool?, list:String?, owner:String?, title:String?) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
-        let predicate = NSPredicate(format: "title = %@", title)
+        let predicate = NSPredicate(format: "title = %@", id)
         fetchRequest.predicate = predicate
         var email = String()
         do {
@@ -295,11 +340,9 @@ class DataBaseHelper {
         }
         
         let docData: [String: Any] = ["isDone": isDone]
-        let taskKey = "\(email ?? "")+\(title ?? "")"
         
         print("Status Change")
-        print(taskKey)
-        db.collection("task").document(taskKey).updateData(docData) {
+        db.collection("task").document(id).updateData(docData) {
             err in
             if err != nil {
                 print("Error updating status")
@@ -310,28 +353,32 @@ class DataBaseHelper {
         
         do {
             let foundTasks = try managedContext.fetch(fetchRequest) as! [TaskEntity]
-            foundTasks.first?.isDone = isDone
+            foundTasks.first?.isDone = isDone!
             try managedContext.save()
             print("Updated.")
         } catch {
             print("Update error.")
         }
     }
-    
-    func updateData(previous:String, title:String, body:String, date: Date, color:String) {
+    // update local task
+    func updateLocalTask(id:String, body: String? = nil, color: String? = nil, date:Date? = nil, isDone: Bool? = nil, list:String? = nil, owner:String? = nil, title:String? = nil) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
-        let predicate = NSPredicate(format: "title = %@", previous)
+        let predicate = NSPredicate(format: "id = %@", id)
         fetchRequest.predicate = predicate
         
         do {
             let foundTasks = try managedContext.fetch(fetchRequest) as! [TaskEntity]
-            foundTasks.first?.title = title
-            foundTasks.first?.body = body
-            foundTasks.first?.date = date
+            if title != nil {foundTasks.first?.title = title}
+            if body != nil {foundTasks.first?.body = body}
+            if date != nil {foundTasks.first?.date = date}
+            if color != nil {foundTasks.first?.color = color}
+            if isDone != nil {foundTasks.first?.isDone = isDone!}
+            if list != nil {foundTasks.first?.list = list}
+            if owner != nil {foundTasks.first?.owner = owner}
             foundTasks.first?.color = color
             try managedContext.save()
             print("Updated.")
@@ -359,85 +406,6 @@ class DataBaseHelper {
         return fetchingImage
     }
     
-    func fetchTaskAscendingTitle() -> [TaskEntity] {
-            var fetchingImage = [TaskEntity]()
-            
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
-            
-            let managedContext = appDelegate.persistentContainer.viewContext
-            
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
-            let sort = NSSortDescriptor(key: "title", ascending: true)
-            fetchRequest.sortDescriptors = [sort]
-            
-            do {
-                print("All Data.")
-                fetchingImage = try managedContext.fetch(fetchRequest) as! [TaskEntity]
-            } catch {
-                print(error)
-            }
-            return fetchingImage
-    }
-    
-    func fetchTaskDecendingTitle() -> [TaskEntity] {
-            var fetchingImage = [TaskEntity]()
-            
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
-            
-            let managedContext = appDelegate.persistentContainer.viewContext
-            
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
-            let sort = NSSortDescriptor(key: "title", ascending: false)
-            fetchRequest.sortDescriptors = [sort]
-            
-            do {
-                print("All Data.")
-                fetchingImage = try managedContext.fetch(fetchRequest) as! [TaskEntity]
-            } catch {
-                print(error)
-            }
-            return fetchingImage
-    }
-    
-    func fetchTaskAscendingDate() -> [TaskEntity] {
-            var fetchingImage = [TaskEntity]()
-            
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
-            
-            let managedContext = appDelegate.persistentContainer.viewContext
-            
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
-            let sort = NSSortDescriptor(key: "date", ascending: true)
-            fetchRequest.sortDescriptors = [sort]
-            
-            do {
-                print("All Data.")
-                fetchingImage = try managedContext.fetch(fetchRequest) as! [TaskEntity]
-            } catch {
-                print(error)
-            }
-            return fetchingImage
-    }
-    
-    func fetchTaskDecendingDate() -> [TaskEntity] {
-            var fetchingImage = [TaskEntity]()
-            
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
-            
-            let managedContext = appDelegate.persistentContainer.viewContext
-            
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
-            let sort = NSSortDescriptor(key: "date", ascending: false)
-            fetchRequest.sortDescriptors = [sort]
-            
-            do {
-                print("All Data.")
-                fetchingImage = try managedContext.fetch(fetchRequest) as! [TaskEntity]
-            } catch {
-                print(error)
-            }
-            return fetchingImage
-    }
     
     func createNewUser(name: String="", email: String, darkMode: Bool = false, notifications: Bool = true, sound: Bool = true ) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
@@ -576,8 +544,8 @@ class DataBaseHelper {
             print(error)
         }
     }
-    
-    func updateSound(soundOn:Bool, email: String) {
+    //TODO : add all
+    func updateLocalUser(email: String,sound:Bool? = nil, notification: Bool? = nil,darkMode:Bool? = nil,name:Bool? = nil ) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -588,51 +556,14 @@ class DataBaseHelper {
         
         do {
             let foundUser = try managedContext.fetch(fetchRequest) as! [UserEntity]
-            foundUser.first?.sound = soundOn
+            sound != nil ? foundUser.first?.sound = sound! :
             try managedContext.save()
             print("Updated Sound.")
         } catch {
             print("Update error.")
         }
     }
-    
-    func updateNotifications(notificationsOn:Bool, email: String) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        
-        let managedContext = appDelegate.persistentContainer.viewContext
-        
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
-        let predicate = NSPredicate(format: "email = %@", email)
-        fetchRequest.predicate = predicate
-        
-        do {
-            let foundUser = try managedContext.fetch(fetchRequest) as! [UserEntity]
-            foundUser.first?.notifications = notificationsOn
-            try managedContext.save()
-            print("Updated notifications.")
-        } catch {
-            print("Update error.")
-        }
-    }
-    
-    func updateDark(darkMode:Bool, email: String) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        
-        let managedContext = appDelegate.persistentContainer.viewContext
-        
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
-        let predicate = NSPredicate(format: "email = %@", email)
-        fetchRequest.predicate = predicate
-        
-        do {
-            let foundUser = try managedContext.fetch(fetchRequest) as! [UserEntity]
-            foundUser.first?.darkMode = darkMode
-            try managedContext.save()
-            print("Updated darkMode.")
-        } catch {
-            print("Update error.")
-        }
-    }
+
     
     func saveList(title: String, shared: Bool, sharedWith: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
