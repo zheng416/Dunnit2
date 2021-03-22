@@ -10,6 +10,8 @@ import UIKit
 class ListTaskViewController: UIViewController {
 
     var titleList: String?
+    var sortMenu: UIMenu?
+    
     @IBOutlet var tableTaskView: UITableView!
     
     var taskListStore = [[TaskEntity](), [TaskEntity]()]
@@ -42,7 +44,8 @@ class ListTaskViewController: UIViewController {
     
     // Dropdown menu
     private func setupSortMenuItem() {
-        let saveMenu = UIMenu(title: "", children: [
+        self.sortMenu = UIMenu(title: "", children: [
+            //TODO: Sort by task list function
             // Sort by title
             UIAction(title: "By Ascending Title", image: UIImage(systemName: "doc.on.doc")) { action in
                 let tasks = DataBaseHelper.shareInstance.fetchTaskAscendingTitle()
@@ -65,18 +68,8 @@ class ListTaskViewController: UIViewController {
                 let tasks = DataBaseHelper.shareInstance.fetchTaskDecendingDate()
                 self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
                 self.tableTaskView.reloadData()
-            },
-             UIAction(title: "By Priorities", image: UIImage(systemName: "plus.square.on.square")) { action in
-                // Duplicate Menu Child Selected
-            },
-             UIAction(title: "By Tags", image: UIImage(systemName: "folder")) { action in
-                //Move Menu Child Selected
-            },
-                ])
-        
-        let saveButton = UIBarButtonItem(title: "Sort", menu: saveMenu)
-        
-        navigationItem.rightBarButtonItem = saveButton
+            }
+        ])
     }
     
     override func viewDidLoad() {
@@ -84,7 +77,11 @@ class ListTaskViewController: UIViewController {
         self.title = titleList
         getData()
         setupSortMenuItem()
-        navigationItem.rightBarButtonItems = [UIBarButtonItem(title: "Share", style: .plain, target: self, action: #selector(didTapShareButton)), UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))]
+        
+        let sortButton = UIBarButtonItem(title: "Sort", menu: sortMenu)
+        let shareButton = UIBarButtonItem(title: "Share", style: .plain, target: self, action: #selector(didTapShareButton))
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+        navigationItem.rightBarButtonItems = [addButton, shareButton, sortButton]
         // Do any additional setup after loading the view.
     }
     

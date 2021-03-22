@@ -121,6 +121,8 @@ class HomeViewController: UIViewController {
             self.title = "My Lists"
             navigationItem.rightBarButtonItem?.isEnabled = true
             menu = MenuType.myList
+
+//            navigationItem.rightBarButtonItems = nil
             
         default:
             print("Default")
