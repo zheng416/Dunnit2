@@ -183,6 +183,10 @@
                                     <outlet property="delegate" destination="vS7-ur-LcG" id="DSw-TY-Zte"/>
                                 </connections>
                             </searchBar>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" fixedFrame="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="qBw-xk-V3X">
+                                <rect key="frame" x="20" y="133" width="374" height="4"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </progressView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="TxW-zn-0BW"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -205,6 +209,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="progressView" destination="qBw-xk-V3X" id="10H-g7-80x"/>
                         <outlet property="searchBar" destination="HZh-kO-YUx" id="PYf-FB-bOQ"/>
                         <outlet property="tableView" destination="I0E-PR-QQk" id="f4l-6u-mN1"/>
                         <segue destination="my1-e3-sGj" kind="show" identifier="showInfo" id="B07-yv-zC2"/>
@@ -212,7 +217,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aFD-Hw-mh8" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="349" y="88"/>
+            <point key="canvasLocation" x="347.82608695652175" y="87.723214285714278"/>
         </scene>
         <!--Add View Controller-->
         <scene sceneID="75X-eq-HbX">

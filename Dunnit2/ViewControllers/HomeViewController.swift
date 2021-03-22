@@ -16,6 +16,8 @@ class HomeViewController: UIViewController {
     let transition = SlideInTransition()
     var topView: UIView?
     
+    @IBOutlet weak var progressView: UIProgressView!
+    
     var menu: MenuType?
     var sortMenu: UIMenu?
 
@@ -35,10 +37,11 @@ class HomeViewController: UIViewController {
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
         let user = DataBaseHelper.shareInstance.fetchUser()
         taskStore = [tasks.filter{$0.isDone == false && $0.owner == user[0].email}, tasks.filter{$0.isDone == true && $0.owner == user[0].email}]
-        print("ALLLLLLLLL            TASKS")
-        print(tasks)
         
-        print("END        ALLLLLLLLL TASKS")
+        let progressCount = (Float(taskStore[1].count) / Float(taskStore[0].count + taskStore[1].count))
+        print("% = ", progressCount, "indi = ", taskStore[1].count, (taskStore[1].count + taskStore[0].count))
+        self.progressView.setProgress(progressCount, animated: true)
+        
         tableView.reloadData()
     }
     
@@ -71,6 +74,13 @@ class HomeViewController: UIViewController {
         menuViewController.transitioningDelegate = self
         present(menuViewController, animated: true)
     }
+    
+//    private let progressView: UIProgressView = {
+//        let progressView = UIProgressView(progressViewStyle: .default)
+//        progressView.trackTintColor = .gray
+//        progressView.progressTintColor = .systemBlue
+//        return progressView
+//    }()
     
     func transitionToNew(_ menuType: MenuType) {
         let title = String(describing: menuType).capitalized
@@ -220,6 +230,10 @@ class HomeViewController: UIViewController {
         getData()
         setupSortMenuItem()
         
+//        view.addSubview(progressView)
+//        progressView.frame = CGRect(x: 10, y: 150, width: view.frame.size.width - 20, height: 20)
+//        progressView.setProgress(0.5, animated: true)
+//
         let sortButton = UIBarButtonItem(title: "Sort", menu: self.sortMenu)
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
         navigationItem.rightBarButtonItems = [addButton, sortButton]
