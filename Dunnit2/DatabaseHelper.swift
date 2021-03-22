@@ -478,6 +478,17 @@ class DataBaseHelper {
             print("Update error.")
         }
     }
+    
+    func updateNameDB(name: String, email: String) {
+        self.db.collection("users").whereField("email", isEqualTo: email).getDocuments() {
+            (querySnapshot, err) in
+            for document in querySnapshot!.documents {
+                let documentId = document.documentID
+                self.db.collection("users").document(documentId).setData(["name": name], merge: true)
+            }
+        }
+    }
+    
     func deleteUser(email: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
