@@ -556,7 +556,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kz5-V6-2lS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1277" y="792"/>
+            <point key="canvasLocation" x="1276.8115942028987" y="791.51785714285711"/>
         </scene>
         <!--Shared View Controller-->
         <scene sceneID="Dy0-Iu-OS8">
@@ -706,6 +706,10 @@
                                     <outlet property="delegate" destination="GPx-gH-kAL" id="7G2-JS-fhq"/>
                                 </connections>
                             </tableView>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" fixedFrame="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="TVE-TS-IK5">
+                                <rect key="frame" x="20" y="93" width="374" height="4"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </progressView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="R2w-ZW-ePg"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -718,12 +722,13 @@
                     </view>
                     <navigationItem key="navigationItem" id="ON4-mk-UDQ"/>
                     <connections>
+                        <outlet property="progressView" destination="TVE-TS-IK5" id="ngz-1A-Jd7"/>
                         <outlet property="tableTaskView" destination="npc-aJ-y5a" id="gkM-KG-fYY"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="s7a-AZ-fpF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2074" y="792"/>
+            <point key="canvasLocation" x="2073.913043478261" y="791.51785714285711"/>
         </scene>
         <!--Sharing View Controller-->
         <scene sceneID="nS8-fV-ez8">

@@ -12,13 +12,19 @@ class ListTaskViewController: UIViewController {
     var titleList: String?
     var sortMenu: UIMenu?
     
+    @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet var tableTaskView: UITableView!
     
     var taskListStore = [[TaskEntity](), [TaskEntity]()]
     
     func getData() {
+        print("in list task view controller")
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
         taskListStore = [tasks.filter{$0.isDone == false && $0.list == self.titleList}, tasks.filter{$0.isDone == true && $0.list == self.titleList}]
+        
+        let progressCount = (Float(taskListStore[1].count) / Float(taskListStore[0].count + taskListStore[1].count))
+        self.progressView.setProgress(progressCount, animated: true)
+        
 
         tableTaskView.reloadData()
     }
