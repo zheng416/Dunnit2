@@ -186,7 +186,7 @@ class HomeViewController: UIViewController {
         vc.completion = {title, body, date, color in
             DispatchQueue.main.async {
                 self.navigationController?.popToRootViewController(animated: true)
-                DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false, list: "all", color: color)
+                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: "all", color: color)
                 self.getData()
             }
         }
@@ -198,24 +198,24 @@ class HomeViewController: UIViewController {
         self.sortMenu = UIMenu(title: "", children: [
             // Sort by title
             UIAction(title: "By Ascending Title", image: UIImage(systemName: "doc.on.doc")) { action in
-                let tasks = DataBaseHelper.shareInstance.fetchTaskAscendingTitle()
+                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"title",ascending: true)
                 self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
                 // Update user's preference local
                 // Update user's preference DB
                 self.tableView.reloadData()
             },
              UIAction(title: "By Ascending Date", image: UIImage(systemName: "pencil")) { action in
-                let tasks = DataBaseHelper.shareInstance.fetchTaskAscendingDate()
+                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: true)
                 self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
                 self.tableView.reloadData()
             },
             UIAction(title: "By Decending Title", image: UIImage(systemName: "doc.on.doc")) { action in
-                let tasks = DataBaseHelper.shareInstance.fetchTaskDecendingTitle()
+                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"title",ascending: false)
                 self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
                 self.tableView.reloadData()
             },
              UIAction(title: "By Decending Date", image: UIImage(systemName: "pencil")) { action in
-                let tasks = DataBaseHelper.shareInstance.fetchTaskDecendingDate()
+                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: false)
                 self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
                 self.tableView.reloadData()
             },
@@ -269,15 +269,15 @@ extension HomeViewController: UITableViewDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let indexPath = tableView.indexPathForSelectedRow {
             let destination = segue.destination as? DescriptionViewController
-            let previous = taskStore[indexPath.section][indexPath.row].title
-            destination?.titleStr = previous
+            let id = taskStore[indexPath.section][indexPath.row].id
+            destination?.titleStr = taskStore[indexPath.section][indexPath.row].title!
             destination?.dateVal = taskStore[indexPath.section][indexPath.row].date!
             destination?.bodyStr = taskStore[indexPath.section][indexPath.row].body
             destination?.topicStr = taskStore[indexPath.section][indexPath.row].color
             tableView.deselectRow(at: indexPath, animated: true)
             destination?.completion = {title, body, date, color in
                 DispatchQueue.main.async {
-                    DataBaseHelper.shareInstance.updateData(previous: previous!, title: title, body: body, date: date, color: color)
+                    DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title )
                     self.navigationController?.popViewController(animated: true)
                     self.getData()
                 }
@@ -472,8 +472,7 @@ extension HomeViewController {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let doneAction = UIContextualAction(style: .normal, title: nil) { (action, sourceView, completionHandler) in
             let row = self.taskStore[0][indexPath.row]
-            
-            DataBaseHelper.shareInstance.update(title: row.title!, isDone: true)
+            DataBaseHelper.shareInstance.updateLocalTask(id: row.id!,isDone: true, title: row.title!)
             
             self.getData()
         }
@@ -486,7 +485,7 @@ extension HomeViewController {
         let deleteAction = UIContextualAction(style: .normal, title: nil) { (action, sourceView, completionHandler) in
             let row = self.taskStore[indexPath.section][indexPath.row]
             
-            DataBaseHelper.shareInstance.deleteData(title: row.title!)
+            DataBaseHelper.shareInstance.deleteTask(id: row.id!)
             
             self.getData()
         }
