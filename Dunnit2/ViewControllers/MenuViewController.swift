@@ -12,6 +12,7 @@ enum MenuType: Int {
     case shared
     case myList
     case settings
+    case progress
     
 }
 

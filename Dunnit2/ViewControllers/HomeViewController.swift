@@ -113,15 +113,6 @@ class HomeViewController: UIViewController {
             addChild(settingVC)
             menu = MenuType.settings
             navigationItem.rightBarButtonItem?.isEnabled = false
-//        case .myList:
-//            let storyboard = UIStoryboard(name: "Home", bundle: nil)
-//            guard let vc = storyboard.instantiateViewController(identifier: "ListVC") as? ListViewController else {
-//                return
-//            }
-//             view.addSubview(profileVC.view)
-//             self.topView = profileVC.view
-//             addChild(profileVC)
-        
         case .myList:
             let storyboard = UIStoryboard(name: "Home", bundle: nil)
             let listVC = storyboard.instantiateViewController(withIdentifier: "listsVC")
@@ -129,10 +120,25 @@ class HomeViewController: UIViewController {
             self.topView = listVC.view
             addChild(listVC)
             self.title = "My Lists"
-            navigationItem.rightBarButtonItem?.isEnabled = true
+            
+            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+            navigationItem.rightBarButtonItems = [addButton]
             menu = MenuType.myList
+//        case .progress:
+//            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+//            let listVC = storyboard.instantiateViewController(withIdentifier: "listsVC")
+//            view.addSubview(listVC.view)
+//            self.topView = listVC.view
+//            addChild(listVC)
+//            self.title = "My Lists"
+//
+//            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+//            navigationItem.rightBarButtonItems = [addButton]
+//            navigationItem.rightBarButtonItem?.isEnabled = false
+////            navigationItem.rightBarButtonItems = nil
+//            menu = MenuType.myList
 
-//            navigationItem.rightBarButtonItems = nil
+            
             
         default:
             print("Default")
