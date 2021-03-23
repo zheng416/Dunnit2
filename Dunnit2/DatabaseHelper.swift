@@ -847,8 +847,8 @@ class DataBaseHelper {
 
         let managedContext = appDelegate.persistentContainer.viewContext
 
-        let instance = SharedEntity(context: managedContext)
-        instance.email = to
+//        let instance = SharedEntity(context: managedContext)
+//        instance.email = to
         do {
             let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
             let user = try managedContext.fetch(fetchUser)
@@ -935,6 +935,9 @@ class DataBaseHelper {
             print(email)
             print("Ckecking for duplicate Data.")
             self.db.collection("sharedLists").whereField("to", isEqualTo: email).getDocuments() { (querySnapshot, err) in
+                
+                print("Count from Database")
+                print(querySnapshot!.count)
                 if let err = err {
                     print("Error getting documents: \(err)")
                 } else {
@@ -943,6 +946,7 @@ class DataBaseHelper {
                         completion(true)
                     }
                     for document in querySnapshot!.documents {
+                        print("ONCEEEEEEEEE")
                         let taskList = document.get("tasklist")!
                         let owner = document.get("owner")!
                         print("\(owner) + \(taskList)")
@@ -954,7 +958,7 @@ class DataBaseHelper {
                         instance.email = owner as? String
                         instance.taskList = taskList  as? String
                         do{
-                            try managedContext.save()//print("save to local.")
+                            //try managedContext.save()//print("save to local.")
                             print("SAVING TO DB SHARE")
                             print(instance.email)
                             print(instance.taskList)
@@ -973,10 +977,12 @@ class DataBaseHelper {
                     completion(false)
                 }
             }
+            completion(true)
         } catch {
             print(error)
             completion(false)
         }
+        print("LIFE SUCKSSSS")
     }
 
     func updateTopic(email: String, red: String, orange: String, yellow: String, green: String, blue: String, purple: String, indigo: String, teal: String, pink: String, black: String) {
@@ -1082,6 +1088,8 @@ class DataBaseHelper {
         do {
             print("Fetching SharedLists.")
             fetchingImage = try managedContext.fetch(fetchRequest) as! [SharedEntity]
+            print("Number of Shared entities")
+            print(fetchingImage.count)
             for result in fetchingImage as [SharedEntity] {
                 print("Inside Loopp")
                 let owner = result.email!
@@ -1178,5 +1186,106 @@ class DataBaseHelper {
             print(error)
         }
         return fetchingImage
-    } 
+    }
+    
+    // Removes shared entity and on firebase
+    func removeSharedEntityDB(title: String, sharedBy: String, completion: @escaping (_ message: Bool) -> Void) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SharedEntity")
+        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        let predicate1 = NSPredicate(format: "taskList == %@", title)
+        let predicate2 = NSPredicate(format: "email == %@", sharedBy)
+        let predicateCompound = NSCompoundPredicate.init(type: .or, subpredicates: [predicate1,predicate2])
+        
+        fetchRequest.predicate = predicateCompound
+        
+        do {
+            let test = try managedContext.fetch(fetchRequest)
+            // Gonna need to change this so it deletes using key???
+            let objectToDelete = test[0] as! NSManagedObject
+            managedContext.delete(objectToDelete)
+            print ("deleted SharedEntity")
+            
+            
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            
+            let email = (user[0] as! UserEntity).email
+            let listKey = "\(email! )+\(title)"
+            print("BEFORE DB")
+            print(listKey)
+            db.collection("sharedLists").document(listKey).delete() { err in
+                if err != nil {
+                    print("Error removing document named \(title): \(err)")
+                } else {
+                    print("Document \(title) successfully deleted!")
+                }
+            }
+            print("AFTER DB")
+        } catch {
+            print(error)
+        }
+        completion(true)
+    }
+    
+    // Removes tasks and lists entities of shared tasks
+    // Need to do it for local
+    // Update values on firebase
+    func removedSharedLocal(title: String, owner: String, completion: @escaping (_ message: Bool) -> Void) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
+        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        let fetchTask = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
+        
+        let predicate1 = NSPredicate(format: "list == %@", title)
+        let predicate2 = NSPredicate(format: "owner == %@", owner)
+        let predicateCompound = NSCompoundPredicate.init(type: .or, subpredicates: [predicate1,predicate2])
+        
+        fetchTask.predicate = predicateCompound
+        
+        let predicate3 = NSPredicate(format: "title == %@", title)
+        let predicate4 = NSPredicate(format: "owner == %@", owner)
+        let predicateCompound2 = NSCompoundPredicate.init(type: .or, subpredicates: [predicate3,predicate4])
+        
+        do {
+            let taskContext = try managedContext.fetch(fetchTask)
+            
+            for task in taskContext {
+                print("tasking DELLEEEEEETTTEEDD \(task)")
+                managedContext.delete(task as! NSManagedObject)
+            }
+            
+            let listContext = try managedContext.fetch(fetchRequest)
+            
+            for list in listContext {
+                print("listing DELLEEEEEETTTEEDD \(list)")
+                managedContext.delete(list as! NSManagedObject)
+            }
+            let docData: [String: Any] = ["shared": false, "sharedWith": ""]
+            let listKey = "\(owner ?? "")+\(title ?? "")"
+            db.collection("taskLists").document(listKey).updateData(docData) { err in
+                        if err != nil {
+                            // Show error message
+                            print("Error saving list data\(err)")
+                            return
+                        }
+                print("Remove Updateddd")
+            }
+        } catch {
+            print(error)
+        }
+        completion(true)
+        
+    }
 }

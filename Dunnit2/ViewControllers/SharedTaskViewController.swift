@@ -52,6 +52,24 @@ class SharedTaskViewController: UIViewController {
     }
     
     @objc func didTapInfoButton() {
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        guard let vc = storyboard.instantiateViewController(identifier: "info") as? InfoViewController else {
+            return
+        }
+        vc.title = "Info"
+        vc.owner = owner
+        vc.titleList = titleList
+        vc.navigationItem.largeTitleDisplayMode = .never
+//        vc.completion = {title, shared, color in
+//            DispatchQueue.main.async {
+//                self.navigationController?.popViewController(animated: true)
+//                DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false, list: self.titleList!, color: color)
+//                self.getData()
+//            }
+//        }
+        navigationController?.pushViewController(vc, animated: true)
+        
+        
         // Redirect to a view controller that:
         // Display who shared it with you
         // Remove Button to remove the list

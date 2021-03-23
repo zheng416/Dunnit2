@@ -18,6 +18,7 @@ class SharedViewController: UIViewController {
     func getLists() {
         DataBaseHelper.shareInstance.fetchSharedDB(completion: {success in
             if success {
+                print("SUCCESSSSSS")
                 print("fetched sharedLists from database!")
                   DataBaseHelper.shareInstance.fetchSharedLists(completion: {
                     list in
@@ -43,9 +44,13 @@ class SharedViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        getLists()
+//        getLists()
         print("HEELELELEMFLKENN")
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        getLists()
     }
     
 
