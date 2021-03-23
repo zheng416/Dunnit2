@@ -75,7 +75,7 @@ class ListTaskViewController: UIViewController {
         vc.completion = {title, body, date, color in
             DispatchQueue.main.async {
                 self.navigationController?.popViewController(animated: true)
-                DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false, list: self.titleList!, color: color)
+                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: self.titleList!, color: color)
                 self.getData()
             }
         }
@@ -180,9 +180,10 @@ extension ListTaskViewController: UITableViewDataSource {
 extension ListTaskViewController {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let doneAction = UIContextualAction(style: .normal, title: nil) { (action, sourceView, completionHandler) in
+            //QUESTION????? should this be intersectoin?
             let row = self.taskListStore[0][indexPath.row]
             
-            DataBaseHelper.shareInstance.update(title: row.title!, isDone: true)
+            DataBaseHelper.shareInstance.updateLocalTask(id: row.id!, isDone: true)
             
             self.getData()
         }
@@ -195,7 +196,7 @@ extension ListTaskViewController {
         let deleteAction = UIContextualAction(style: .normal, title: nil) { (action, sourceView, completionHandler) in
             let row = self.taskListStore[indexPath.section][indexPath.row]
             
-            DataBaseHelper.shareInstance.deleteData(title: row.title!)
+            DataBaseHelper.shareInstance.deleteTask(id: row.id!)
             
             self.getData()
         }

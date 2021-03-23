@@ -14,16 +14,33 @@ import FBSDKLoginKit
 
 //self.updateUserPassword(email: "zheng460@purdue.edu", password: "123456@a", newpassword: "123456@b")
 
-class UpdatePasswordViewController: UIViewController {
-
+class UpdatePasswordViewController: UIViewController,UITextFieldDelegate {
+    
     @IBOutlet weak var oriPassField: UITextField!
     @IBOutlet weak var newPassField1: UITextField!
     @IBOutlet weak var newPassField2: UITextField!
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        oriPassField.delegate = self
+        newPassField1.delegate = self
+        newPassField2.delegate = self
+        //oriPassField.addTarget(self, action: "textFieldDidChange", for:UIControlE)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool
      {
-        oriPassField.resignFirstResponder()
-        newPassField1.resignFirstResponder()
-        newPassField2.resignFirstResponder()
+        switch textField {
+        case self.oriPassField:
+            self.newPassField1.becomeFirstResponder()
+        case self.newPassField1:
+            self.newPassField2.becomeFirstResponder()
+        default:
+            newPassField2.resignFirstResponder()
+        }
         return true;
     }
     
