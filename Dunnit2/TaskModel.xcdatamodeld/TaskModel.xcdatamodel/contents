@@ -39,6 +39,7 @@
         <attribute name="email" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="notifications" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="sortPreference" optional="YES" attributeType="String"/>
         <attribute name="sound" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
     </entity>
     <elements>

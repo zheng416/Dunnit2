@@ -456,7 +456,7 @@ class DataBaseHelper {
             }
         }
     }
-    
+  
     func deleteUser(email: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
@@ -697,6 +697,8 @@ class DataBaseHelper {
         let managedContext = appDelegate.persistentContainer.viewContext
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
+        let sort = NSSortDescriptor(key: "title", ascending: true)
+        fetchRequest.sortDescriptors = [sort]
         
         do {
             print("Fetching Lists.")

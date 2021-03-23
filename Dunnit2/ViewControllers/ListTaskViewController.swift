@@ -10,13 +10,21 @@ import UIKit
 class ListTaskViewController: UIViewController {
 
     var titleList: String?
+    var sortMenu: UIMenu?
+    
+    @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet var tableTaskView: UITableView!
     
     var taskListStore = [[TaskEntity](), [TaskEntity]()]
     
     func getData() {
+        print("in list task view controller")
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
         taskListStore = [tasks.filter{$0.isDone == false && $0.list == self.titleList}, tasks.filter{$0.isDone == true && $0.list == self.titleList}]
+        
+        let progressCount = (Float(taskListStore[1].count) / Float(taskListStore[0].count + taskListStore[1].count))
+        self.progressView.setProgress(progressCount, animated: true)
+        
 
         tableTaskView.reloadData()
     }
@@ -40,11 +48,46 @@ class ListTaskViewController: UIViewController {
         return endUser
     }
     
+    // Dropdown menu
+    private func setupSortMenuItem() {
+        self.sortMenu = UIMenu(title: "", children: [
+            //TODO: Sort by task list function
+            // Sort by title
+            UIAction(title: "By Ascending Title", image: UIImage(systemName: "doc.on.doc")) { action in
+                let tasks = DataBaseHelper.shareInstance.fetchTaskAscendingTitle()
+                self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                // Update user's preference local
+                // Update user's preference DB
+                self.tableTaskView.reloadData()
+            },
+             UIAction(title: "By Ascending Date", image: UIImage(systemName: "pencil")) { action in
+                let tasks = DataBaseHelper.shareInstance.fetchTaskAscendingDate()
+                self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                self.tableTaskView.reloadData()
+            },
+            UIAction(title: "By Decending Title", image: UIImage(systemName: "doc.on.doc")) { action in
+                let tasks = DataBaseHelper.shareInstance.fetchTaskDecendingTitle()
+                self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                self.tableTaskView.reloadData()
+            },
+             UIAction(title: "By Decending Date", image: UIImage(systemName: "pencil")) { action in
+                let tasks = DataBaseHelper.shareInstance.fetchTaskDecendingDate()
+                self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                self.tableTaskView.reloadData()
+            }
+        ])
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = titleList
         getData()
-        navigationItem.rightBarButtonItems = [UIBarButtonItem(title: "Share", style: .plain, target: self, action: #selector(didTapShareButton)), UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))]
+        setupSortMenuItem()
+        
+        let sortButton = UIBarButtonItem(title: "Sort", menu: sortMenu)
+        let shareButton = UIBarButtonItem(title: "Share", style: .plain, target: self, action: #selector(didTapShareButton))
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+        navigationItem.rightBarButtonItems = [addButton, shareButton, sortButton]
         // Do any additional setup after loading the view.
     }
     

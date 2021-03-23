@@ -16,7 +16,10 @@ class HomeViewController: UIViewController {
     let transition = SlideInTransition()
     var topView: UIView?
     
+    @IBOutlet weak var progressView: UIProgressView!
+    
     var menu: MenuType?
+    var sortMenu: UIMenu?
 
     @IBOutlet var tableView: UITableView!
     
@@ -34,10 +37,11 @@ class HomeViewController: UIViewController {
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
         let user = DataBaseHelper.shareInstance.fetchUser()
         taskStore = [tasks.filter{$0.isDone == false && $0.owner == user[0].email}, tasks.filter{$0.isDone == true && $0.owner == user[0].email}]
-        print("ALLLLLLLLL            TASKS")
-        print(tasks)
         
-        print("END        ALLLLLLLLL TASKS")
+        let progressCount = (Float(taskStore[1].count) / Float(taskStore[0].count + taskStore[1].count))
+        print("% = ", progressCount, "indi = ", taskStore[1].count, (taskStore[1].count + taskStore[0].count))
+        self.progressView.setProgress(progressCount, animated: true)
+        
         tableView.reloadData()
     }
     
@@ -71,6 +75,13 @@ class HomeViewController: UIViewController {
         present(menuViewController, animated: true)
     }
     
+//    private let progressView: UIProgressView = {
+//        let progressView = UIProgressView(progressViewStyle: .default)
+//        progressView.trackTintColor = .gray
+//        progressView.progressTintColor = .systemBlue
+//        return progressView
+//    }()
+    
     func transitionToNew(_ menuType: MenuType) {
         let title = String(describing: menuType).capitalized
         self.title = title
@@ -102,15 +113,6 @@ class HomeViewController: UIViewController {
             addChild(settingVC)
             menu = MenuType.settings
             navigationItem.rightBarButtonItem?.isEnabled = false
-//        case .myList:
-//            let storyboard = UIStoryboard(name: "Home", bundle: nil)
-//            guard let vc = storyboard.instantiateViewController(identifier: "ListVC") as? ListViewController else {
-//                return
-//            }
-//             view.addSubview(profileVC.view)
-//             self.topView = profileVC.view
-//             addChild(profileVC)
-        
         case .myList:
             let storyboard = UIStoryboard(name: "Home", bundle: nil)
             let listVC = storyboard.instantiateViewController(withIdentifier: "listsVC")
@@ -118,8 +120,25 @@ class HomeViewController: UIViewController {
             self.topView = listVC.view
             addChild(listVC)
             self.title = "My Lists"
-            navigationItem.rightBarButtonItem?.isEnabled = true
+            
+            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+            navigationItem.rightBarButtonItems = [addButton]
             menu = MenuType.myList
+//        case .progress:
+//            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+//            let listVC = storyboard.instantiateViewController(withIdentifier: "listsVC")
+//            view.addSubview(listVC.view)
+//            self.topView = listVC.view
+//            addChild(listVC)
+//            self.title = "My Lists"
+//
+//            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+//            navigationItem.rightBarButtonItems = [addButton]
+//            navigationItem.rightBarButtonItem?.isEnabled = false
+////            navigationItem.rightBarButtonItems = nil
+//            menu = MenuType.myList
+
+            
             
         default:
             print("Default")
@@ -130,7 +149,7 @@ class HomeViewController: UIViewController {
         }
     }
     
-    @IBAction func didTapAdd() {
+    @objc func didTapAddButton() {
         // Show add vc
         let storyboard = UIStoryboard(name: "Home", bundle: nil)
         guard let vc = storyboard.instantiateViewController(identifier: "add") as? AddViewController else {
@@ -176,11 +195,13 @@ class HomeViewController: UIViewController {
     
     // Dropdown menu
     private func setupSortMenuItem() {
-        let saveMenu = UIMenu(title: "", children: [
+        self.sortMenu = UIMenu(title: "", children: [
             // Sort by title
             UIAction(title: "By Ascending Title", image: UIImage(systemName: "doc.on.doc")) { action in
                 let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"title",ascending: true)
                 self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                // Update user's preference local
+                // Update user's preference DB
                 self.tableView.reloadData()
             },
              UIAction(title: "By Ascending Date", image: UIImage(systemName: "pencil")) { action in
@@ -205,10 +226,6 @@ class HomeViewController: UIViewController {
                 //Move Menu Child Selected
             },
                 ])
-        
-        let saveButton = UIBarButtonItem(title: "Sort", menu: saveMenu)
-        
-        navigationItem.rightBarButtonItem = saveButton
     }
 
     override func viewDidLoad() {
@@ -218,8 +235,14 @@ class HomeViewController: UIViewController {
         searchBar.autocapitalizationType = .none
         getData()
         setupSortMenuItem()
-//        tableView.delegate = self
-//        tableView.dataSource = self
+        
+//        view.addSubview(progressView)
+//        progressView.frame = CGRect(x: 10, y: 150, width: view.frame.size.width - 20, height: 20)
+//        progressView.setProgress(0.5, animated: true)
+//
+        let sortButton = UIBarButtonItem(title: "Sort", menu: self.sortMenu)
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+        navigationItem.rightBarButtonItems = [addButton, sortButton]
     }
     
 
