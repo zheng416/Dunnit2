@@ -53,7 +53,6 @@ extension ListsViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print("HEREEEEEPOOP")
             let cell = tableView.dequeueReusableCell(withIdentifier: "listcell", for: indexPath)
             cell.textLabel!.text = listStore[indexPath.row].title
             return cell

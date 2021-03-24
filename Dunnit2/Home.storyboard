@@ -459,8 +459,48 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="107" id="WCV-gw-aQ6">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="107" id="iQO-by-PX2">
                                         <rect key="frame" x="0.0" y="339" width="414" height="107"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="iQO-by-PX2" id="vLS-fd-nB1">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="107"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Progress" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nAG-HK-YeV">
+                                                    <rect key="frame" x="56" y="40.5" width="75" height="26"/>
+                                                    <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="19"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="msA-C9-PVm">
+                                                    <rect key="frame" x="16" y="105" width="398" height="2"/>
+                                                    <color key="backgroundColor" systemColor="separatorColor"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="2" id="O6l-VV-urP"/>
+                                                    </constraints>
+                                                </view>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="stopwatch" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="ejD-cS-0Ry">
+                                                    <rect key="frame" x="6" y="27" width="42" height="52"/>
+                                                    <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="24" id="Lkb-Bx-h6n"/>
+                                                        <constraint firstAttribute="height" constant="24" id="pdh-7Y-FjC"/>
+                                                    </constraints>
+                                                </imageView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="ejD-cS-0Ry" firstAttribute="centerY" secondItem="vLS-fd-nB1" secondAttribute="centerY" id="PeI-sA-BxH"/>
+                                                <constraint firstItem="ejD-cS-0Ry" firstAttribute="leading" secondItem="vLS-fd-nB1" secondAttribute="leading" constant="16" id="amW-Xx-Jdg"/>
+                                                <constraint firstItem="nAG-HK-YeV" firstAttribute="leading" secondItem="ejD-cS-0Ry" secondAttribute="trailing" constant="16" id="cN5-hn-mAB"/>
+                                                <constraint firstItem="nAG-HK-YeV" firstAttribute="centerY" secondItem="ejD-cS-0Ry" secondAttribute="centerY" id="f6c-k5-Ki4"/>
+                                                <constraint firstAttribute="trailing" secondItem="msA-C9-PVm" secondAttribute="trailing" id="h8D-rp-hQp"/>
+                                                <constraint firstItem="msA-C9-PVm" firstAttribute="leading" secondItem="vLS-fd-nB1" secondAttribute="leading" constant="16" id="r6V-K2-2v1"/>
+                                                <constraint firstAttribute="bottom" secondItem="msA-C9-PVm" secondAttribute="bottom" id="xtl-Tr-abM"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="107" id="WCV-gw-aQ6">
+                                        <rect key="frame" x="0.0" y="446" width="414" height="107"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="WCV-gw-aQ6" id="H47-Wi-jVm">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="107"/>
@@ -602,6 +642,41 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UeM-pf-bjU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1277" y="1491"/>
+        </scene>
+        <!--Progress View Controller-->
+        <scene sceneID="830-Qm-SZw">
+            <objects>
+                <viewController storyboardIdentifier="progressVC" id="FDX-Cq-Ji2" customClass="ProgressViewController" customModule="Dunnit2" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Dgb-7B-ibX">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Percentage" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M1W-0n-rb0">
+                                <rect key="frame" x="20" y="473" width="374" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="All" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fy5-6X-pc9">
+                                <rect key="frame" x="20" y="438" width="374" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="RO9-Ec-Z7T"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <outlet property="labelType" destination="fy5-6X-pc9" id="Fed-w7-dxb"/>
+                        <outlet property="mainPercentageLabel" destination="M1W-0n-rb0" id="kfd-NU-iJy"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="isr-QC-Ukv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1289.8550724637682" y="2219.1964285714284"/>
         </scene>
         <!--Shared Task View Controller-->
         <scene sceneID="RtV-Zj-Tbf">
@@ -816,6 +891,7 @@
         <image name="gearshape" catalog="system" width="128" height="121"/>
         <image name="list.bullet.rectangle" catalog="system" width="128" height="93"/>
         <image name="person.2.fill" catalog="system" width="128" height="80"/>
+        <image name="stopwatch" catalog="system" width="121" height="128"/>
         <systemColor name="separatorColor">
             <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

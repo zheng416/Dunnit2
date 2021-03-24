@@ -162,7 +162,7 @@ extension ListTaskViewController: UITableViewDataSource {
         cell.textLabel?.text = taskListStore[indexPath.section][indexPath.row].title
         cell.textLabel?.sizeToFit()
         cell.detailTextLabel?.text = formatter.string(from: date)
-        if !(color!.isEmpty) {
+        if (color != nil && !color!.isEmpty){
             let label = UILabel()
             label.text = " " + color! + " "
             label.font = UIFont.boldSystemFont(ofSize: 16.0)

@@ -95,6 +95,19 @@ class HomeViewController: UIViewController {
         // self.topView = profileVC.view
         // addChild(profileVC)
         
+        case .progress:
+            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+            let listVC = storyboard.instantiateViewController(withIdentifier: "progressVC")
+            view.addSubview(listVC.view)
+            self.topView = listVC.view
+            addChild(listVC)
+            self.title = "Progress"
+
+            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+            navigationItem.rightBarButtonItems = [addButton]
+            navigationItem.rightBarButtonItem?.isEnabled = false
+//            navigationItem.rightBarButtonItems = nil
+            menu = MenuType.progress
         
         case .shared:
             let storyboard = UIStoryboard(name: "Home", bundle: nil)
@@ -124,22 +137,7 @@ class HomeViewController: UIViewController {
             let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
             navigationItem.rightBarButtonItems = [addButton]
             menu = MenuType.myList
-//        case .progress:
-//            let storyboard = UIStoryboard(name: "Home", bundle: nil)
-//            let listVC = storyboard.instantiateViewController(withIdentifier: "listsVC")
-//            view.addSubview(listVC.view)
-//            self.topView = listVC.view
-//            addChild(listVC)
-//            self.title = "My Lists"
-//
-//            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
-//            navigationItem.rightBarButtonItems = [addButton]
-//            navigationItem.rightBarButtonItem?.isEnabled = false
-////            navigationItem.rightBarButtonItems = nil
-//            menu = MenuType.myList
 
-            
-            
         default:
             print("Default")
             navigationItem.rightBarButtonItem?.isEnabled = true

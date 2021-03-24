@@ -11,9 +11,8 @@ enum MenuType: Int {
     case all
     case shared
     case myList
-    case settings
     case progress
-    
+    case settings
 }
 
 class MenuViewController: UITableViewController {
