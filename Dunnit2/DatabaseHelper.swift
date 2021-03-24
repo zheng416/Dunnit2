@@ -115,7 +115,7 @@ class DataBaseHelper {
         }
         var ref: DatabaseReference?
         ref = Database.database().reference()
-        guard let key = ref?.child("posts").childByAutoId().key else { return }
+        guard let key = ref?.child("task").childByAutoId().key else { return }
         let docData: [String: Any] = [
             "id" : key,
             "email" : email,
@@ -427,7 +427,7 @@ class DataBaseHelper {
         }
         
     }
-    
+    //should not be used
     func updateName(name:String, email: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
@@ -564,8 +564,8 @@ class DataBaseHelper {
         }
     }
 
-    
-    func saveList(title: String, shared: Bool, sharedWith: String) {
+    //Save local list
+    func saveLocalList(title: String, shared: Bool, sharedWith: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -589,10 +589,11 @@ class DataBaseHelper {
             }
             let email = (user[0] as! UserEntity).email
             instance.owner = email
-            let docData: [String: Any] = ["title" : title, "email": email!, "shared": shared, "sharedWith": sharedWith as! String]
-            
-            let listKey = "\(email ?? "")+\(title)"
-            db.collection("taskLists").document(listKey).setData(docData) { err in
+            let docData: [String: Any] = ["title" : title, "email": email!, "shared": shared, "sharedWith": sharedWith ]
+            var ref: DatabaseReference?
+            ref = Database.database().reference()
+            guard let id = ref?.child("taskLists").childByAutoId().key else { return }
+            db.collection("taskLists").document(id).setData(docData) { err in
                 if err != nil {
                     // Show error message
                     print("Error saving user data\(err)")
@@ -620,7 +621,7 @@ class DataBaseHelper {
         do {
             fetchingImage = try managedContext.fetch(fetchRequest) as! [ListEntity]
             for result in fetchingImage as [ListEntity] {
-                titlelist.append(result.title!)
+                titlelist.append(result.id!)
             }
             let user = try managedContext.fetch(fetchUser)
             if user.count > 1{
@@ -643,14 +644,16 @@ class DataBaseHelper {
                         completion(true)
                     }
                     for document in querySnapshot!.documents {
+                        let id = document.get("id")!
                         let title = document.get("title")!
                         let owner = document.get("email")!
                         let shared = document.get("shared")!
                         let sharedWith = document.get("sharedWith")!
-                        if titlelist.contains(title as! String){
+                        if titlelist.contains(id as! String){
                             continue
                         }
                         let instance = ListEntity(context: managedContext)
+                        instance.id = id as? String
                         instance.title = title as? String
                         instance.owner = owner as? String
                         instance.shared = shared as! Bool
@@ -696,7 +699,7 @@ class DataBaseHelper {
         return fetchingImage
     }
     
-    func deleteList(title: String) {
+    func deleteList(id: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -704,35 +707,20 @@ class DataBaseHelper {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
         let fetchTaskRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
         let fetchUserRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
-        fetchRequest.predicate = NSPredicate(format: "title = %@", title)
-        fetchTaskRequest.predicate = NSPredicate(format: "list = %@", title)
+        fetchRequest.predicate = NSPredicate(format: "id = %@", id)
+        fetchTaskRequest.predicate = NSPredicate(format: "list = %@", id)
         
         do {
-            let test = try managedContext.fetch(fetchRequest)
-            
-            let objectToDelete = test[0] as! NSManagedObject
+            let list = try managedContext.fetch(fetchRequest)
+            let objectToDelete = list[0] as! NSManagedObject
+            let id = (list[0] as! ListEntity).id
             managedContext.delete(objectToDelete)
             
-            // Get user email
-            let user = try managedContext.fetch(fetchUserRequest)
-            if user.count > 1{
-                print("multiple user was found ")
-                return
-            }
-            if (user.isEmpty || user.count == 0){
-                print("not local user was found when fetching data")
-                return
-            }
-            let email = (user[0] as! UserEntity).email
-            
-            // Database access
-            let listKey = "\(email ?? "")+\(title)"
-            
-            db.collection("taskLists").document(listKey).delete() { err in
+            db.collection("taskLists").document(id!).delete() { err in
                 if err != nil {
-                    print("Error removing document named \(title): \(err)")
+                    print("Error removing document named \(String(describing: id)): \(String(describing: err))")
                 } else {
-                    print("Document \(title) successfully deleted!")
+                    print("Document \(String(describing: id)) successfully deleted!")
                 }
             }
             
@@ -743,7 +731,7 @@ class DataBaseHelper {
                 managedContext.delete(task as! NSManagedObject)
             }
             
-            db.collection("task").whereField("list", isEqualTo: title).getDocuments() { (querySnapshot, err) in
+            db.collection("task").whereField("list", isEqualTo: id! as String).getDocuments() { (querySnapshot, err) in
                 if let err = err {
                     print("Error getting documents: \(err)")
                 } else {
@@ -751,11 +739,7 @@ class DataBaseHelper {
                         print("No lists found")
                     }
                     for document in querySnapshot!.documents {
-                        let toBeDeletedTask = document.get("title") as! String
-
-                        let taskKey = "\(email ?? "")+\(toBeDeletedTask)"
-                        self.db.collection("task").document(taskKey).delete()
-
+                        self.db.collection("task").document(document.get("id") as! String).delete()
                     }
                 }
             }
@@ -773,7 +757,7 @@ class DataBaseHelper {
     
 
     // Save a shared list to Firebase only
-    func shareListDB(to: String, taskList: String) {
+    func saveDBSharedList(to: String, taskList: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
 
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -781,6 +765,9 @@ class DataBaseHelper {
         let instance = SharedEntity(context: managedContext)
         instance.email = to
         do {
+            var ref: DatabaseReference?
+            ref = Database.database().reference()
+            guard let id = ref?.child("sharedLists").childByAutoId().key else { return }
             let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
             let user = try managedContext.fetch(fetchUser)
             if user.count > 1{
@@ -795,16 +782,15 @@ class DataBaseHelper {
             
             let docData: [String: Any] = ["owner": email!, "tasklist": taskList, "to": to]
             
-            let listKey = "\(to )+\(taskList)"
-            db.collection("sharedLists").document(listKey).setData(docData) { err in
+            db.collection("sharedLists").document(id).setData(docData) { err in
                 if err != nil {
                     // Show error message
                     print("Error saving user data\(err)")
                     return
                 }
                 print("Saved list \(taskList) to DB")
-                
-                DataBaseHelper.shareInstance.updateListsShared(email: email!, shared: true, sharedWith: to, title: taskList)
+                //QUESTION why update here??????
+                //DataBaseHelper.shareInstance.updateListsShared(id:id,email: email!, shared: true, sharedWith: to, title: taskList)
                 print("DONEEEEEE Update")
             }
         } catch {
@@ -812,7 +798,7 @@ class DataBaseHelper {
         }
     }
     
-    func updateListsShared(email: String, shared: Bool, sharedWith: String, title: String ) {
+    func updateListsShared(id : String,email: String, shared: Bool, sharedWith: String, title: String ) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
                 
                 let managedContext = appDelegate.persistentContainer.viewContext
@@ -820,8 +806,8 @@ class DataBaseHelper {
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
         
         let docData: [String: Any] = ["email": email , "shared": shared, "sharedWith": sharedWith, "title": title]
-        let listKey = "\(email ?? "")+\(title ?? "")"
-        db.collection("taskLists").document(listKey).updateData(docData) { err in
+        //let listKey = "\(email ?? "")+\(title ?? "")"
+        db.collection("taskLists").document(id).updateData(docData) { err in
                     if err != nil {
                         // Show error message
                         print("Error saving user data\(err)")
@@ -1026,7 +1012,8 @@ class DataBaseHelper {
                             print("No lists found")
                         } else {
                             for document in querySnapshot!.documents {
-                               let instance = ListEntity(context: managedContext)
+                                let instance = ListEntity(context: managedContext)
+                                //TODO change this to id
                                 instance.title = document.get("title")! as! String
                                 instance.shared = true
                                 instance.sharedWith = document.get("sharedWith")! as! String

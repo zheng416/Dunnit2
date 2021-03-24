@@ -83,7 +83,7 @@ extension ListsViewController {
         let deleteAction = UIContextualAction(style: .normal, title: nil) { (action, sourceView, completionHandler) in
             let row = self.listStore[indexPath.row]
             
-            DataBaseHelper.shareInstance.deleteList(title: row.title!)
+            DataBaseHelper.shareInstance.deleteList(id: row.id!)
             
             self.getLists()
         }
