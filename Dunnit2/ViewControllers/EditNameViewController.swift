@@ -81,6 +81,7 @@ class EditNameViewController: UIViewController, UITextFieldDelegate {
                 let user = self.getUser()
                 // Update Name based on email
                 DataBaseHelper.shareInstance.updateName(name: name, email: user["email"] as! String)
+                DataBaseHelper.shareInstance.updateNameDB(name: name, email: user["email"] as! String)
                 self.getUser()
                 self.navigationController?.popViewController(animated: true)
                 

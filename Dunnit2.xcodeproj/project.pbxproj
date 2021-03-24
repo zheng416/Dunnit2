@@ -32,6 +32,7 @@
 		9B7190BE25FBCD7100549805 /* SharedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7190BD25FBCD7100549805 /* SharedViewController.swift */; };
 		9B7190C125FBCF7700549805 /* SharedTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7190C025FBCF7700549805 /* SharedTaskViewController.swift */; };
 		9B7190C425FC1F0C00549805 /* SharingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7190C325FC1F0C00549805 /* SharingViewController.swift */; };
+		9BA17B742608EBF700D998D6 /* InfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BA17B732608EBF700D998D6 /* InfoViewController.swift */; };
 		9BBAE66125ED7DE1003CC28B /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE66025ED7DE1003CC28B /* SettingsViewController.swift */; };
 		9BBAE66425ED7DF1003CC28B /* EditNameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE66325ED7DF1003CC28B /* EditNameViewController.swift */; };
 		9BBAE66725ED7DFA003CC28B /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9BBAE66625ED7DF9003CC28B /* Settings.storyboard */; };
@@ -72,6 +73,7 @@
 		9B7190BD25FBCD7100549805 /* SharedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedViewController.swift; sourceTree = "<group>"; };
 		9B7190C025FBCF7700549805 /* SharedTaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTaskViewController.swift; sourceTree = "<group>"; };
 		9B7190C325FC1F0C00549805 /* SharingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingViewController.swift; sourceTree = "<group>"; };
+		9BA17B732608EBF700D998D6 /* InfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoViewController.swift; sourceTree = "<group>"; };
 		9BBAE66025ED7DE1003CC28B /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		9BBAE66325ED7DF1003CC28B /* EditNameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditNameViewController.swift; sourceTree = "<group>"; };
 		9BBAE66625ED7DF9003CC28B /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 				8DC9D4AB25FB024F00353402 /* SortingViewController.swift */,
 				CE4912C32602E3B800896E14 /* UpdatePassViewController.swift */,
 				9B6CC76E25DB5F5A00C0CAF7 /* ViewController.swift */,
+				9BA17B732608EBF700D998D6 /* InfoViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -333,6 +336,7 @@
 				9BBAE66F25EEAC3E003CC28B /* AddListViewController.swift in Sources */,
 				9B46D5CF25E4D12000E990CC /* AddViewController.swift in Sources */,
 				CE4912C42602E3B800896E14 /* UpdatePassViewController.swift in Sources */,
+				9BA17B742608EBF700D998D6 /* InfoViewController.swift in Sources */,
 				9B46D56725DB7DB500E990CC /* Utilities.swift in Sources */,
 				9B6CC78025DB60DA00C0CAF7 /* SignUpViewController.swift in Sources */,
 				9B46D62625ED436500E990CC /* MenuViewController.swift in Sources */,

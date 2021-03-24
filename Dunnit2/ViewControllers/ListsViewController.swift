@@ -9,22 +9,16 @@ import UIKit
 import CoreData
 
 class ListsViewController: UIViewController {
-
+    var sortMenu: UIMenu?
     @IBOutlet var listTableView: UITableView!
     var listStore = [ListEntity]()
     
     func getLists() {
         let templists = DataBaseHelper.shareInstance.fetchLists()
         let user = DataBaseHelper.shareInstance.fetchUser()
-        print("plssssssss")
-        print(user.count)
-        print(user[0].email)
-        // print(templists.filter{$0.owner == user[0].email})
+        
         listStore = templists.filter{$0.owner == user[0].email}
         listTableView.reloadData()
-        print("ppppp")
-        print(listStore)
-        
     }
     
     @objc func loadList(notification: NSNotification){
@@ -36,12 +30,7 @@ class ListsViewController: UIViewController {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(loadList), name: NSNotification.Name(rawValue: "load"), object: nil)
         getLists()
-
-        // Do any additional setup after loading the view.
     }
-    
-
-
 }
 
 extension ListsViewController: UITableViewDelegate {
@@ -67,8 +56,6 @@ extension ListsViewController: UITableViewDataSource {
         print("HEREEEEEPOOP")
             let cell = tableView.dequeueReusableCell(withIdentifier: "listcell", for: indexPath)
             cell.textLabel!.text = listStore[indexPath.row].title
-//            print("HELLLOOOOO")
-            
             return cell
     }
     

@@ -183,6 +183,10 @@
                                     <outlet property="delegate" destination="vS7-ur-LcG" id="DSw-TY-Zte"/>
                                 </connections>
                             </searchBar>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" fixedFrame="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="qBw-xk-V3X">
+                                <rect key="frame" x="20" y="133" width="374" height="4"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </progressView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="TxW-zn-0BW"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -203,16 +207,9 @@
                                 <action selector="didTapMenu:" destination="vS7-ur-LcG" id="qLL-lI-9pR"/>
                             </connections>
                         </barButtonItem>
-                        <rightBarButtonItems>
-                            <barButtonItem title="Item" id="F9c-SV-qhr"/>
-                            <barButtonItem systemItem="add" id="OCT-FU-Lb3">
-                                <connections>
-                                    <action selector="didTapAdd" destination="vS7-ur-LcG" id="esl-xM-maO"/>
-                                </connections>
-                            </barButtonItem>
-                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
+                        <outlet property="progressView" destination="qBw-xk-V3X" id="10H-g7-80x"/>
                         <outlet property="searchBar" destination="HZh-kO-YUx" id="PYf-FB-bOQ"/>
                         <outlet property="tableView" destination="I0E-PR-QQk" id="f4l-6u-mN1"/>
                         <segue destination="my1-e3-sGj" kind="show" identifier="showInfo" id="B07-yv-zC2"/>
@@ -220,7 +217,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aFD-Hw-mh8" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="349" y="88"/>
+            <point key="canvasLocation" x="347.82608695652175" y="87.723214285714278"/>
         </scene>
         <!--Add View Controller-->
         <scene sceneID="75X-eq-HbX">
@@ -559,7 +556,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kz5-V6-2lS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1277" y="792"/>
+            <point key="canvasLocation" x="1276.8115942028987" y="791.51785714285711"/>
         </scene>
         <!--Shared View Controller-->
         <scene sceneID="Dy0-Iu-OS8">
@@ -709,6 +706,10 @@
                                     <outlet property="delegate" destination="GPx-gH-kAL" id="7G2-JS-fhq"/>
                                 </connections>
                             </tableView>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" fixedFrame="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="TVE-TS-IK5">
+                                <rect key="frame" x="20" y="93" width="374" height="4"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </progressView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="R2w-ZW-ePg"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -721,12 +722,13 @@
                     </view>
                     <navigationItem key="navigationItem" id="ON4-mk-UDQ"/>
                     <connections>
+                        <outlet property="progressView" destination="TVE-TS-IK5" id="ngz-1A-Jd7"/>
                         <outlet property="tableTaskView" destination="npc-aJ-y5a" id="gkM-KG-fYY"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="s7a-AZ-fpF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2074" y="792"/>
+            <point key="canvasLocation" x="2073.913043478261" y="791.51785714285711"/>
         </scene>
         <!--Sharing View Controller-->
         <scene sceneID="nS8-fV-ez8">
@@ -760,7 +762,53 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="21R-Qo-rwx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2874" y="1491"/>
+            <point key="canvasLocation" x="3674" y="792"/>
+        </scene>
+        <!--Info View Controller-->
+        <scene sceneID="sm9-TS-SHL">
+            <objects>
+                <viewController storyboardIdentifier="info" id="srs-uA-oq0" customClass="InfoViewController" customModule="Dunnit2" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="tWf-nH-RhA">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fkw-UC-aFC">
+                                <rect key="frame" x="178" y="695" width="59" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Remove ">
+                                    <color key="titleColor" systemColor="systemRedColor"/>
+                                </state>
+                                <connections>
+                                    <action selector="removeTapped:" destination="srs-uA-oq0" eventType="touchUpInside" id="axX-Zx-YLh"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Shared by" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HR7-pE-664">
+                                <rect key="frame" x="64" y="274" width="297" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Title of List" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pTJ-N9-um5">
+                                <rect key="frame" x="64" y="151" width="241" height="47"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="akH-q7-6R6"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <outlet property="ListTitle" destination="pTJ-N9-um5" id="tLj-1N-Odj"/>
+                        <outlet property="Remove" destination="fkw-UC-aFC" id="00E-of-iD9"/>
+                        <outlet property="SharedBy" destination="HR7-pE-664" id="eJV-zF-Rth"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="JGD-Vw-0xZ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2873.913043478261" y="1490.625"/>
         </scene>
     </scenes>
     <resources>
@@ -773,6 +821,9 @@
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
