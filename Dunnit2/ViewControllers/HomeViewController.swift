@@ -172,7 +172,7 @@ class HomeViewController: UIViewController {
             addlistVC.completion = {title in
 //                DispatchQueue.main.async {
                     self.navigationController?.popToRootViewController(animated: true)
-                DataBaseHelper.shareInstance.saveList(title: title, shared: false, sharedWith: "")
+                DataBaseHelper.shareInstance.saveLocalList(title: title, shared: false, sharedWith: "")
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: "load"), object: nil)
 //                    listsVC.viewWillAppear(true)
 //                }

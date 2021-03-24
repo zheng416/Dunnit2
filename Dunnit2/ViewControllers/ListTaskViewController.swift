@@ -101,7 +101,7 @@ class ListTaskViewController: UIViewController {
         vc.completion = {email in
             DispatchQueue.main.async {
                 self.navigationController?.popViewController(animated: true)
-                DataBaseHelper.shareInstance.shareListDB(to: email, taskList: self.titleList!)
+                DataBaseHelper.shareInstance.saveDBSharedList(to: email, taskList: self.titleList!)
                 self.getData()
             }
         }
