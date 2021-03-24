@@ -54,24 +54,24 @@ class ListTaskViewController: UIViewController {
             //TODO: Sort by task list function
             // Sort by title
             UIAction(title: "By Ascending Title", image: UIImage(systemName: "doc.on.doc")) { action in
-                let tasks = DataBaseHelper.shareInstance.fetchTaskAscendingTitle()
+                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: "title", ascending: true)
                 self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
                 // Update user's preference local
                 // Update user's preference DB
                 self.tableTaskView.reloadData()
             },
              UIAction(title: "By Ascending Date", image: UIImage(systemName: "pencil")) { action in
-                let tasks = DataBaseHelper.shareInstance.fetchTaskAscendingDate()
+                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: "date", ascending: true)
                 self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
                 self.tableTaskView.reloadData()
             },
             UIAction(title: "By Decending Title", image: UIImage(systemName: "doc.on.doc")) { action in
-                let tasks = DataBaseHelper.shareInstance.fetchTaskDecendingTitle()
+                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: "title", ascending: false)
                 self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
                 self.tableTaskView.reloadData()
             },
              UIAction(title: "By Decending Date", image: UIImage(systemName: "pencil")) { action in
-                let tasks = DataBaseHelper.shareInstance.fetchTaskDecendingDate()
+                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: "title", ascending: false)
                 self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
                 self.tableTaskView.reloadData()
             }
