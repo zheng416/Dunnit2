@@ -97,7 +97,7 @@ class HomeViewController: UIViewController {
         
         case .progress:
             let storyboard = UIStoryboard(name: "Home", bundle: nil)
-            let listVC = storyboard.instantiateViewController(withIdentifier: "progressVC")
+            let listVC = storyboard.instantiateViewController(withIdentifier: "progressTabVC")
             view.addSubview(listVC.view)
             self.topView = listVC.view
             addChild(listVC)

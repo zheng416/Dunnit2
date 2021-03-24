@@ -643,7 +643,7 @@
             </objects>
             <point key="canvasLocation" x="1277" y="1491"/>
         </scene>
-        <!--Progress View Controller-->
+        <!--All-->
         <scene sceneID="830-Qm-SZw">
             <objects>
                 <viewController storyboardIdentifier="progressVC" id="FDX-Cq-Ji2" customClass="ProgressViewController" customModule="Dunnit2" customModuleProvider="target" sceneMemberID="viewController">
@@ -669,6 +669,7 @@
                         <viewLayoutGuide key="safeArea" id="RO9-Ec-Z7T"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
+                    <tabBarItem key="tabBarItem" title="All" id="lae-2B-hQ1" userLabel="All"/>
                     <connections>
                         <outlet property="labelType" destination="fy5-6X-pc9" id="Fed-w7-dxb"/>
                         <outlet property="mainPercentageLabel" destination="M1W-0n-rb0" id="kfd-NU-iJy"/>
@@ -676,7 +677,58 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="isr-QC-Ukv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1289.8550724637682" y="2219.1964285714284"/>
+            <point key="canvasLocation" x="535" y="3009"/>
+        </scene>
+        <!--Daily-->
+        <scene sceneID="Gzs-jK-nj9">
+            <objects>
+                <viewController id="ZrD-Ob-0db" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="iXQ-45-Ay0">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="aVD-pU-Nei"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Daily" id="mSR-Fy-ake"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="aS1-FC-bbo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1277" y="3010"/>
+        </scene>
+        <!--Monthly-->
+        <scene sceneID="R5L-Tg-3be">
+            <objects>
+                <viewController id="mQo-EN-L6s" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="yc4-YT-oqS">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="4hQ-ZB-aMB"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Monthly" id="jX2-Rb-jRE"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="GRe-8z-aEy" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2003" y="3009"/>
+        </scene>
+        <!--Tab Bar Controller-->
+        <scene sceneID="fcD-gm-1qU">
+            <objects>
+                <tabBarController storyboardIdentifier="progressTabVC" id="JOf-wY-nTW" sceneMemberID="viewController">
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="x9H-bf-vxY">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="FDX-Cq-Ji2" kind="relationship" relationship="viewControllers" id="uG4-m9-OkK"/>
+                        <segue destination="ZrD-Ob-0db" kind="relationship" relationship="viewControllers" id="euy-XF-sHW"/>
+                        <segue destination="mQo-EN-L6s" kind="relationship" relationship="viewControllers" id="LXk-lP-QnP"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="VfU-jE-7jb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1277" y="2278"/>
         </scene>
         <!--Shared Task View Controller-->
         <scene sceneID="RtV-Zj-Tbf">
