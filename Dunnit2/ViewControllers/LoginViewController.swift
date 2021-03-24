@@ -148,10 +148,10 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                 DispatchQueue.main.asyncAfter(deadline: when) {
                     dialogMessage.dismiss(animated: true, completion: nil)
                 }
-                DataBaseHelper.shareInstance.createNewUser(email: email)
+                //DataBaseHelper.shareInstance.createNewUser(email: email)
                 DataBaseHelper.shareInstance.FBfetchuname(email: email, completion: {name in
                     print("name",name)
-                    DataBaseHelper.shareInstance.updateName(name: name, email: email)
+                    //DataBaseHelper.shareInstance.updateName(name: name, email: email)
                 } )
                 DataBaseHelper.shareInstance.fetchListsDB(completion: {success in
                     if success {

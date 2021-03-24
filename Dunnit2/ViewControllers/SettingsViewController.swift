@@ -12,15 +12,18 @@ import FBSDKLoginKit
 
 class SettingsViewController: UITableViewController {
     
+    @IBOutlet weak var verifyEmailButton: UIView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var emailLabel: UILabel!
     @IBOutlet weak var soundToggle: UISwitch!
+    @IBOutlet weak var verifyLabel: UILabel!
     @IBOutlet weak var notificationsToggle: UISwitch!
     @IBOutlet weak var darkModeToggle: UISwitch!
     
+    @IBOutlet weak var verifyEmailLabel: UIView!
     var userStore = [UserEntity]()
     var globalUser = [String: Any]()
-    
+    var authUser = Auth.auth().currentUser
     //  Access databse functions
     //helper functions
     func getUser() -> [String: Any] {
@@ -91,6 +94,13 @@ class SettingsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         loadLabelValues()
+        authUser = Auth.auth().currentUser
+        print(authUser!.isEmailVerified)
+        if authUser!.isEmailVerified{
+            verifyEmailButton.isUserInteractionEnabled = false
+            emailLabel.text = "Email Verified"
+            verifyLabel.text = "Email Verified"
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -170,9 +180,11 @@ class SettingsViewController: UITableViewController {
             dialogMessage.addAction(cancel)
             self.present(dialogMessage, animated: true, completion: nil)
         } else if (indexPath == verifyEmailIndex){
+            if authUser!.isEmailVerified{
+                print("User already verified")
+                return
+            }
             print("Verify Email Button Pressed!")
-            
-            
             let dialogMessage = UIAlertController(title: "", message: "Would you like to verify your email?", preferredStyle: .alert)
             let ok = UIAlertAction(title: "Yes", style: .default) {
                 UIAlertAction in
