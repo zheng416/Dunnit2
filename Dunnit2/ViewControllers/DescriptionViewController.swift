@@ -29,18 +29,13 @@ class DescriptionViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("what is completeeeeeee")
-        print(completion)
-        print("")
-        print("")
-        print("CCCC")
 
         titleField.text = titleStr
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM dd, YYYY"
         dateField.text = formatter.string(from: self.dateVal!)
         bodyField.text = bodyStr
-        if !(topicStr!.isEmpty) {
+        if (topicStr != nil && !topicStr!.isEmpty) {
             topicField.text = "Topic: " + topicStr!
         }
         else {
