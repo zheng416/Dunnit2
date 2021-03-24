@@ -122,7 +122,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Verify email" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YFl-im-4xm">
-                                                    <rect key="frame" x="20" y="11" width="89" height="21"/>
+                                                    <rect key="frame" x="20" y="11" width="137" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
@@ -315,6 +315,8 @@
                         <outlet property="nameLabel" destination="JBX-Fn-lyy" id="EP0-iW-p26"/>
                         <outlet property="notificationsToggle" destination="aH6-qc-pf3" id="VWB-uN-DPF"/>
                         <outlet property="soundToggle" destination="Wok-Ie-5Cf" id="zOm-3a-WxV"/>
+                        <outlet property="verifyEmailButton" destination="Y8M-Af-MSO" id="ATS-o9-LJZ"/>
+                        <outlet property="verifyLabel" destination="YFl-im-4xm" id="zOg-gw-cfs"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="P1C-5x-Lmt" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
