@@ -15,7 +15,7 @@ class ListsViewController: UIViewController {
     
     func getLists() {
         let templists = DataBaseHelper.shareInstance.fetchLists()
-        let user = DataBaseHelper.shareInstance.fetchUser()
+        let user = DataBaseHelper.shareInstance.fetchLocalUser()
         
         listStore = templists.filter{$0.owner == user[0].email}
         listTableView.reloadData()

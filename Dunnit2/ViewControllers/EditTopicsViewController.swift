@@ -23,7 +23,7 @@ class EditTopicsViewController: UITableViewController, UITextFieldDelegate {
     
     //  Access databse functions
     func getUser() -> [String: Any] {
-        let user = DataBaseHelper.shareInstance.fetchUser()
+        let user = DataBaseHelper.shareInstance.fetchLocalUser()
         
         // Unpack user entity to dictionary
         var endUser = [String:Any]()
@@ -31,7 +31,7 @@ class EditTopicsViewController: UITableViewController, UITextFieldDelegate {
             endUser["name"] = x.name
             endUser["email"] = x.email
             endUser["darkMode"] = x.darkMode
-            endUser["notifications"] = x.notifications
+            endUser["notification"] = x.notification
             endUser["sound"] = x.sound
         }
         

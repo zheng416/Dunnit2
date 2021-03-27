@@ -27,8 +27,9 @@ import FirebaseFirestore
  delete a task with title both local and database
  fetchLocalTask fetch tasks from coredata
  fetchDBTask fetch Task from database
- updateUserLocal
- updateUserDB
+ updateDBUser
+ updateLocalUser
+ 
  */
 func getBoolFromAny(paramAny: Any)->Bool {
     let result = "\(paramAny)"
@@ -58,7 +59,11 @@ class DataBaseHelper {
     }
 
     func comForSaveUser(name:String, email:String, uid:String,completion:@escaping(Bool)->Void) {
-        db.collection("users").addDocument(data: ["name" : name, "uid" : uid, "email": email]) { (error) in
+        db.collection("users").addDocument(data: ["name" : name, "uid" : uid,
+                                                  "email": email,
+                                                  "darkMode":false,
+                                                  "notification":false,
+                                                  "sound":false]) { (error) in
             
             if error != nil {
                 // Show error message
@@ -339,7 +344,8 @@ class DataBaseHelper {
             print("Error retrieving user")
         }
         
-        let docData: [String: Any] = ["isDone": isDone]
+        let docData: [String: Any] = [:]
+        
         
         print("Status Change")
         db.collection("task").document(id).updateData(docData) {
@@ -388,7 +394,7 @@ class DataBaseHelper {
     }
     
     // User section -- Start
-    func fetchUser() -> [UserEntity] {
+    func fetchLocalUser() -> [UserEntity] {
         var fetchingImage = [UserEntity]()
         
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
@@ -406,8 +412,32 @@ class DataBaseHelper {
         return fetchingImage
     }
     
+    func fetchDBUser(email:String, completion:@escaping (_ message:String)->Void){
+        db.collection("users").whereField("email", isEqualTo: email).getDocuments { (docs, err) in
+            if let err = err{
+                print("cannot fetch user name from firebase: \(err)")
+                return
+            }
+            else {
+                if docs == nil {
+                    completion("FetchDBUser Error")
+                    print("No user found in DB with email: \(email)")
+                }
+                if (docs!.count > 1){
+                    print(String(docs!.count))
+                    completion("Error found more than user")
+                }
+                let user = docs?.documents[0]
+                
+                self.updateLocalUser(email: email,darkMode: (user?.get("darkmode") as? Bool) ,name: user?.get("name") as? String,notification: user?.get("notification") as? Bool,sound: user?.get("sound") as? Bool)
+                print("email for the database", email)
+                completion("Success fetchDBUser")
+            }
+        }
+        return
+    }
     
-    func createNewUser(name: String="", email: String, darkMode: Bool = false, notifications: Bool = true, sound: Bool = true ) {
+    func createNewUser(name: String="", email: String, darkMode: Bool = false, notification: Bool = true, sound: Bool = true ) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -416,7 +446,7 @@ class DataBaseHelper {
         instance.name = name
         instance.email = email
         instance.darkMode = darkMode
-        instance.notifications = notifications
+        instance.notification = notification
         instance.sound = sound
         
         do {
@@ -556,7 +586,7 @@ class DataBaseHelper {
         }
     }
     //TODO : add all
-    func updateLocalUser(email: String,sound:Bool? = nil, notification: Bool? = nil,darkMode:Bool? = nil,name:Bool? = nil ) {
+    func updateLocalUser(email: String,darkMode:Bool? = nil,name:String? = nil, notification: Bool? = nil,sound:Bool? = nil ) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -567,14 +597,40 @@ class DataBaseHelper {
         
         do {
             let foundUser = try managedContext.fetch(fetchRequest) as! [UserEntity]
-            sound != nil ? foundUser.first?.sound = sound! :
+            if darkMode != nil  {foundUser.first?.darkMode = darkMode!}
+            if name != nil  {foundUser.first?.name = name!}
+            if notification != nil  {foundUser.first?.notification = notification!}
+            if sound != nil  {foundUser.first?.sound = sound!}
             try managedContext.save()
             print("Updated Sound.")
         } catch {
             print("Update error.")
         }
     }
-
+    func updateDBUser(email: String,darkMode:Bool? = nil,name:String? = nil, notification: Bool? = nil,sound:Bool? = nil ) {
+        var docData: [String: Any] = [:]
+        if darkMode != nil  {docData["darkMode"] = darkMode!}
+        if name != nil  {docData["name"] = name!}
+        if notification != nil  {docData["notification"] = notification!}
+        if sound != nil  {docData["sound"] = sound!}
+        print(sound)
+        print(docData["sound"])
+        self.db.collection("users").whereField("email", isEqualTo: email).getDocuments() {
+            (docs, err) in
+            if err != nil {
+                print("Error updating status")
+                return
+            }
+            if docs != nil && docs!.count == 1{
+                docs?.documents[0].reference.updateData(docData)
+                print ("DB User Updated")
+            }
+            else{
+                print("Error Updating User on DB")
+                print(docs?.count)
+            }
+        }
+    }
     //Save local list
     func saveLocalList(title: String, shared: Bool, sharedWith: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }

@@ -35,7 +35,7 @@ class HomeViewController: UIViewController {
     func getData() {
         
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
-        let user = DataBaseHelper.shareInstance.fetchUser()
+        let user = DataBaseHelper.shareInstance.fetchLocalUser()
         taskStore = [tasks.filter{$0.isDone == false && $0.owner == user[0].email}, tasks.filter{$0.isDone == true && $0.owner == user[0].email}]
         
         let progressCount = (Float(taskStore[1].count) / Float(taskStore[0].count + taskStore[1].count))
