@@ -148,26 +148,34 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                 DispatchQueue.main.asyncAfter(deadline: when) {
                     dialogMessage.dismiss(animated: true, completion: nil)
                 }
-                //DataBaseHelper.shareInstance.createNewUser(email: email)
-                DataBaseHelper.shareInstance.FBfetchuname(email: email, completion: {name in
-                    print("name",name)
-                    //DataBaseHelper.shareInstance.updateName(name: name, email: email)
-                } )
-                DataBaseHelper.shareInstance.fetchListsDB(completion: {success in
-                    if success {
-                        print("fetched taskslist from database!")
-                    }
-                })
-                DataBaseHelper.shareInstance.fetchDBTask (completion: {success in
-                    if success{
-                        print("Loaded data from database")
-                        // Transition to the home screen
-                        self.transitionToHome()
+                //TODO update using the 
+                DataBaseHelper.shareInstance.createNewUser(email: email)
+                DataBaseHelper.shareInstance.fetchDBUser(email: email, completion:{message in
+                    if message.contains("Success"){
+                        DataBaseHelper.shareInstance.fetchListsDB(completion: {success in
+                            if success {
+                                print("fetched taskslist from database!")
+                            }
+                        })
+                        DataBaseHelper.shareInstance.fetchDBTask (completion: {success in
+                            if success{
+                                print("Loaded data from database")
+                                // Transition to the home screen
+                                self.transitionToHome()
 
+                            }
+                            print("cannot load data from database")
+                            return
+                        })
                     }
-                    print("cannot load data from database")
-                    return
-                })
+                    else if message.contains("Error"){
+                        return
+                    }
+                    else{
+                        print("Unknown return from compelition")
+                        return
+                    }
+                }  )
             }
         }
         
