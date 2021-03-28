@@ -286,6 +286,7 @@ class DataBaseHelper {
                             continue
                         }
                         let instance = TaskEntity(context: managedContext)
+                        instance.id = document.get("id")! as? String
                         instance.title = title as? String
                         instance.body = document.get("body")! as? String
                         instance.date = (document.get("date")! as! Timestamp).dateValue() as? Date
@@ -344,8 +345,13 @@ class DataBaseHelper {
             print("Error retrieving user")
         }
         
-        let docData: [String: Any] = [:]
+        let docData: [String: Any]
         
+        if (owner == nil || list == nil || isDone == nil) {
+            docData = ["title": title, "body": body, "color": color,"date": date]
+        } else {
+            docData = ["title": title, "body": body, "color": color,"date": date, "isDone": isDone, "list": list]
+        }
         
         print("Status Change")
         db.collection("task").document(id).updateData(docData) {
@@ -388,6 +394,13 @@ class DataBaseHelper {
             foundTasks.first?.color = color
             try managedContext.save()
             print("Updated.")
+            print("ID")
+            print(id)
+            print(body)
+            print(list)
+            print(isDone)
+            print(owner)
+            updateDBTask(id: id, body: body, color: color, date: date, isDone: isDone, list: list, owner: owner, title: title)
         } catch {
             print("Update error.")
         }
@@ -859,7 +872,7 @@ class DataBaseHelper {
                 }
                 print("Saved list \(taskList) to DB")
                 //QUESTION why update here??????
-                //DataBaseHelper.shareInstance.updateListsShared(id:id,email: email!, shared: true, sharedWith: to, title: taskList)
+                DataBaseHelper.shareInstance.updateListsShared(id:id,email: email!, shared: true, sharedWith: to, title: taskList)
                 print("DONEEEEEE Update")
             }
         } catch {
