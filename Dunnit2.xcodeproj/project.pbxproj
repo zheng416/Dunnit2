@@ -40,6 +40,7 @@
 		9BBAE66F25EEAC3E003CC28B /* AddListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE66E25EEAC3D003CC28B /* AddListViewController.swift */; };
 		9BBAE67625F15EB7003CC28B /* ListTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE67525F15EB6003CC28B /* ListTaskViewController.swift */; };
 		CE4912C42602E3B800896E14 /* UpdatePassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4912C32602E3B800896E14 /* UpdatePassViewController.swift */; };
+		CE58F3C3260FF61F0049EB4B /* ChangeListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE58F3C2260FF61F0049EB4B /* ChangeListViewController.swift */; };
 		D999FD13777EE2C0EA48865A /* Pods_Dunnit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA12CDEBDC4CE346BF760AAE /* Pods_Dunnit2.framework */; };
 /* End PBXBuildFile section */
 
@@ -81,6 +82,7 @@
 		9BBAE66E25EEAC3D003CC28B /* AddListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddListViewController.swift; sourceTree = "<group>"; };
 		9BBAE67525F15EB6003CC28B /* ListTaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTaskViewController.swift; sourceTree = "<group>"; };
 		CE4912C32602E3B800896E14 /* UpdatePassViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePassViewController.swift; sourceTree = "<group>"; };
+		CE58F3C2260FF61F0049EB4B /* ChangeListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeListViewController.swift; sourceTree = "<group>"; };
 		FA12CDEBDC4CE346BF760AAE /* Pods_Dunnit2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dunnit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -166,6 +168,7 @@
 				CE4912C32602E3B800896E14 /* UpdatePassViewController.swift */,
 				9B6CC76E25DB5F5A00C0CAF7 /* ViewController.swift */,
 				9BA17B732608EBF700D998D6 /* InfoViewController.swift */,
+				CE58F3C2260FF61F0049EB4B /* ChangeListViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -329,6 +332,7 @@
 				9B7190C125FBCF7700549805 /* SharedTaskViewController.swift in Sources */,
 				9B6CC76F25DB5F5A00C0CAF7 /* ViewController.swift in Sources */,
 				9BBAE66C25EDA714003CC28B /* ListsViewController.swift in Sources */,
+				CE58F3C3260FF61F0049EB4B /* ChangeListViewController.swift in Sources */,
 				9B7190BE25FBCD7100549805 /* SharedViewController.swift in Sources */,
 				9B6CC76B25DB5F5A00C0CAF7 /* AppDelegate.swift in Sources */,
 				5DA410AE25F1BE6B005D3E0B /* EditViewController.swift in Sources */,
