@@ -1,23 +1,21 @@
 //
-//  ProgressViewController.swift
+//  DailyProgressViewController.swift
 //  Dunnit2
 //
-//  Created by Andrew T Lim on 3/23/21.
+//  Created by Andrew T Lim on 3/24/21.
 //
 
 import UIKit
 
-class ProgressViewController: UIViewController {
-    let shapeLayer = CAShapeLayer()
+class DailyProgressViewController: UIViewController {
+    
     @IBOutlet weak var labelType: UILabel!
     @IBOutlet weak var mainPercentageLabel: UILabel!
     
+    let shapeLayer = CAShapeLayer()
     var taskStore = [[TaskEntity](), [TaskEntity]()]
     var percentageValue: Float = 0.0
-    var period: String = "all"
-    
-  
-    
+    var period: String = "daily"
     
     override func viewDidLoad() {
         
@@ -91,7 +89,12 @@ class ProgressViewController: UIViewController {
         let percentage = NSString(format: "%.0f", 100 * value) as String
         let percentageLabel = percentage + "%"
         
-        labelType.text = timePeriod.capitalized
+        let now = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMMM d y"
+        let dateString = dateFormatter.string(from: now)
+        
+        labelType.text = dateString
         mainPercentageLabel.textColor = .black
         mainPercentageLabel.textAlignment = .center
         mainPercentageLabel.text = percentageLabel
