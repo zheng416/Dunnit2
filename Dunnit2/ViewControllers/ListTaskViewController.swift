@@ -99,6 +99,7 @@ class ListTaskViewController: UIViewController {
         }
         vc.title = "Share with"
         vc.navigationItem.largeTitleDisplayMode = .never
+        vc.lid = self.id!
         vc.completion = {email in
             DispatchQueue.main.async {
                 self.navigationController?.popViewController(animated: true)
