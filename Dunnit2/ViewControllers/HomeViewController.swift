@@ -242,6 +242,28 @@ class HomeViewController: UIViewController {
              UIAction(title: "By Tags") { action in
                 //Move Menu Child Selected
             },
+            UIAction(title: "Filter Today") { action in
+               //Move Menu Child Selected
+                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: false, filterKey: "today")
+                self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                
+                self.tableView.reloadData()
+           },
+            UIAction(title: "Filter This Month") { action in
+               //Move Menu Child Selected
+                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: false, filterKey: "month")
+                self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                
+                self.tableView.reloadData()
+           },
+            UIAction(title: "Filter This Year") { action in
+               //Move Menu Child Selected
+                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: false, filterKey: "year")
+                self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                
+                self.tableView.reloadData()
+           },
+            
                 ])
     }
 

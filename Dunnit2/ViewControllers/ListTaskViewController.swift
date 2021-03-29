@@ -61,7 +61,8 @@ class ListTaskViewController: UIViewController {
             // Sort by title
             UIAction(title: "By Title Ascending") { action in
                 let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: "title", ascending: true)
-                self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                
+                self.taskListStore = [tasks.filter{$0.isDone == false && $0.list == self.titleList}, tasks.filter{$0.isDone == true && $0.list == self.titleList}]
                 
                 // Update user's preference in db
                 DataBaseHelper.shareInstance.updateSortPreference(key: "title", ascending: true, email: localUser[0].email ?? "")
@@ -71,7 +72,7 @@ class ListTaskViewController: UIViewController {
             },
             UIAction(title: "By Title Decending") { action in
                 let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: "title", ascending: false)
-                self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                self.taskListStore = [tasks.filter{$0.isDone == false && $0.list == self.titleList}, tasks.filter{$0.isDone == true && $0.list == self.titleList}]
                 
                 // Update user's preference in db
                 DataBaseHelper.shareInstance.updateSortPreference(key: "title", ascending: false, email: localUser[0].email ?? "")
@@ -81,7 +82,7 @@ class ListTaskViewController: UIViewController {
             },
              UIAction(title: "By Date Ascending") { action in
                 let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: "date", ascending: true)
-                self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                self.taskListStore = [tasks.filter{$0.isDone == false && $0.list == self.titleList}, tasks.filter{$0.isDone == true && $0.list == self.titleList}]
                 
                 // Update user's preference in db
                 DataBaseHelper.shareInstance.updateSortPreference(key: "date", ascending: true, email: localUser[0].email ?? "")
@@ -91,14 +92,35 @@ class ListTaskViewController: UIViewController {
             },
              UIAction(title: "By Date Decending") { action in
                 let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: "title", ascending: false)
-                self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                self.taskListStore = [tasks.filter{$0.isDone == false && $0.list == self.titleList}, tasks.filter{$0.isDone == true && $0.list == self.titleList}]
                 
                 // Update user's preference in db
                 DataBaseHelper.shareInstance.updateSortPreference(key: "date", ascending: false, email: localUser[0].email ?? "")
                 DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "date", ascending: false, email: localUser[0].email ?? "")
                 
                 self.tableTaskView.reloadData()
-            }
+            },
+            UIAction(title: "Filter Today") { action in
+               //Move Menu Child Selected
+                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: false, filterKey: "today")
+                self.taskListStore = [tasks.filter{$0.isDone == false && $0.list == self.titleList}, tasks.filter{$0.isDone == true && $0.list == self.titleList}]
+                
+                self.tableTaskView.reloadData()
+           },
+            UIAction(title: "Filter This Month") { action in
+               //Move Menu Child Selected
+                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: false, filterKey: "month")
+                self.taskListStore = [tasks.filter{$0.isDone == false && $0.list == self.titleList}, tasks.filter{$0.isDone == true && $0.list == self.titleList}]
+                
+                self.tableTaskView.reloadData()
+           },
+            UIAction(title: "Filter This Year") { action in
+               //Move Menu Child Selected
+                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: false, filterKey: "year")
+                self.taskListStore = [tasks.filter{$0.isDone == false && $0.list == self.titleList}, tasks.filter{$0.isDone == true && $0.list == self.titleList}]
+                
+                self.tableTaskView.reloadData()
+           },
         ])
     }
     

@@ -9,7 +9,7 @@ import UIKit
 import CoreData
 
 class ListsViewController: UIViewController {
-    var sortMenu: UIMenu?
+
     @IBOutlet var listTableView: UITableView!
     var listStore = [ListEntity]()
     

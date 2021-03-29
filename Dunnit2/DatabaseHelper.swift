@@ -30,6 +30,56 @@ import FirebaseFirestore
  updateUserLocal
  updateUserDB
  */
+
+extension Date {
+    var startOfDay: Date {
+        return Calendar.current.startOfDay(for: self)
+    }
+
+    var startOfMonth: Date {
+
+        let calendar = Calendar(identifier: .gregorian)
+        let components = calendar.dateComponents([.year, .month], from: self)
+
+        return  calendar.date(from: components)!
+    }
+    
+    var startOfYear: Date {
+
+        let calendar = Calendar(identifier: .gregorian)
+        let components = calendar.dateComponents([.year], from: self)
+
+        return  calendar.date(from: components)!
+    }
+
+    var endOfDay: Date {
+        var components = DateComponents()
+        components.day = 1
+        components.second = -1
+        return Calendar.current.date(byAdding: components, to: startOfDay)!
+    }
+
+    var endOfMonth: Date {
+        var components = DateComponents()
+        components.month = 1
+        components.second = -1
+        return Calendar(identifier: .gregorian).date(byAdding: components, to: startOfMonth)!
+    }
+    
+    var endOfYear: Date {
+        var components = DateComponents()
+        components.year = 1
+        components.second = -1
+        return Calendar(identifier: .gregorian).date(byAdding: components, to: startOfMonth)!
+    }
+
+    func isMonday() -> Bool {
+        let calendar = Calendar(identifier: .gregorian)
+        let components = calendar.dateComponents([.weekday], from: self)
+        return components.weekday == 2
+    }
+}
+
 func getBoolFromAny(paramAny: Any)->Bool {
     let result = "\(paramAny)"
     return result == "1"
@@ -202,7 +252,7 @@ class DataBaseHelper {
         }
     }
     
-    func fetchLocalTask(key:String? = nil, ascending:Bool? = nil) -> [TaskEntity] {
+    func fetchLocalTask(key:String? = nil, ascending:Bool? = nil, filterKey: String? = nil) -> [TaskEntity] {
         var fetchingImage = [TaskEntity]()
             
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
@@ -214,6 +264,50 @@ class DataBaseHelper {
             let sort = NSSortDescriptor(key: key, ascending: ascending ?? true)
             fetchRequest.sortDescriptors = [sort]
         }
+
+        if (filterKey != nil) {
+            // Get the current calendar with local time zone
+            var calendar = Calendar.current
+            calendar.timeZone = NSTimeZone.local
+
+            if (filterKey == "today") {
+                // Get today's beginning & end
+                let dateFrom = calendar.startOfDay(for: Date()) // eg. 2016-10-10 00:00:00
+                let dateTo = calendar.date(byAdding: .day, value: 1, to: dateFrom)
+                
+                // Set predicate as date being today's date
+                let fromPredicate = NSPredicate(format: "date >= %@", dateFrom as NSDate)
+                let toPredicate = NSPredicate(format: "date < %@", dateTo! as NSDate)
+                
+                let datePredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [fromPredicate, toPredicate])
+                fetchRequest.predicate = datePredicate
+                
+            } else if (filterKey == "month") {
+                // Get today's beginning & end
+                let startOfMonth = Date().startOfMonth
+                let endOfMonth = Date().endOfMonth
+                
+                // Set predicate as date being today's date
+                let fromPredicate = NSPredicate(format: "date >= %@", startOfMonth as NSDate)
+                let toPredicate = NSPredicate(format: "date < %@", endOfMonth as NSDate)
+                
+                let datePredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [fromPredicate, toPredicate])
+                fetchRequest.predicate = datePredicate
+            } else if (filterKey == "year") {
+                // Get today's beginning & end
+   
+                let startYear = Date().startOfYear
+                let endYear = Date().endOfYear
+                
+                // Set predicate as date being today's date
+                let fromPredicate = NSPredicate(format: "date >= %@", startYear as NSDate)
+                let toPredicate = NSPredicate(format: "date < %@", endYear as NSDate)
+                
+                let datePredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [fromPredicate, toPredicate])
+                fetchRequest.predicate = datePredicate
+            }
+        }
+        
         do {
             print("All Data.")
             fetchingImage = try managedContext.fetch(fetchRequest) as! [TaskEntity]
