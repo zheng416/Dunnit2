@@ -41,6 +41,7 @@ extension ListsViewController: UITableViewDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destination = segue.destination as? ListTaskViewController {
             destination.titleList = listStore[(listTableView.indexPathForSelectedRow?.row)!].title
+            destination.id = listStore[(listTableView.indexPathForSelectedRow?.row)!].id
             listTableView.deselectRow(at: listTableView.indexPathForSelectedRow!, animated: true)
         }
     }

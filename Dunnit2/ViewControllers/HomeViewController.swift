@@ -270,6 +270,8 @@ extension HomeViewController: UITableViewDelegate {
         if let indexPath = tableView.indexPathForSelectedRow {
             let destination = segue.destination as? DescriptionViewController
             let id = taskStore[indexPath.section][indexPath.row].id
+            print("THE ID IS    ")
+            print(id)
             destination?.titleStr = taskStore[indexPath.section][indexPath.row].title!
             destination?.dateVal = taskStore[indexPath.section][indexPath.row].date!
             destination?.bodyStr = taskStore[indexPath.section][indexPath.row].body

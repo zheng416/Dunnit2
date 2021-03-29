@@ -10,6 +10,7 @@ import UIKit
 class ListTaskViewController: UIViewController {
 
     var titleList: String?
+    var id: String?
     var sortMenu: UIMenu?
     
     @IBOutlet weak var progressView: UIProgressView!
@@ -101,7 +102,7 @@ class ListTaskViewController: UIViewController {
         vc.completion = {email in
             DispatchQueue.main.async {
                 self.navigationController?.popViewController(animated: true)
-                DataBaseHelper.shareInstance.saveDBSharedList(to: email, taskList: self.titleList!)
+                DataBaseHelper.shareInstance.saveDBSharedList(to: email, taskList: self.titleList!, lid: self.id!)
                 self.getData()
             }
         }

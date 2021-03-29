@@ -11,6 +11,7 @@ class SharedTaskViewController: UIViewController {
 
     var titleList: String?
     var owner: String?
+    var id: String?
     var listtasks = [TaskEntity]()
     @IBOutlet var sharedTaskTableView: UITableView!
     
@@ -24,8 +25,8 @@ class SharedTaskViewController: UIViewController {
                 self.listtasks = task
                 print("RETRIEVED")
                 
-                print(self.listtasks[0].isDone)
-                print(self.listtasks[0].isDone)
+//                print(self.listtasks[0].isDone)
+//                print(self.listtasks[0].isDone)
                 
                 
                 self.taskShareStore = [self.listtasks.filter{$0.isDone == false && $0.list == self.titleList}, self.listtasks.filter{$0.isDone == true && $0.list == self.titleList}]
@@ -59,6 +60,9 @@ class SharedTaskViewController: UIViewController {
         vc.title = "Info"
         vc.owner = owner
         vc.titleList = titleList
+        vc.id = id
+        print("INFOOOOOOOOOOOOOOOOO")
+        print(id)
         vc.navigationItem.largeTitleDisplayMode = .never
 //        vc.completion = {title, shared, color in
 //            DispatchQueue.main.async {
