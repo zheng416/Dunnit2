@@ -101,7 +101,7 @@ class DataBaseHelper {
             }
         }
     }
-    func saveTask(title: String, body: String, date: Date, isDone: Bool, list: String, color: String) {
+    func saveTask(title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -130,7 +130,8 @@ class DataBaseHelper {
             "date":date,
             "isDone" : isDone,
             "list": list,
-            "color": color
+            "color": color,
+            "priority": priority
         ]
         
         db.collection("task").document(key).setData(docData) { err in
@@ -149,6 +150,7 @@ class DataBaseHelper {
         instance.list = list
         instance.color = color
         instance.owner = email
+        instance.priority = priority
         print(instance.date!)
         do {
             print("Saved.")
@@ -294,6 +296,7 @@ class DataBaseHelper {
                         instance.color = document.get("color")! as? String
                         instance.list = document.get("list")! as? String
                         instance.owner = document.get("email")! as? String
+                        instance.priority = (document.get("priority")! as? Int16)!
                         print(title)
                         do{
                             try managedContext.save()//print("save to local.")
@@ -320,7 +323,7 @@ class DataBaseHelper {
     }
     
     //change the isDone for a task
-    func updateDBTask(id:String, body: String?, color: String?, date:Date?, isDone: Bool?, list:String?, owner:String?, title:String?) {
+    func updateDBTask(id:String, body: String?, color: String?, date:Date?, isDone: Bool?, list:String?, owner:String?, title:String?, priority:Int16?) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -348,9 +351,9 @@ class DataBaseHelper {
         let docData: [String: Any]
         
         if (owner == nil || list == nil || isDone == nil) {
-            docData = ["title": title, "body": body, "color": color,"date": date]
+            docData = ["title": title, "body": body, "color": color,"date": date, "priority": priority]
         } else {
-            docData = ["title": title, "body": body, "color": color,"date": date, "isDone": isDone, "list": list]
+            docData = ["title": title, "body": body, "color": color,"date": date, "isDone": isDone, "list": list, "priority": priority]
         }
         
         print("Status Change")
@@ -373,7 +376,7 @@ class DataBaseHelper {
         }
     }
     // update local task
-    func updateLocalTask(id:String, body: String? = nil, color: String? = nil, date:Date? = nil, isDone: Bool? = nil, list:String? = nil, owner:String? = nil, title:String? = nil) {
+    func updateLocalTask(id:String, body: String? = nil, color: String? = nil, date:Date? = nil, isDone: Bool? = nil, list:String? = nil, owner:String? = nil, title:String? = nil, priority:Int16? = 0) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -391,6 +394,7 @@ class DataBaseHelper {
             if isDone != nil {foundTasks.first?.isDone = isDone!}
             if list != nil {foundTasks.first?.list = list}
             if owner != nil {foundTasks.first?.owner = owner}
+            if priority != 0 {foundTasks.first?.priority = priority!}
             foundTasks.first?.color = color
             try managedContext.save()
             print("Updated.")
@@ -400,7 +404,7 @@ class DataBaseHelper {
             print(list)
             print(isDone)
             print(owner)
-            updateDBTask(id: id, body: body, color: color, date: date, isDone: isDone, list: list, owner: owner, title: title)
+            updateDBTask(id: id, body: body, color: color, date: date, isDone: isDone, list: list, owner: owner, title: title, priority: priority)
         } catch {
             print("Update error.")
         }
