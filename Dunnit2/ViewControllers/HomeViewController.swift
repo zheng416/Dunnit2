@@ -9,6 +9,33 @@ import UIKit
 import CoreData
 import Firebase
 
+extension NSMutableAttributedString {
+    var fontSize:CGFloat { return 18 }
+    var boldFont:UIFont { return UIFont(name: "AvenirNext-Bold", size: fontSize) ?? UIFont.boldSystemFont(ofSize: fontSize) }
+    var normalFont:UIFont { return UIFont(name: "AvenirNext-Regular", size: fontSize) ?? UIFont.systemFont(ofSize: fontSize)}
+    
+    func boldAndRed(_ value:String) -> NSMutableAttributedString {
+        
+        let attributes:[NSAttributedString.Key : Any] = [
+            .font : boldFont,
+            .foregroundColor : UIColor.red
+        ]
+        
+        self.append(NSAttributedString(string: value, attributes:attributes))
+        return self
+    }
+    
+    func normal(_ value:String) -> NSMutableAttributedString {
+        
+        let attributes:[NSAttributedString.Key : Any] = [
+            .font : normalFont,
+        ]
+        
+        self.append(NSAttributedString(string: value, attributes:attributes))
+        return self
+    }
+}
+
 private var sortViewController: UIView!
 
 class HomeViewController: UIViewController {
@@ -183,10 +210,10 @@ class HomeViewController: UIViewController {
 
         vc.title = "New Task"
         vc.navigationItem.largeTitleDisplayMode = .never
-        vc.completion = {title, body, date, color in
+        vc.completion = {title, body, date, color, priority in
             DispatchQueue.main.async {
                 self.navigationController?.popToRootViewController(animated: true)
-                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: "all", color: color)
+                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: "all", color: color, priority: priority)
                 self.getData()
             }
         }
@@ -276,10 +303,11 @@ extension HomeViewController: UITableViewDelegate {
             destination?.dateVal = taskStore[indexPath.section][indexPath.row].date!
             destination?.bodyStr = taskStore[indexPath.section][indexPath.row].body
             destination?.topicStr = taskStore[indexPath.section][indexPath.row].color
+            destination?.priorityVal = Int(taskStore[indexPath.section][indexPath.row].priority)
             tableView.deselectRow(at: indexPath, animated: true)
-            destination?.completion = {title, body, date, color in
+            destination?.completion = {title, body, date, color, priority in
                 DispatchQueue.main.async {
-                    DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title )
+                    DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority)
                     self.navigationController?.popViewController(animated: true)
                     self.getData()
                 }
@@ -314,9 +342,25 @@ extension HomeViewController: UITableViewDataSource {
         if searching {
             let date = searchTasks[indexPath.section][indexPath.row].date!
             let color = searchTasks[indexPath.section][indexPath.row].color
+            let priority = searchTasks[indexPath.section][indexPath.row].priority
             let formatter = DateFormatter()
             formatter.dateFormat = "MMM dd, YYYY"
-            cell.textLabel?.text = searchTasks[indexPath.section][indexPath.row].title
+            cell.textLabel?.attributedText = NSMutableAttributedString()
+                .normal(searchTasks[indexPath.section][indexPath.row].title!)
+            if (priority != 0) {
+                var priorityText = ""
+                if (priority == 1) {
+                    priorityText = "!"
+                } else if (priority == 2) {
+                    priorityText = "!!"
+                } else {
+                    priorityText = "!!!"
+                }
+                cell.textLabel?.attributedText = NSMutableAttributedString()
+                    .normal(searchTasks[indexPath.section][indexPath.row].title! + "  ( ")
+                    .boldAndRed(priorityText)
+                    .normal(" )")
+            }
             cell.textLabel?.sizeToFit()
             cell.detailTextLabel?.text = formatter.string(from: date)
 //            if !(color!.isEmpty) {
@@ -374,13 +418,30 @@ extension HomeViewController: UITableViewDataSource {
                 // Add the rectangle to your cell
                 cell.addSubview(rectangle)
             }
+            
         }
         else {
             let date = taskStore[indexPath.section][indexPath.row].date!
             let color = taskStore[indexPath.section][indexPath.row].color
+            let priority = taskStore[indexPath.section][indexPath.row].priority
             let formatter = DateFormatter()
             formatter.dateFormat = "MMM dd, YYYY"
-            cell.textLabel?.text = taskStore[indexPath.section][indexPath.row].title
+            cell.textLabel?.attributedText = NSMutableAttributedString()
+                .normal(taskStore[indexPath.section][indexPath.row].title!)
+            if (priority != 0) {
+                var priorityText = ""
+                if (priority == 1) {
+                    priorityText = "!"
+                } else if (priority == 2) {
+                    priorityText = "!!"
+                } else {
+                    priorityText = "!!!"
+                }
+                cell.textLabel?.attributedText = NSMutableAttributedString()
+                    .normal(taskStore[indexPath.section][indexPath.row].title! + "  ( ")
+                    .boldAndRed(priorityText)
+                    .normal(" )")
+            }
             cell.textLabel?.sizeToFit()
             cell.detailTextLabel?.text = formatter.string(from: date)
 //            if !(color!.isEmpty) {
