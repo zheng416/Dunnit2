@@ -607,6 +607,16 @@ class DataBaseHelper {
         }
     }
     
+    func updateSoundDB(soundOn: Bool, email: String) {
+        self.db.collection("users").whereField("email", isEqualTo: email).getDocuments() {
+            (querySnapshot, err) in
+            for document in querySnapshot!.documents {
+                let documentId = document.documentID
+                self.db.collection("users").document(documentId).setData(["sound": soundOn], merge: true)
+            }
+        }
+    }
+    
     func updateNotifications(notificationsOn:Bool, email: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
@@ -626,6 +636,16 @@ class DataBaseHelper {
         }
     }
     
+    func updateNotificationsDB(notificationsOn: Bool, email: String) {
+        self.db.collection("users").whereField("email", isEqualTo: email).getDocuments() {
+            (querySnapshot, err) in
+            for document in querySnapshot!.documents {
+                let documentId = document.documentID
+                self.db.collection("users").document(documentId).setData(["notifications": notificationsOn], merge: true)
+            }
+        }
+    }
+    
     func updateDark(darkMode:Bool, email: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
@@ -642,6 +662,16 @@ class DataBaseHelper {
             print("Updated darkMode.")
         } catch {
             print("Update error.")
+        }
+    }
+    
+    func updateDarkDB(darkMode: Bool, email: String) {
+        self.db.collection("users").whereField("email", isEqualTo: email).getDocuments() {
+            (querySnapshot, err) in
+            for document in querySnapshot!.documents {
+                let documentId = document.documentID
+                self.db.collection("users").document(documentId).setData(["darkMode": darkMode], merge: true)
+            }
         }
     }
     
