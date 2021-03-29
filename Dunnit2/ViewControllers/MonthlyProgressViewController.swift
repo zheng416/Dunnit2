@@ -6,6 +6,33 @@
 //
 
 import UIKit
+import Foundation
+
+extension Date {
+
+    func isEqual(to date: Date, toGranularity component: Calendar.Component, in calendar: Calendar = .current) -> Bool {
+        calendar.isDate(self, equalTo: date, toGranularity: component)
+    }
+
+    func isInSameYear(as date: Date) -> Bool { isEqual(to: date, toGranularity: .year) }
+    func isInSameMonth(as date: Date) -> Bool { isEqual(to: date, toGranularity: .month) }
+    func isInSameWeek(as date: Date) -> Bool { isEqual(to: date, toGranularity: .weekOfYear) }
+
+    func isInSameDay(as date: Date) -> Bool { Calendar.current.isDate(self, inSameDayAs: date) }
+
+    var isInThisYear:  Bool { isInSameYear(as: Date()) }
+    var isInThisMonth: Bool { isInSameMonth(as: Date()) }
+    var isInThisWeek:  Bool { isInSameWeek(as: Date()) }
+
+    var isInYesterday: Bool { Calendar.current.isDateInYesterday(self) }
+    var isInToday:     Bool { Calendar.current.isDateInToday(self) }
+    var isInTomorrow:  Bool { Calendar.current.isDateInTomorrow(self) }
+
+    var isInTheFuture: Bool { self > Date() }
+    var isInThePast:   Bool { self < Date() }
+}
+
+
 
 class MonthlyProgressViewController: UIViewController {
     
@@ -72,15 +99,30 @@ class MonthlyProgressViewController: UIViewController {
         view.layer.addSublayer(shapeLayer)
     }
     
+    
     private func calculatePercentage(period: String) -> Float{
         
         // Fetch tasks for all tasks
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
         let user = DataBaseHelper.shareInstance.fetchUser()
-        taskStore = [tasks.filter{$0.isDone == false && $0.owner == user[0].email}, tasks.filter{$0.isDone == true && $0.owner == user[0].email}]
         
-        let progressCount = (Float(taskStore[1].count) / Float(taskStore[0].count + taskStore[1].count))
-        print("inside calculate percentage", progressCount)
+        let partOne = tasks.filter{$0.isDone == false && $0.owner == user[0].email &&  ($0.date as! Date).isInThisMonth}
+        let partTwo = tasks.filter{$0.isDone == true && $0.owner == user[0].email &&  ($0.date as! Date).isInThisMonth}
+        
+        taskStore = [partOne, partTwo]
+        
+        
+        let numerator = taskStore[1].count
+        let denominator = taskStore[0].count + taskStore[1].count
+        var progressCount = Float(0)
+        
+        if (numerator == 0) {
+            progressCount = Float(0)
+        } else {
+            progressCount = (Float(numerator) / Float(denominator))
+            print("inside calculate percentage", progressCount)
+        }
+        
         return progressCount
     }
     
@@ -100,3 +142,4 @@ class MonthlyProgressViewController: UIViewController {
         mainPercentageLabel.text = percentageLabel
     }
 }
+

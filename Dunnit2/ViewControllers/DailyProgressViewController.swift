@@ -77,10 +77,20 @@ class DailyProgressViewController: UIViewController {
         // Fetch tasks for all tasks
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
         let user = DataBaseHelper.shareInstance.fetchUser()
-        taskStore = [tasks.filter{$0.isDone == false && $0.owner == user[0].email}, tasks.filter{$0.isDone == true && $0.owner == user[0].email}]
+        taskStore = [tasks.filter{$0.isDone == false && $0.owner == user[0].email && Calendar.current.isDateInToday($0.date as! Date) }, tasks.filter{$0.isDone == true && $0.owner == user[0].email && Calendar.current.isDateInToday($0.date as! Date)}]
         
-        let progressCount = (Float(taskStore[1].count) / Float(taskStore[0].count + taskStore[1].count))
-        print("inside calculate percentage", progressCount)
+        
+        let numerator = taskStore[1].count
+        let denominator = taskStore[0].count + taskStore[1].count
+        var progressCount = Float(0)
+        
+        if (numerator == 0) {
+            progressCount = Float(0)
+        } else {
+            progressCount = (Float(numerator) / Float(denominator))
+            print("inside calculate percentage", progressCount)
+        }
+        
         return progressCount
     }
     
