@@ -18,8 +18,13 @@ class ListTaskViewController: UIViewController {
     var taskListStore = [[TaskEntity](), [TaskEntity]()]
     
     func getData() {
-        print("in list task view controller")
-        let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
+        let user = DataBaseHelper.shareInstance.fetchUser()
+        
+        let sortKey = user[0].sortKey
+        let sortAscending = user[0].sortAscending
+        
+        let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: sortKey, ascending: sortAscending)
+        
         taskListStore = [tasks.filter{$0.isDone == false && $0.list == self.titleList}, tasks.filter{$0.isDone == true && $0.list == self.titleList}]
         
         let progressCount = (Float(taskListStore[1].count) / Float(taskListStore[0].count + taskListStore[1].count))
@@ -50,29 +55,48 @@ class ListTaskViewController: UIViewController {
     
     // Dropdown menu
     private func setupSortMenuItem() {
+        let localUser = DataBaseHelper.shareInstance.fetchUser()
         self.sortMenu = UIMenu(title: "", children: [
             //TODO: Sort by task list function
             // Sort by title
-            UIAction(title: "By Ascending Title", image: UIImage(systemName: "doc.on.doc")) { action in
+            UIAction(title: "By Title Ascending") { action in
                 let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: "title", ascending: true)
                 self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
-                // Update user's preference local
-                // Update user's preference DB
+                
+                // Update user's preference in db
+                DataBaseHelper.shareInstance.updateSortPreference(key: "title", ascending: true, email: localUser[0].email ?? "")
+                DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "title", ascending: true, email: localUser[0].email ?? "")
+                
                 self.tableTaskView.reloadData()
             },
-             UIAction(title: "By Ascending Date", image: UIImage(systemName: "pencil")) { action in
+            UIAction(title: "By Title Decending") { action in
+                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: "title", ascending: false)
+                self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                
+                // Update user's preference in db
+                DataBaseHelper.shareInstance.updateSortPreference(key: "title", ascending: false, email: localUser[0].email ?? "")
+                DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "title", ascending: false, email: localUser[0].email ?? "")
+                
+                self.tableTaskView.reloadData()
+            },
+             UIAction(title: "By Date Ascending") { action in
                 let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: "date", ascending: true)
                 self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                
+                // Update user's preference in db
+                DataBaseHelper.shareInstance.updateSortPreference(key: "date", ascending: true, email: localUser[0].email ?? "")
+                DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "date", ascending: true, email: localUser[0].email ?? "")
+                
                 self.tableTaskView.reloadData()
             },
-            UIAction(title: "By Decending Title", image: UIImage(systemName: "doc.on.doc")) { action in
+             UIAction(title: "By Date Decending") { action in
                 let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: "title", ascending: false)
                 self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
-                self.tableTaskView.reloadData()
-            },
-             UIAction(title: "By Decending Date", image: UIImage(systemName: "pencil")) { action in
-                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: "title", ascending: false)
-                self.taskListStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                
+                // Update user's preference in db
+                DataBaseHelper.shareInstance.updateSortPreference(key: "date", ascending: false, email: localUser[0].email ?? "")
+                DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "date", ascending: false, email: localUser[0].email ?? "")
+                
                 self.tableTaskView.reloadData()
             }
         ])

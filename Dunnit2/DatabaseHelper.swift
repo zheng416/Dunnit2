@@ -223,24 +223,6 @@ class DataBaseHelper {
         return fetchingImage
     }
     
-    /**
-    func fetchLocalTask() -> [TaskEntity] {
-            var fetchingImage = [TaskEntity]()
-            
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
-            
-            let managedContext = appDelegate.persistentContainer.viewContext
-            
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
-            
-            do {
-                print("All Data.")
-                fetchingImage = try managedContext.fetch(fetchRequest) as! [TaskEntity]
-            } catch {
-                print(error)
-            }
-            return fetchingImage
-    }*/
     func fetchDBTask(completion: @escaping (_ message: Bool) -> Void) {
         var fetchingImage = [TaskEntity]()
         var newImage = [TaskEntity]()
@@ -418,6 +400,8 @@ class DataBaseHelper {
         instance.darkMode = darkMode
         instance.notifications = notifications
         instance.sound = sound
+        instance.sortKey = "title"
+        instance.sortAscending = true
         
         do {
             print("Created New User.")
@@ -453,6 +437,36 @@ class DataBaseHelper {
             for document in querySnapshot!.documents {
                 let documentId = document.documentID
                 self.db.collection("users").document(documentId).setData(["name": name], merge: true)
+            }
+        }
+    }
+    
+    func updateSortPreference(key: String, ascending: Bool, email: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        let predicate = NSPredicate(format: "email = %@", email)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let foundUser = try managedContext.fetch(fetchRequest) as! [UserEntity]
+            foundUser.first?.sortKey = key
+            foundUser.first?.sortAscending = ascending
+            try managedContext.save()
+            print("Updated.")
+        } catch {
+            print("Update error.")
+        }
+    }
+    
+    func updateSortPreferenceDB(key: String, ascending: Bool, email: String) {
+        self.db.collection("users").whereField("email", isEqualTo: email).getDocuments() {
+            (querySnapshot, err) in
+            for document in querySnapshot!.documents {
+                let documentId = document.documentID
+                self.db.collection("users").document(documentId).setData(["sortKey": key, "sortAscending": ascending], merge: true)
             }
         }
     }

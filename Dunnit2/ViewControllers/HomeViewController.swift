@@ -34,8 +34,12 @@ class HomeViewController: UIViewController {
     //local
     func getData() {
         
-        let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
         let user = DataBaseHelper.shareInstance.fetchUser()
+        
+        let sortKey = user[0].sortKey
+        let sortAscending = user[0].sortAscending
+        
+        let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: sortKey, ascending: sortAscending)
         taskStore = [tasks.filter{$0.isDone == false && $0.owner == user[0].email}, tasks.filter{$0.isDone == true && $0.owner == user[0].email}]
         
         let progressCount = (Float(taskStore[1].count) / Float(taskStore[0].count + taskStore[1].count))
@@ -193,34 +197,49 @@ class HomeViewController: UIViewController {
     
     // Dropdown menu
     private func setupSortMenuItem() {
+        let localUser = DataBaseHelper.shareInstance.fetchUser()
         self.sortMenu = UIMenu(title: "", children: [
             // Sort by title
-            UIAction(title: "By Ascending Title", image: UIImage(systemName: "doc.on.doc")) { action in
+            UIAction(title: "By Title Ascending") { action in
                 let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"title",ascending: true)
                 self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
-                // Update user's preference local
-                // Update user's preference DB
+                
+                DataBaseHelper.shareInstance.updateSortPreference(key: "title", ascending: true, email: localUser[0].email ?? "")
+                DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "title", ascending: true, email: localUser[0].email ?? "")
+                
                 self.tableView.reloadData()
             },
-             UIAction(title: "By Ascending Date", image: UIImage(systemName: "pencil")) { action in
-                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: true)
-                self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
-                self.tableView.reloadData()
-            },
-            UIAction(title: "By Decending Title", image: UIImage(systemName: "doc.on.doc")) { action in
+            UIAction(title: "By Title Decending") { action in
                 let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"title",ascending: false)
                 self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                
+                DataBaseHelper.shareInstance.updateSortPreference(key: "title", ascending: false, email: localUser[0].email ?? "")
+                DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "title", ascending: false, email: localUser[0].email ?? "")
+                
                 self.tableView.reloadData()
             },
-             UIAction(title: "By Decending Date", image: UIImage(systemName: "pencil")) { action in
+             UIAction(title: "By Date Ascending") { action in
+                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: true)
+                self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                
+                DataBaseHelper.shareInstance.updateSortPreference(key: "date", ascending: true, email: localUser[0].email ?? "")
+                DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "date", ascending: true, email: localUser[0].email ?? "")
+                
+                self.tableView.reloadData()
+            },
+             UIAction(title: "By Date Decending") { action in
                 let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: false)
                 self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
+                
+                DataBaseHelper.shareInstance.updateSortPreference(key: "date", ascending: false, email: localUser[0].email ?? "")
+                DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "date", ascending: false, email: localUser[0].email ?? "")
+                
                 self.tableView.reloadData()
             },
-             UIAction(title: "By Priorities", image: UIImage(systemName: "plus.square.on.square")) { action in
+             UIAction(title: "By Priorities") { action in
                 // Duplicate Menu Child Selected
             },
-             UIAction(title: "By Tags", image: UIImage(systemName: "folder")) { action in
+             UIAction(title: "By Tags") { action in
                 //Move Menu Child Selected
             },
                 ])
@@ -234,10 +253,6 @@ class HomeViewController: UIViewController {
         getData()
         setupSortMenuItem()
         
-//        view.addSubview(progressView)
-//        progressView.frame = CGRect(x: 10, y: 150, width: view.frame.size.width - 20, height: 20)
-//        progressView.setProgress(0.5, animated: true)
-//
         let sortButton = UIBarButtonItem(title: "Sort", menu: self.sortMenu)
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
         navigationItem.rightBarButtonItems = [addButton, sortButton]
