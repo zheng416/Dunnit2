@@ -680,6 +680,7 @@ class DataBaseHelper {
                     return
                 }
                 print("Saved list \(title) to DB")
+                instance.id = id
             }
         
             print("Saving List \(title) local.")
@@ -839,7 +840,7 @@ class DataBaseHelper {
     
 
     // Save a shared list to Firebase only
-    func saveDBSharedList(to: String, taskList: String) {
+    func saveDBSharedList(to: String, taskList: String, lid: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
 
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -862,7 +863,7 @@ class DataBaseHelper {
             }
             let email = (user[0] as! UserEntity).email
             
-            let docData: [String: Any] = ["owner": email!, "tasklist": taskList, "to": to]
+            let docData: [String: Any] = ["owner": email!, "tasklist": taskList, "to": to, "lid": lid, "id": id]
             
             db.collection("sharedLists").document(id).setData(docData) { err in
                 if err != nil {
@@ -872,7 +873,9 @@ class DataBaseHelper {
                 }
                 print("Saved list \(taskList) to DB")
                 //QUESTION why update here??????
-                DataBaseHelper.shareInstance.updateListsShared(id:id,email: email!, shared: true, sharedWith: to, title: taskList)
+                print("THE LID ISSSS")
+                print(lid)
+                DataBaseHelper.shareInstance.updateListsShared(id: lid, email: email!, shared: true, sharedWith: to, title: taskList)
                 print("DONEEEEEE Update")
             }
         } catch {
@@ -948,6 +951,8 @@ class DataBaseHelper {
                         print("ONCEEEEEEEEE")
                         let taskList = document.get("tasklist")!
                         let owner = document.get("owner")!
+                        let lid = document.get("lid")!
+                        let id = document.get("id")!
                         print("\(owner) + \(taskList)")
                         if titlelist.contains("\(owner) + \(taskList)" as! String){
                             print("SAMMMMMEE")
@@ -956,6 +961,8 @@ class DataBaseHelper {
                         let instance = SharedEntity(context: managedContext)
                         instance.email = owner as? String
                         instance.taskList = taskList  as? String
+                        instance.lid = lid as? String
+                        instance.id = id as? String
                         do{
                             //try managedContext.save()//print("save to local.")
                             print("SAVING TO DB SHARE")
@@ -1108,6 +1115,7 @@ class DataBaseHelper {
                                 instance.shared = true
                                 instance.sharedWith = document.get("sharedWith")! as! String
                                 instance.owner = document.get("email") as! String
+                                instance.id = document.documentID
                                 shared.append(instance)
                                 print("Sleepy")
                                 print(document.get("title")!)
@@ -1204,6 +1212,7 @@ class DataBaseHelper {
         do {
             let test = try managedContext.fetch(fetchRequest)
             // Gonna need to change this so it deletes using key???
+            let sharedid = (test[0] as! SharedEntity).id
             let objectToDelete = test[0] as! NSManagedObject
             managedContext.delete(objectToDelete)
             print ("deleted SharedEntity")
@@ -1220,9 +1229,11 @@ class DataBaseHelper {
             }
             
             let email = (user[0] as! UserEntity).email
-            let listKey = "\(email! )+\(title)"
+//            let listKey = "\(email! )+\(title)"
+            let listKey = sharedid!
             print("BEFORE DB")
             print(listKey)
+            
             db.collection("sharedLists").document(listKey).delete() { err in
                 if err != nil {
                     print("Error removing document named \(title): \(err)")
@@ -1240,7 +1251,7 @@ class DataBaseHelper {
     // Removes tasks and lists entities of shared tasks
     // Need to do it for local
     // Update values on firebase
-    func removedSharedLocal(title: String, owner: String, completion: @escaping (_ message: Bool) -> Void) {
+    func removedSharedLocal(title: String, owner: String, id: String, completion: @escaping (_ message: Bool) -> Void) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -1273,7 +1284,8 @@ class DataBaseHelper {
                 managedContext.delete(list as! NSManagedObject)
             }
             let docData: [String: Any] = ["shared": false, "sharedWith": ""]
-            let listKey = "\(owner ?? "")+\(title ?? "")"
+//            let listKey = "\(owner ?? "")+\(title ?? "")"
+            let listKey = id
             db.collection("taskLists").document(listKey).updateData(docData) { err in
                         if err != nil {
                             // Show error message
