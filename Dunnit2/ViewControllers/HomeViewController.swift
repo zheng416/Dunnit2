@@ -38,8 +38,9 @@ class HomeViewController: UIViewController {
         
         let sortKey = user[0].sortKey
         let sortAscending = user[0].sortAscending
+        let filterKey = user[0].filterKey
         
-        let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: sortKey, ascending: sortAscending)
+        let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: sortKey, ascending: sortAscending, filterKey: filterKey)
         taskStore = [tasks.filter{$0.isDone == false && $0.owner == user[0].email}, tasks.filter{$0.isDone == true && $0.owner == user[0].email}]
         
         let progressCount = (Float(taskStore[1].count) / Float(taskStore[0].count + taskStore[1].count))
@@ -201,40 +202,29 @@ class HomeViewController: UIViewController {
         self.sortMenu = UIMenu(title: "", children: [
             // Sort by title
             UIAction(title: "By Title Ascending") { action in
-                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"title",ascending: true)
-                self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
-                
                 DataBaseHelper.shareInstance.updateSortPreference(key: "title", ascending: true, email: localUser[0].email ?? "")
                 DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "title", ascending: true, email: localUser[0].email ?? "")
                 
-                self.tableView.reloadData()
+                self.getData()
             },
             UIAction(title: "By Title Decending") { action in
-                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"title",ascending: false)
-                self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
-                
                 DataBaseHelper.shareInstance.updateSortPreference(key: "title", ascending: false, email: localUser[0].email ?? "")
                 DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "title", ascending: false, email: localUser[0].email ?? "")
                 
-                self.tableView.reloadData()
+                self.getData()
             },
              UIAction(title: "By Date Ascending") { action in
-                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: true)
-                self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
-                
                 DataBaseHelper.shareInstance.updateSortPreference(key: "date", ascending: true, email: localUser[0].email ?? "")
                 DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "date", ascending: true, email: localUser[0].email ?? "")
                 
-                self.tableView.reloadData()
+                self.getData()
             },
              UIAction(title: "By Date Decending") { action in
-                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: false)
-                self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
-                
+   
                 DataBaseHelper.shareInstance.updateSortPreference(key: "date", ascending: false, email: localUser[0].email ?? "")
                 DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "date", ascending: false, email: localUser[0].email ?? "")
                 
-                self.tableView.reloadData()
+                self.getData()
             },
              UIAction(title: "By Priorities") { action in
                 // Duplicate Menu Child Selected
@@ -243,25 +233,20 @@ class HomeViewController: UIViewController {
                 //Move Menu Child Selected
             },
             UIAction(title: "Filter Today") { action in
-               //Move Menu Child Selected
-                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: false, filterKey: "today")
-                self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
-                
-                self.tableView.reloadData()
+                DataBaseHelper.shareInstance.updateFilterPreference(email: localUser[0].email ?? "", filterKey: "today")
+                self.getData()
            },
             UIAction(title: "Filter This Month") { action in
-               //Move Menu Child Selected
-                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: false, filterKey: "month")
-                self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
-                
-                self.tableView.reloadData()
+                DataBaseHelper.shareInstance.updateFilterPreference(email: localUser[0].email ?? "", filterKey: "month")
+                self.getData()
            },
             UIAction(title: "Filter This Year") { action in
-               //Move Menu Child Selected
-                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: false, filterKey: "year")
-                self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
-                
-                self.tableView.reloadData()
+                DataBaseHelper.shareInstance.updateFilterPreference(email: localUser[0].email ?? "", filterKey: "year")
+                self.getData()
+           },
+            UIAction(title: "Clear Filter") { action in
+                DataBaseHelper.shareInstance.updateFilterPreference(email: localUser[0].email ?? "", filterKey: "")
+                self.getData()
            },
             
                 ])
@@ -270,8 +255,13 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         overrideUserInterfaceStyle = .light
-        // Do any additional setup after loading the view.
         searchBar.autocapitalizationType = .none
+        // Do any additional setup after loading the view.
+        
+        // Clear filter everytime relaunch app (prevent missed lists)
+        let user = DataBaseHelper.shareInstance.fetchUser()
+        DataBaseHelper.shareInstance.updateFilterPreference(email: user[0].email ?? "", filterKey: "")
+        
         getData()
         setupSortMenuItem()
         

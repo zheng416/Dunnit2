@@ -305,6 +305,8 @@ class DataBaseHelper {
                 
                 let datePredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [fromPredicate, toPredicate])
                 fetchRequest.predicate = datePredicate
+            } else {
+                fetchRequest.predicate = nil
             }
         }
         
@@ -562,6 +564,25 @@ class DataBaseHelper {
                 let documentId = document.documentID
                 self.db.collection("users").document(documentId).setData(["sortKey": key, "sortAscending": ascending], merge: true)
             }
+        }
+    }
+    
+    func updateFilterPreference(email: String, filterKey: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        let predicate = NSPredicate(format: "email = %@", email)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let foundUser = try managedContext.fetch(fetchRequest) as! [UserEntity]
+            foundUser.first?.filterKey = filterKey
+            try managedContext.save()
+            print("Updated filter.")
+        } catch {
+            print("Update error.")
         }
     }
   
