@@ -14,6 +14,7 @@
 		8D8632D5260BEBDE00EAEB85 /* MonthlyProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8632D4260BEBDE00EAEB85 /* MonthlyProgressViewController.swift */; };
 		8DC9D4AC25FB024F00353402 /* SortingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC9D4AB25FB024F00353402 /* SortingViewController.swift */; };
 		8DD81F5E260ACBE5003E9628 /* ProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DD81F5D260ACBE5003E9628 /* ProgressViewController.swift */; };
+		8DF257C82611611700D7D3E3 /* YearlyProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DF257C72611611700D7D3E3 /* YearlyProgressViewController.swift */; };
 		9B46D56725DB7DB500E990CC /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B46D56625DB7DB500E990CC /* Utilities.swift */; };
 		9B46D56A25DB8BBD00E990CC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9B46D56925DB8BBD00E990CC /* GoogleService-Info.plist */; };
 		9B46D59125DC73CE00E990CC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B46D59025DC73CE00E990CC /* Constants.swift */; };
@@ -55,6 +56,7 @@
 		8D8632D4260BEBDE00EAEB85 /* MonthlyProgressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyProgressViewController.swift; sourceTree = "<group>"; };
 		8DC9D4AB25FB024F00353402 /* SortingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortingViewController.swift; sourceTree = "<group>"; };
 		8DD81F5D260ACBE5003E9628 /* ProgressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressViewController.swift; sourceTree = "<group>"; };
+		8DF257C72611611700D7D3E3 /* YearlyProgressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearlyProgressViewController.swift; sourceTree = "<group>"; };
 		92FB961D9E339F74AF2EDDC9 /* Pods-Dunnit2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dunnit2.debug.xcconfig"; path = "Target Support Files/Pods-Dunnit2/Pods-Dunnit2.debug.xcconfig"; sourceTree = "<group>"; };
 		9B46D56625DB7DB500E990CC /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		9B46D56925DB8BBD00E990CC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 				9B6CC77F25DB60DA00C0CAF7 /* SignUpViewController.swift */,
 				9B6CC78225DB60F300C0CAF7 /* LoginViewController.swift */,
 				9B6CC78525DB60FD00C0CAF7 /* HomeViewController.swift */,
+				8DF257C72611611700D7D3E3 /* YearlyProgressViewController.swift */,
 				9B46D5CE25E4D12000E990CC /* AddViewController.swift */,
 				9B46D62525ED436500E990CC /* MenuViewController.swift */,
 				9BBAE66325ED7DF1003CC28B /* EditNameViewController.swift */,
@@ -339,6 +342,7 @@
 				9B7190C125FBCF7700549805 /* SharedTaskViewController.swift in Sources */,
 				9B6CC76F25DB5F5A00C0CAF7 /* ViewController.swift in Sources */,
 				9BBAE66C25EDA714003CC28B /* ListsViewController.swift in Sources */,
+				8DF257C82611611700D7D3E3 /* YearlyProgressViewController.swift in Sources */,
 				9B7190BE25FBCD7100549805 /* SharedViewController.swift in Sources */,
 				8D8632D2260BE92E00EAEB85 /* DailyProgressViewController.swift in Sources */,
 				9B6CC76B25DB5F5A00C0CAF7 /* AppDelegate.swift in Sources */,
