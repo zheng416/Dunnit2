@@ -42,6 +42,8 @@ extension ListsViewController: UITableViewDelegate {
         if let destination = segue.destination as? ListTaskViewController {
             destination.titleList = listStore[(listTableView.indexPathForSelectedRow?.row)!].title
             destination.id = listStore[(listTableView.indexPathForSelectedRow?.row)!].id
+            print("LeTS SEee IT")
+            print(destination.id)
             listTableView.deselectRow(at: listTableView.indexPathForSelectedRow!, animated: true)
         }
     }

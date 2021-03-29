@@ -673,7 +673,7 @@ class DataBaseHelper {
             }
             let email = (user[0] as! UserEntity).email
             instance.owner = email
-            let docData: [String: Any] = ["title" : title, "email": email!, "shared": shared, "sharedWith": sharedWith ]
+            let docData: [String: Any] = ["title" : title, "email": email!, "shared": shared, "sharedWith": sharedWith, "sharedArr": []]
             var ref: DatabaseReference?
             ref = Database.database().reference()
             guard let id = ref?.child("taskLists").childByAutoId().key else { return }
@@ -739,6 +739,8 @@ class DataBaseHelper {
                         }
                         let instance = ListEntity(context: managedContext)
                         instance.id = id as? String
+                        print("INSTANCE IIIIIDDDDD")
+                        print(instance.id)
                         instance.title = title as? String
                         instance.owner = owner as? String
                         instance.shared = shared as! Bool
@@ -894,7 +896,7 @@ class DataBaseHelper {
                 
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
         
-        let docData: [String: Any] = ["email": email , "shared": shared, "sharedWith": sharedWith, "title": title]
+        let docData: [String: Any] = ["email": email , "shared": shared, "sharedWith": sharedWith, "title": title, "sharedArr": FieldValue.arrayUnion([sharedWith])]
         //let listKey = "\(email ?? "")+\(title ?? "")"
         db.collection("taskLists").document(id).updateData(docData) { err in
                     if err != nil {
@@ -1287,7 +1289,18 @@ class DataBaseHelper {
                 print("listing DELLEEEEEETTTEEDD \(list)")
                 managedContext.delete(list as! NSManagedObject)
             }
-            let docData: [String: Any] = ["shared": false, "sharedWith": ""]
+            
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            
+            let docData: [String: Any] = ["shared": false, "sharedWith": "", "sharedArr": FieldValue.arrayRemove([(user[0] as! UserEntity).email])]
 //            let listKey = "\(owner ?? "")+\(title ?? "")"
             let listKey = id
             db.collection("taskLists").document(listKey).updateData(docData) { err in
@@ -1303,5 +1316,38 @@ class DataBaseHelper {
         }
         completion(true)
         
+    }
+    
+    func fetchSharedEmails(lid: String, completion: @escaping (_ list: Array<Any>) -> Void) {
+        self.db.collection("taskLists").document(lid).getDocument { (document, err) in
+            if let document = document, document.exists {
+                print(document)
+                let array = document.get("sharedArr")
+                print("THIS IS THE ARRAY")
+                print(array)
+                completion(array as! Array<Any>)
+            }
+            
+        }
+    }
+    
+    func removeSharedEmail(lid: String, email: String) {
+        self.db.collection("taskLists").document(lid).updateData(["sharedArr": FieldValue.arrayRemove([email])])
+        
+        self.db.collection("sharedLists").whereField("lid", isEqualTo: lid).whereField("to", isEqualTo: email).getDocuments() { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                if (querySnapshot?.count == 0){
+                    print("No shared found")
+                    return
+                }
+                for document in querySnapshot!.documents {
+                    var id = document.get("id") as! String
+                    self.db.collection("sharedLists").document(id).delete()
+                }
+                
+            }
+        }
     }
 }
