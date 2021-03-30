@@ -67,6 +67,7 @@ extension SharedViewController: UITableViewDelegate {
         if let destination = segue.destination as? SharedTaskViewController {
             destination.titleList = shareStore[(sharedTableView.indexPathForSelectedRow?.row)!].title
             destination.owner = shareStore[(sharedTableView.indexPathForSelectedRow?.row)!].owner
+            destination.id = shareStore[(sharedTableView.indexPathForSelectedRow?.row)!].id
             print("AMONG US")
             print(destination.titleList)
             print(destination.owner)

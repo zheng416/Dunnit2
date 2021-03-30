@@ -6,11 +6,14 @@
 //
 
 import UIKit
+import UserNotifications
 
 
 class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
     
     var currentTopic: String?
+    var currentPriority: Int?
+    var noSelection: [String] = [String]()
     var currentListIndex: Int = 0
     var noTopics: [String] = [String]()
     
@@ -18,13 +21,17 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
     @IBOutlet var bodyField: UITextField!
     @IBOutlet var datePicker: UIDatePicker!
     @IBOutlet weak var topicPicker: UIPickerView!
+    @IBOutlet weak var priorityPicker: UIPickerView!
     
+    var topicPickerData: [String] = [String]()
+    var priorityPickerData: [String] = [String]()
+    
+    public var completion: ((String, String, Date, String, Int16, String) -> Void)?
     @IBOutlet weak var listPicker: UIPickerView!
     
     var pickerData: [String] = [String]()
     //var listPickerData: [Int:(String,String)] = [Int:(String,String)]()
     var listPickerData: [String] = [String]()
-    public var completion: ((String, String, Date, String) -> Void)?
     
     func getTopics() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchTopics()
@@ -64,24 +71,29 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
 
         // Do any additional setup after loading the view.
         topicPicker.tag = 1
-        listPicker.tag = 2
+        listPicker.tag = 3
         listPicker.delegate = self
         listPicker.dataSource = self
         topicPicker.delegate = self
         topicPicker.dataSource = self
-        pickerData = []
+        topicPickerData = []
         let topics = getTopics()
         for (color, topics) in topics {
             if !((topics as! String).isEmpty) {
-                pickerData.append(topics as! String)
+                topicPickerData.append(topics as! String)
             }
         }
-        pickerData.sort()
-        pickerData.insert("", at: 0)
-        if pickerData.count == 1 {
-            pickerData = ["No Topics Available", "Add Topics in Settings"]
-        }
-        noTopics = ["", "No Topics Available", "Add Topics in Settings"]
+        topicPickerData.sort()
+        topicPickerData.insert("None", at: 0)
+        
+        priorityPicker.delegate = self
+        priorityPicker.dataSource = self
+        priorityPickerData.insert("None", at: 0)
+        priorityPickerData.insert("(!) Low Priority", at: 1)
+        priorityPickerData.insert("(!!) Medium Priority", at: 2)
+        priorityPickerData.insert("(!!!) High Priority", at: 3) 
+      
+        noSelection = ["None"]
         listPickerData.removeAll()
         let list = getList()
         for (index, (id, title)) in list {
@@ -97,36 +109,56 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        if pickerView.tag == 1{
-            return pickerData.count
+        if pickerView.tag == 1 {
+            return topicPickerData.count
         }
-        else {
-            return listPickerData.count
+        else if (pickerView.tag == 2){
+            return priorityPickerData.count
+        } else {
+          return listPickerData.count
         }
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        if pickerView.tag == 1{
-            currentTopic = pickerData[row]
-            return pickerData[row]
+        if pickerView.tag == 1 {
+            currentTopic = topicPickerData[row]
+            return topicPickerData[row]
+        } else if pickerView.tag == 2  {
+            currentPriority = row
+            return priorityPickerData[row]
         }
-        else {
-            currentTopic = listPickerData[row]
-            currentListIndex = row
+      else {
             return listPickerData[row]
-        }
-
+      }
     }
     
     @objc func didTapSaveButton() {
         if let titleText = titlefield.text, !titleText.isEmpty,
            let bodyText = bodyField.text, !bodyText.isEmpty {
             let targetDate = datePicker.date
-            if noTopics.contains(currentTopic!) {
+            if noSelection.contains(currentTopic!) {
                 currentTopic = ""
             }
-            let selectedValue = pickerData[topicPicker.selectedRow(inComponent: 0)]
-            completion?(titleText, bodyText, targetDate, selectedValue)
+            
+            let made = Date()
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "YY, MMM d, HH:mm:ss"
+            let madeDate = dateFormatter.string(from: made)
+            let content = UNMutableNotificationContent()
+            content.title = "Deadline: " + titleText
+            content.sound = .default
+            content.body = bodyText
+            let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: targetDate), repeats: false)
+            let request = UNNotificationRequest(identifier: madeDate, content: content, trigger: trigger)
+            UNUserNotificationCenter.current().add(request, withCompletionHandler: {error in
+                if error != nil {
+                    print("error for adding notification")
+                }
+            })
+            
+            let selectedTopicValue = topicPickerData[topicPicker.selectedRow(inComponent: 0)]
+            let selectedPriorityValue = priorityPicker.selectedRow(inComponent: 0)
+            completion?(titleText, bodyText, targetDate, selectedTopicValue, Int16(selectedPriorityValue), madeDate)
         }
     }
 

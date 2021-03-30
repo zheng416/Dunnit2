@@ -9,6 +9,33 @@ import UIKit
 import CoreData
 import Firebase
 
+extension NSMutableAttributedString {
+    var fontSize:CGFloat { return 18 }
+    var boldFont:UIFont { return UIFont(name: "AvenirNext-Bold", size: fontSize) ?? UIFont.boldSystemFont(ofSize: fontSize) }
+    var normalFont:UIFont { return UIFont(name: "AvenirNext-Regular", size: fontSize) ?? UIFont.systemFont(ofSize: fontSize)}
+    
+    func boldAndRed(_ value:String) -> NSMutableAttributedString {
+        
+        let attributes:[NSAttributedString.Key : Any] = [
+            .font : boldFont,
+            .foregroundColor : UIColor.red
+        ]
+        
+        self.append(NSAttributedString(string: value, attributes:attributes))
+        return self
+    }
+    
+    func normal(_ value:String) -> NSMutableAttributedString {
+        
+        let attributes:[NSAttributedString.Key : Any] = [
+            .font : normalFont,
+        ]
+        
+        self.append(NSAttributedString(string: value, attributes:attributes))
+        return self
+    }
+}
+
 private var sortViewController: UIView!
 
 class HomeViewController: UIViewController {
@@ -34,8 +61,14 @@ class HomeViewController: UIViewController {
     //local
     func getData() {
         
-        let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
         let user = DataBaseHelper.shareInstance.fetchLocalUser()
+        
+        let sortKey = user[0].sortKey
+        let sortAscending = user[0].sortAscending
+        let filterKey = user[0].filterKey
+        
+        let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: sortKey, ascending: sortAscending, filterKey: filterKey)
+
         taskStore = [tasks.filter{$0.isDone == false && $0.owner == user[0].email}, tasks.filter{$0.isDone == true && $0.owner == user[0].email}]
         
         let progressCount = (Float(taskStore[1].count) / Float(taskStore[0].count + taskStore[1].count))
@@ -95,6 +128,19 @@ class HomeViewController: UIViewController {
         // self.topView = profileVC.view
         // addChild(profileVC)
         
+        case .progress:
+            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+            let listVC = storyboard.instantiateViewController(withIdentifier: "progressTabVC")
+            view.addSubview(listVC.view)
+            self.topView = listVC.view
+            addChild(listVC)
+            self.title = "Progress"
+
+            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+            navigationItem.rightBarButtonItems = [addButton]
+            navigationItem.rightBarButtonItem?.isEnabled = false
+//            navigationItem.rightBarButtonItems = nil
+            menu = MenuType.progress
         
         case .shared:
             let storyboard = UIStoryboard(name: "Home", bundle: nil)
@@ -124,22 +170,7 @@ class HomeViewController: UIViewController {
             let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
             navigationItem.rightBarButtonItems = [addButton]
             menu = MenuType.myList
-//        case .progress:
-//            let storyboard = UIStoryboard(name: "Home", bundle: nil)
-//            let listVC = storyboard.instantiateViewController(withIdentifier: "listsVC")
-//            view.addSubview(listVC.view)
-//            self.topView = listVC.view
-//            addChild(listVC)
-//            self.title = "My Lists"
-//
-//            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
-//            navigationItem.rightBarButtonItems = [addButton]
-//            navigationItem.rightBarButtonItem?.isEnabled = false
-////            navigationItem.rightBarButtonItems = nil
-//            menu = MenuType.myList
 
-            
-            
         default:
             print("Default")
             navigationItem.rightBarButtonItem?.isEnabled = true
@@ -183,10 +214,10 @@ class HomeViewController: UIViewController {
 
         vc.title = "New Task"
         vc.navigationItem.largeTitleDisplayMode = .never
-        vc.completion = {title, body, date, color in
+        vc.completion = {title, body, date, color, priority, made in
             DispatchQueue.main.async {
                 self.navigationController?.popToRootViewController(animated: true)
-                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: "all", color: color)
+                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: "all", color: color, priority: priority, made: made)
                 self.getData()
             }
         }
@@ -195,51 +226,73 @@ class HomeViewController: UIViewController {
     
     // Dropdown menu
     private func setupSortMenuItem() {
+        let localUser = DataBaseHelper.shareInstance.fetchLocalUser()
         self.sortMenu = UIMenu(title: "", children: [
             // Sort by title
-            UIAction(title: "By Ascending Title", image: UIImage(systemName: "doc.on.doc")) { action in
-                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"title",ascending: true)
-                self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
-                // Update user's preference local
-                // Update user's preference DB
-                self.tableView.reloadData()
+            UIAction(title: "By Title Ascending") { action in
+                DataBaseHelper.shareInstance.updateSortPreference(key: "title", ascending: true, email: localUser[0].email ?? "")
+                DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "title", ascending: true, email: localUser[0].email ?? "")
+                
+                self.getData()
             },
-             UIAction(title: "By Ascending Date", image: UIImage(systemName: "pencil")) { action in
-                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: true)
-                self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
-                self.tableView.reloadData()
+            UIAction(title: "By Title Decending") { action in
+                DataBaseHelper.shareInstance.updateSortPreference(key: "title", ascending: false, email: localUser[0].email ?? "")
+                DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "title", ascending: false, email: localUser[0].email ?? "")
+                
+                self.getData()
             },
-            UIAction(title: "By Decending Title", image: UIImage(systemName: "doc.on.doc")) { action in
-                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"title",ascending: false)
-                self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
-                self.tableView.reloadData()
+             UIAction(title: "By Date Ascending") { action in
+                DataBaseHelper.shareInstance.updateSortPreference(key: "date", ascending: true, email: localUser[0].email ?? "")
+                DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "date", ascending: true, email: localUser[0].email ?? "")
+                
+                self.getData()
             },
-             UIAction(title: "By Decending Date", image: UIImage(systemName: "pencil")) { action in
-                let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key:"date",ascending: false)
-                self.taskStore = [tasks.filter{$0.isDone == false}, tasks.filter{$0.isDone == true}]
-                self.tableView.reloadData()
+             UIAction(title: "By Date Decending") { action in
+   
+                DataBaseHelper.shareInstance.updateSortPreference(key: "date", ascending: false, email: localUser[0].email ?? "")
+                DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "date", ascending: false, email: localUser[0].email ?? "")
+                
+                self.getData()
             },
-             UIAction(title: "By Priorities", image: UIImage(systemName: "plus.square.on.square")) { action in
+             UIAction(title: "By Priorities") { action in
                 // Duplicate Menu Child Selected
             },
-             UIAction(title: "By Tags", image: UIImage(systemName: "folder")) { action in
+             UIAction(title: "By Tags") { action in
                 //Move Menu Child Selected
             },
+            UIAction(title: "Filter Today") { action in
+                DataBaseHelper.shareInstance.updateFilterPreference(email: localUser[0].email ?? "", filterKey: "today")
+                self.getData()
+           },
+            UIAction(title: "Filter This Month") { action in
+                DataBaseHelper.shareInstance.updateFilterPreference(email: localUser[0].email ?? "", filterKey: "month")
+                self.getData()
+           },
+            UIAction(title: "Filter This Year") { action in
+                DataBaseHelper.shareInstance.updateFilterPreference(email: localUser[0].email ?? "", filterKey: "year")
+                self.getData()
+           },
+            UIAction(title: "Clear Filter") { action in
+                DataBaseHelper.shareInstance.updateFilterPreference(email: localUser[0].email ?? "", filterKey: "")
+                self.getData()
+           },
+            
                 ])
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         overrideUserInterfaceStyle = .light
-        // Do any additional setup after loading the view.
         searchBar.autocapitalizationType = .none
+        // Do any additional setup after loading the view.
+        
+        // Clear filter everytime relaunch app (prevent missed lists)
+        let user = DataBaseHelper.shareInstance.fetchLocalUser()
+        DataBaseHelper.shareInstance.updateFilterPreference(email: user[0].email ?? "", filterKey: "")
+        
         getData()
         setupSortMenuItem()
         
-//        view.addSubview(progressView)
-//        progressView.frame = CGRect(x: 10, y: 150, width: view.frame.size.width - 20, height: 20)
-//        progressView.setProgress(0.5, animated: true)
-//
         let sortButton = UIBarButtonItem(title: "Sort", menu: self.sortMenu)
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
         navigationItem.rightBarButtonItems = [addButton, sortButton]
@@ -270,16 +323,19 @@ extension HomeViewController: UITableViewDelegate {
         if let indexPath = tableView.indexPathForSelectedRow {
             let destination = segue.destination as? DescriptionViewController
             let id = taskStore[indexPath.section][indexPath.row].id
-
+            print("THE ID IS    ")
+            print(id)
             destination?.titleStr = taskStore[indexPath.section][indexPath.row].title!
             destination?.dateVal = taskStore[indexPath.section][indexPath.row].date!
             destination?.bodyStr = taskStore[indexPath.section][indexPath.row].body
             destination?.topicStr = taskStore[indexPath.section][indexPath.row].color
+            destination?.priorityVal = Int(taskStore[indexPath.section][indexPath.row].priority)
+            destination?.madeVal = taskStore[indexPath.section][indexPath.row].made
             destination?.task = taskStore[indexPath.section][indexPath.row]
             tableView.deselectRow(at: indexPath, animated: true)
-            destination?.completion = {title, body, date, color in
+            destination?.completion = {title, body, date, color, priority, made in
                 DispatchQueue.main.async {
-                    DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title )
+                    DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made)
                     self.navigationController?.popViewController(animated: true)
                     self.getData()
                 }
@@ -314,9 +370,25 @@ extension HomeViewController: UITableViewDataSource {
         if searching {
             let date = searchTasks[indexPath.section][indexPath.row].date!
             let color = searchTasks[indexPath.section][indexPath.row].color
+            let priority = searchTasks[indexPath.section][indexPath.row].priority
             let formatter = DateFormatter()
             formatter.dateFormat = "MMM dd, YYYY"
-            cell.textLabel?.text = searchTasks[indexPath.section][indexPath.row].title
+            cell.textLabel?.attributedText = NSMutableAttributedString()
+                .normal(searchTasks[indexPath.section][indexPath.row].title!)
+            if (priority != 0) {
+                var priorityText = ""
+                if (priority == 1) {
+                    priorityText = "!"
+                } else if (priority == 2) {
+                    priorityText = "!!"
+                } else {
+                    priorityText = "!!!"
+                }
+                cell.textLabel?.attributedText = NSMutableAttributedString()
+                    .normal(searchTasks[indexPath.section][indexPath.row].title! + "  ( ")
+                    .boldAndRed(priorityText)
+                    .normal(" )")
+            }
             cell.textLabel?.sizeToFit()
             cell.detailTextLabel?.text = formatter.string(from: date)
 //            if !(color!.isEmpty) {
@@ -374,13 +446,30 @@ extension HomeViewController: UITableViewDataSource {
                 // Add the rectangle to your cell
                 cell.addSubview(rectangle)
             }
+            
         }
         else {
             let date = taskStore[indexPath.section][indexPath.row].date!
             let color = taskStore[indexPath.section][indexPath.row].color
+            let priority = taskStore[indexPath.section][indexPath.row].priority
             let formatter = DateFormatter()
             formatter.dateFormat = "MMM dd, YYYY"
-            cell.textLabel?.text = taskStore[indexPath.section][indexPath.row].title
+            cell.textLabel?.attributedText = NSMutableAttributedString()
+                .normal(taskStore[indexPath.section][indexPath.row].title!)
+            if (priority != 0) {
+                var priorityText = ""
+                if (priority == 1) {
+                    priorityText = "!"
+                } else if (priority == 2) {
+                    priorityText = "!!"
+                } else {
+                    priorityText = "!!!"
+                }
+                cell.textLabel?.attributedText = NSMutableAttributedString()
+                    .normal(taskStore[indexPath.section][indexPath.row].title! + "  ( ")
+                    .boldAndRed(priorityText)
+                    .normal(" )")
+            }
             cell.textLabel?.sizeToFit()
             cell.detailTextLabel?.text = formatter.string(from: date)
 //            if !(color!.isEmpty) {

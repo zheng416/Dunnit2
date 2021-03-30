@@ -9,7 +9,7 @@ import UIKit
 import CoreData
 
 class ListsViewController: UIViewController {
-    var sortMenu: UIMenu?
+
     @IBOutlet var listTableView: UITableView!
     var listStore = [ListEntity]()
     
@@ -41,6 +41,9 @@ extension ListsViewController: UITableViewDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destination = segue.destination as? ListTaskViewController {
             destination.titleList = listStore[(listTableView.indexPathForSelectedRow?.row)!].title
+            destination.id = listStore[(listTableView.indexPathForSelectedRow?.row)!].id
+            print("LeTS SEee IT")
+            print(destination.id)
             listTableView.deselectRow(at: listTableView.indexPathForSelectedRow!, animated: true)
         }
     }
@@ -53,7 +56,6 @@ extension ListsViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print("HEREEEEEPOOP")
             let cell = tableView.dequeueReusableCell(withIdentifier: "listcell", for: indexPath)
             cell.textLabel!.text = listStore[indexPath.row].title
             return cell
