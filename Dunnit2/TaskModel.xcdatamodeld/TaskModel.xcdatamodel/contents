@@ -42,7 +42,11 @@
     <entity name="UserEntity" representedClassName="UserEntity" syncable="YES" codeGenerationType="class">
         <attribute name="darkMode" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="filterKey" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notifications" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="sortAscending" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="sortKey" optional="YES" attributeType="String"/>
         <attribute name="notification" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="sortPreference" optional="YES" attributeType="String"/>
         <attribute name="sound" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
