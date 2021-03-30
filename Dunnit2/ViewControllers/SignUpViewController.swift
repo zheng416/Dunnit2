@@ -200,7 +200,13 @@ class SignUpViewController: UIViewController, LoginButtonDelegate {
                         }
                     }
                     
-
+                    UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { success, error in
+                        if success {
+                            print("success for notifications")
+                        } else if let error = error {
+                            print("error occurred")
+                        }
+                    })
                     
                 }
             }

@@ -9,6 +9,33 @@ import UIKit
 import CoreData
 import Firebase
 
+extension NSMutableAttributedString {
+    var fontSize:CGFloat { return 18 }
+    var boldFont:UIFont { return UIFont(name: "AvenirNext-Bold", size: fontSize) ?? UIFont.boldSystemFont(ofSize: fontSize) }
+    var normalFont:UIFont { return UIFont(name: "AvenirNext-Regular", size: fontSize) ?? UIFont.systemFont(ofSize: fontSize)}
+    
+    func boldAndRed(_ value:String) -> NSMutableAttributedString {
+        
+        let attributes:[NSAttributedString.Key : Any] = [
+            .font : boldFont,
+            .foregroundColor : UIColor.red
+        ]
+        
+        self.append(NSAttributedString(string: value, attributes:attributes))
+        return self
+    }
+    
+    func normal(_ value:String) -> NSMutableAttributedString {
+        
+        let attributes:[NSAttributedString.Key : Any] = [
+            .font : normalFont,
+        ]
+        
+        self.append(NSAttributedString(string: value, attributes:attributes))
+        return self
+    }
+}
+
 private var sortViewController: UIView!
 
 class HomeViewController: UIViewController {
@@ -41,6 +68,7 @@ class HomeViewController: UIViewController {
         let filterKey = user[0].filterKey
         
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: sortKey, ascending: sortAscending, filterKey: filterKey)
+
         taskStore = [tasks.filter{$0.isDone == false && $0.owner == user[0].email}, tasks.filter{$0.isDone == true && $0.owner == user[0].email}]
         
         let progressCount = (Float(taskStore[1].count) / Float(taskStore[0].count + taskStore[1].count))
@@ -175,7 +203,7 @@ class HomeViewController: UIViewController {
             addlistVC.completion = {title in
 //                DispatchQueue.main.async {
                     self.navigationController?.popToRootViewController(animated: true)
-                DataBaseHelper.shareInstance.saveList(title: title, shared: false, sharedWith: "")
+                DataBaseHelper.shareInstance.saveLocalList(title: title, shared: false, sharedWith: "")
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: "load"), object: nil)
 //                    listsVC.viewWillAppear(true)
 //                }
@@ -186,10 +214,10 @@ class HomeViewController: UIViewController {
 
         vc.title = "New Task"
         vc.navigationItem.largeTitleDisplayMode = .never
-        vc.completion = {title, body, date, color in
+        vc.completion = {title, body, date, color, priority, made in
             DispatchQueue.main.async {
                 self.navigationController?.popToRootViewController(animated: true)
-                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: "all", color: color)
+                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: "all", color: color, priority: priority, made: made)
                 self.getData()
             }
         }
@@ -295,14 +323,18 @@ extension HomeViewController: UITableViewDelegate {
         if let indexPath = tableView.indexPathForSelectedRow {
             let destination = segue.destination as? DescriptionViewController
             let id = taskStore[indexPath.section][indexPath.row].id
+            print("THE ID IS    ")
+            print(id)
             destination?.titleStr = taskStore[indexPath.section][indexPath.row].title!
             destination?.dateVal = taskStore[indexPath.section][indexPath.row].date!
             destination?.bodyStr = taskStore[indexPath.section][indexPath.row].body
             destination?.topicStr = taskStore[indexPath.section][indexPath.row].color
+            destination?.priorityVal = Int(taskStore[indexPath.section][indexPath.row].priority)
+            destination?.madeVal = taskStore[indexPath.section][indexPath.row].made
             tableView.deselectRow(at: indexPath, animated: true)
-            destination?.completion = {title, body, date, color in
+            destination?.completion = {title, body, date, color, priority, made in
                 DispatchQueue.main.async {
-                    DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title )
+                    DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made)
                     self.navigationController?.popViewController(animated: true)
                     self.getData()
                 }
@@ -337,9 +369,25 @@ extension HomeViewController: UITableViewDataSource {
         if searching {
             let date = searchTasks[indexPath.section][indexPath.row].date!
             let color = searchTasks[indexPath.section][indexPath.row].color
+            let priority = searchTasks[indexPath.section][indexPath.row].priority
             let formatter = DateFormatter()
             formatter.dateFormat = "MMM dd, YYYY"
-            cell.textLabel?.text = searchTasks[indexPath.section][indexPath.row].title
+            cell.textLabel?.attributedText = NSMutableAttributedString()
+                .normal(searchTasks[indexPath.section][indexPath.row].title!)
+            if (priority != 0) {
+                var priorityText = ""
+                if (priority == 1) {
+                    priorityText = "!"
+                } else if (priority == 2) {
+                    priorityText = "!!"
+                } else {
+                    priorityText = "!!!"
+                }
+                cell.textLabel?.attributedText = NSMutableAttributedString()
+                    .normal(searchTasks[indexPath.section][indexPath.row].title! + "  ( ")
+                    .boldAndRed(priorityText)
+                    .normal(" )")
+            }
             cell.textLabel?.sizeToFit()
             cell.detailTextLabel?.text = formatter.string(from: date)
 //            if !(color!.isEmpty) {
@@ -397,13 +445,30 @@ extension HomeViewController: UITableViewDataSource {
                 // Add the rectangle to your cell
                 cell.addSubview(rectangle)
             }
+            
         }
         else {
             let date = taskStore[indexPath.section][indexPath.row].date!
             let color = taskStore[indexPath.section][indexPath.row].color
+            let priority = taskStore[indexPath.section][indexPath.row].priority
             let formatter = DateFormatter()
             formatter.dateFormat = "MMM dd, YYYY"
-            cell.textLabel?.text = taskStore[indexPath.section][indexPath.row].title
+            cell.textLabel?.attributedText = NSMutableAttributedString()
+                .normal(taskStore[indexPath.section][indexPath.row].title!)
+            if (priority != 0) {
+                var priorityText = ""
+                if (priority == 1) {
+                    priorityText = "!"
+                } else if (priority == 2) {
+                    priorityText = "!!"
+                } else {
+                    priorityText = "!!!"
+                }
+                cell.textLabel?.attributedText = NSMutableAttributedString()
+                    .normal(taskStore[indexPath.section][indexPath.row].title! + "  ( ")
+                    .boldAndRed(priorityText)
+                    .normal(" )")
+            }
             cell.textLabel?.sizeToFit()
             cell.detailTextLabel?.text = formatter.string(from: date)
 //            if !(color!.isEmpty) {

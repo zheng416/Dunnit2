@@ -10,6 +10,7 @@ import UIKit
 class ListTaskViewController: UIViewController {
 
     var titleList: String?
+    var id: String?
     var sortMenu: UIMenu?
     
     @IBOutlet weak var progressView: UIProgressView!
@@ -129,10 +130,11 @@ class ListTaskViewController: UIViewController {
         }
         vc.title = "Share with"
         vc.navigationItem.largeTitleDisplayMode = .never
+        vc.lid = self.id!
         vc.completion = {email in
             DispatchQueue.main.async {
                 self.navigationController?.popViewController(animated: true)
-                DataBaseHelper.shareInstance.shareListDB(to: email, taskList: self.titleList!)
+                DataBaseHelper.shareInstance.saveDBSharedList(to: email, taskList: self.titleList!, lid: self.id!)
                 self.getData()
             }
         }
@@ -146,10 +148,10 @@ class ListTaskViewController: UIViewController {
         }
         vc.title = "New Task"
         vc.navigationItem.largeTitleDisplayMode = .never
-        vc.completion = {title, body, date, color in
+        vc.completion = {title, body, date, color, priority, made in
             DispatchQueue.main.async {
                 self.navigationController?.popViewController(animated: true)
-                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: self.titleList!, color: color)
+                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: self.titleList!, color: color, priority: priority, made: made)
                 self.getData()
             }
         }

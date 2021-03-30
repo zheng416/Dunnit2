@@ -15,7 +15,7 @@ class ListsViewController: UIViewController {
     
     func getLists() {
         let templists = DataBaseHelper.shareInstance.fetchLists()
-        let user = DataBaseHelper.shareInstance.fetchUser()
+        let user = DataBaseHelper.shareInstance.fetchLocalUser()
         
         listStore = templists.filter{$0.owner == user[0].email}
         listTableView.reloadData()
@@ -41,6 +41,9 @@ extension ListsViewController: UITableViewDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destination = segue.destination as? ListTaskViewController {
             destination.titleList = listStore[(listTableView.indexPathForSelectedRow?.row)!].title
+            destination.id = listStore[(listTableView.indexPathForSelectedRow?.row)!].id
+            print("LeTS SEee IT")
+            print(destination.id)
             listTableView.deselectRow(at: listTableView.indexPathForSelectedRow!, animated: true)
         }
     }
@@ -69,7 +72,7 @@ extension ListsViewController {
         let deleteAction = UIContextualAction(style: .normal, title: nil) { (action, sourceView, completionHandler) in
             let row = self.listStore[indexPath.row]
             
-            DataBaseHelper.shareInstance.deleteList(title: row.title!)
+            DataBaseHelper.shareInstance.deleteList(id: row.id!)
             
             self.getLists()
         }

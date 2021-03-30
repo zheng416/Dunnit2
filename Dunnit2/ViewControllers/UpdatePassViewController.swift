@@ -56,10 +56,10 @@ class UpdatePasswordViewController: UIViewController,UITextFieldDelegate {
         self.present(dialogMessage, animated: true, completion: nil)
     }
     func getUser() -> [String: Any] {
-        var user = DataBaseHelper.shareInstance.fetchUser()
+        var user = DataBaseHelper.shareInstance.fetchLocalUser()
         if user.isEmpty{
             DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
-            user = DataBaseHelper.shareInstance.fetchUser()
+            user = DataBaseHelper.shareInstance.fetchLocalUser()
         }
         
         // Unpack user entity to dictionary
@@ -68,7 +68,7 @@ class UpdatePasswordViewController: UIViewController,UITextFieldDelegate {
             endUser["name"] = x.name
             endUser["email"] = x.email
             endUser["darkMode"] = x.darkMode
-            endUser["notifications"] = x.notifications
+            endUser["notification"] = x.notification
             endUser["sound"] = x.sound
         }
         

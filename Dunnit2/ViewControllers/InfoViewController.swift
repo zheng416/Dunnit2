@@ -17,6 +17,7 @@ class InfoViewController: UIViewController {
     @IBOutlet weak var Remove: UIButton!
     
     var owner: String?
+    var id: String?
     var titleList: String?
     
     override func viewDidLoad() {
@@ -30,9 +31,10 @@ class InfoViewController: UIViewController {
         print("remove")
         print(titleList)
         print(owner)
+        print(id)
         DataBaseHelper.shareInstance.removeSharedEntityDB(title: titleList!, sharedBy: owner!, completion: {success in
             if success {
-                DataBaseHelper.shareInstance.removedSharedLocal(title: self.titleList!, owner: self.owner!,  completion: {success in
+                DataBaseHelper.shareInstance.removedSharedLocal(title: self.titleList!, owner: self.owner!, id: self.id!,  completion: {success in
                     if success {
                         print("Success")
                         self.navigationController?.popToRootViewController(animated: true)
