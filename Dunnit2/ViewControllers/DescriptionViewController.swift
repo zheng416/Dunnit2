@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 class DescriptionViewController: UIViewController {
 
@@ -19,6 +20,8 @@ class DescriptionViewController: UIViewController {
     
     var priorityVal: Int?
     
+    var madeVal: String?
+    
     @IBOutlet var titleField: UILabel!
     
     @IBOutlet var dateField: UILabel!
@@ -29,7 +32,7 @@ class DescriptionViewController: UIViewController {
     
     @IBOutlet var priorityField: UILabel!
     
-    public var completion: ((String, String, Date, String, Int16) -> Void)?
+    public var completion: ((String, String, Date, String, Int16, String) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,7 +74,8 @@ class DescriptionViewController: UIViewController {
         vc.priority = self.priorityVal
         vc.title = "Edit"
         vc.navigationItem.largeTitleDisplayMode = .never
-        vc.completion = {title, body, date, color, priority in
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [String(madeVal!)])
+        vc.completion = {title, body, date, color, priority, made in
             DispatchQueue.main.async {
                 self.titleField.text = title
                 let formatter = DateFormatter()
@@ -79,6 +83,7 @@ class DescriptionViewController: UIViewController {
                 self.dateField.text = formatter.string(from: date)
                 self.bodyField.text = body
                 self.topicField.text = color
+                self.madeVal = made
                 /*DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false)*/
                 if (priority == 0) {
                     self.priorityField.text = ""
@@ -89,7 +94,7 @@ class DescriptionViewController: UIViewController {
                 } else {
                     self.priorityField.text = "Priority: High"
                 }
-                self.completion?(title, body, date, color, priority)
+                self.completion?(title, body, date, color, priority, made)
             }
         }
         navigationController?.pushViewController(vc, animated: true)

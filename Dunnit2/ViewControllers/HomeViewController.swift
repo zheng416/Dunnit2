@@ -210,10 +210,10 @@ class HomeViewController: UIViewController {
 
         vc.title = "New Task"
         vc.navigationItem.largeTitleDisplayMode = .never
-        vc.completion = {title, body, date, color, priority in
+        vc.completion = {title, body, date, color, priority, made in
             DispatchQueue.main.async {
                 self.navigationController?.popToRootViewController(animated: true)
-                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: "all", color: color, priority: priority)
+                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: "all", color: color, priority: priority, made: made)
                 self.getData()
             }
         }
@@ -304,10 +304,11 @@ extension HomeViewController: UITableViewDelegate {
             destination?.bodyStr = taskStore[indexPath.section][indexPath.row].body
             destination?.topicStr = taskStore[indexPath.section][indexPath.row].color
             destination?.priorityVal = Int(taskStore[indexPath.section][indexPath.row].priority)
+            destination?.madeVal = taskStore[indexPath.section][indexPath.row].made
             tableView.deselectRow(at: indexPath, animated: true)
-            destination?.completion = {title, body, date, color, priority in
+            destination?.completion = {title, body, date, color, priority, made in
                 DispatchQueue.main.async {
-                    DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority)
+                    DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made)
                     self.navigationController?.popViewController(animated: true)
                     self.getData()
                 }

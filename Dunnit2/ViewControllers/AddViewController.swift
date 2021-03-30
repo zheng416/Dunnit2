@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 
 class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
@@ -23,7 +24,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
     var topicPickerData: [String] = [String]()
     var priorityPickerData: [String] = [String]()
     
-    public var completion: ((String, String, Date, String, Int16) -> Void)?
+    public var completion: ((String, String, Date, String, Int16, String) -> Void)?
     
     func getTopics() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchTopics()
@@ -103,9 +104,26 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
             if noSelection.contains(currentTopic!) {
                 currentTopic = ""
             }
+            
+            let made = Date()
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "YY, MMM d, HH:mm:ss"
+            let madeDate = dateFormatter.string(from: made)
+            let content = UNMutableNotificationContent()
+            content.title = "Deadline: " + titleText
+            content.sound = .default
+            content.body = bodyText
+            let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: targetDate), repeats: false)
+            let request = UNNotificationRequest(identifier: madeDate, content: content, trigger: trigger)
+            UNUserNotificationCenter.current().add(request, withCompletionHandler: {error in
+                if error != nil {
+                    print("error for adding notification")
+                }
+            })
+            
             let selectedTopicValue = topicPickerData[topicPicker.selectedRow(inComponent: 0)]
             let selectedPriorityValue = priorityPicker.selectedRow(inComponent: 0)
-            completion?(titleText, bodyText, targetDate, selectedTopicValue, Int16(selectedPriorityValue))
+            completion?(titleText, bodyText, targetDate, selectedTopicValue, Int16(selectedPriorityValue), madeDate)
         }
     }
 

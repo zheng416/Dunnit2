@@ -101,7 +101,7 @@ class DataBaseHelper {
             }
         }
     }
-    func saveTask(title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16) {
+    func saveTask(title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16, made: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -109,7 +109,7 @@ class DataBaseHelper {
         var email = ""
         do{
             let users = try managedContext.fetch(fetchUser)
-            if users.count > 1{
+            if users.count > 1 {
                 print("multiple user was found ")
                 return
             }
@@ -131,7 +131,8 @@ class DataBaseHelper {
             "isDone" : isDone,
             "list": list,
             "color": color,
-            "priority": priority
+            "priority": priority,
+            "made": made
         ]
         
         db.collection("task").document(key).setData(docData) { err in
@@ -151,6 +152,7 @@ class DataBaseHelper {
         instance.color = color
         instance.owner = email
         instance.priority = priority
+        instance.made = made
         print(instance.date!)
         do {
             print("Saved.")
@@ -297,6 +299,7 @@ class DataBaseHelper {
                         instance.list = document.get("list")! as? String
                         instance.owner = document.get("email")! as? String
                         instance.priority = (document.get("priority")! as? Int16)!
+                        instance.made = document.get("made") as? String
                         print(title)
                         do{
                             try managedContext.save()//print("save to local.")
@@ -323,7 +326,7 @@ class DataBaseHelper {
     }
     
     //change the isDone for a task
-    func updateDBTask(id:String, body: String?, color: String?, date:Date?, isDone: Bool?, list:String?, owner:String?, title:String?, priority:Int16?) {
+    func updateDBTask(id:String, body: String?, color: String?, date:Date?, isDone: Bool?, list:String?, owner:String?, title:String?, priority:Int16?, made: String?) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -351,9 +354,9 @@ class DataBaseHelper {
         let docData: [String: Any]
         
         if (owner == nil || list == nil || isDone == nil) {
-            docData = ["title": title, "body": body, "color": color,"date": date, "priority": priority]
+            docData = ["title": title, "body": body, "color": color,"date": date, "priority": priority, "made": made]
         } else {
-            docData = ["title": title, "body": body, "color": color,"date": date, "isDone": isDone, "list": list, "priority": priority]
+            docData = ["title": title, "body": body, "color": color,"date": date, "isDone": isDone, "list": list, "priority": priority, "made": made]
         }
         
         print("Status Change")
@@ -376,7 +379,7 @@ class DataBaseHelper {
         }
     }
     // update local task
-    func updateLocalTask(id:String, body: String? = nil, color: String? = nil, date:Date? = nil, isDone: Bool? = nil, list:String? = nil, owner:String? = nil, title:String? = nil, priority:Int16? = 0) {
+    func updateLocalTask(id:String, body: String? = nil, color: String? = nil, date:Date? = nil, isDone: Bool? = nil, list:String? = nil, owner:String? = nil, title:String? = nil, priority:Int16? = 0, made:String? = nil) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -395,6 +398,7 @@ class DataBaseHelper {
             if list != nil {foundTasks.first?.list = list}
             if owner != nil {foundTasks.first?.owner = owner}
             if priority != 0 {foundTasks.first?.priority = priority!}
+            if made != nil {foundTasks.first?.made = made}
             foundTasks.first?.color = color
             try managedContext.save()
             print("Updated.")
@@ -404,7 +408,7 @@ class DataBaseHelper {
             print(list)
             print(isDone)
             print(owner)
-            updateDBTask(id: id, body: body, color: color, date: date, isDone: isDone, list: list, owner: owner, title: title, priority: priority)
+            updateDBTask(id: id, body: body, color: color, date: date, isDone: isDone, list: list, owner: owner, title: title, priority: priority, made: made)
         } catch {
             print("Update error.")
         }

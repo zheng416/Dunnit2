@@ -38,7 +38,7 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
     var topicPickerData: [String] = [String]()
     var priorityPickerData: [String] = [String]()
     
-    public var completion: ((String, String, Date, String, Int16) -> Void)?
+    public var completion: ((String, String, Date, String, Int16, String) -> Void)?
     
     func getTopics() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchTopics()
@@ -138,7 +138,24 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
             }
             let selectedValue = topicPickerData[topicPicker.selectedRow(inComponent: 0)]
             let selectedPriorityValue = priorityPicker.selectedRow(inComponent: 0)
-            completion?(titleText, bodyText, targetDate, selectedValue, Int16(selectedPriorityValue))
+            
+            let made = Date()
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "YY, MMM d, HH:mm:ss"
+            let madeDate = dateFormatter.string(from: made)
+            let content = UNMutableNotificationContent()
+            content.title = "Deadline: " + titleText
+            content.sound = .default
+            content.body = bodyText
+            let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: targetDate), repeats: false)
+            let request = UNNotificationRequest(identifier: madeDate, content: content, trigger: trigger)
+            UNUserNotificationCenter.current().add(request, withCompletionHandler: {error in
+                if error != nil {
+                    print("error for adding notification")
+                }
+            })
+            
+            completion?(titleText, bodyText, targetDate, selectedValue, Int16(selectedPriorityValue), madeDate)
             print("Saved")
         }
     }
