@@ -21,6 +21,7 @@ class DescriptionViewController: UIViewController {
     var priorityVal: Int?
     
     var madeVal: String?
+    var task: TaskEntity?
     
     @IBOutlet var titleField: UILabel!
     

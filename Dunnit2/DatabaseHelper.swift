@@ -863,6 +863,7 @@ class DataBaseHelper {
                     }
                     for document in querySnapshot!.documents {
                         let id = document.documentID
+                        print("list ID",document.documentID)
                         let title = document.get("title")!
                         let owner = document.get("email")!
                         let shared = document.get("shared")!
