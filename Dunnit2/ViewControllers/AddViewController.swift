@@ -11,6 +11,7 @@ import UIKit
 class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
     
     var currentTopic: String?
+    var currentListIndex: Int = 0
     var noTopics: [String] = [String]()
     
     @IBOutlet var titlefield: UITextField!
@@ -18,8 +19,11 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
     @IBOutlet var datePicker: UIDatePicker!
     @IBOutlet weak var topicPicker: UIPickerView!
     
-    var pickerData: [String] = [String]()
+    @IBOutlet weak var listPicker: UIPickerView!
     
+    var pickerData: [String] = [String]()
+    //var listPickerData: [Int:(String,String)] = [Int:(String,String)]()
+    var listPickerData: [String] = [String]()
     public var completion: ((String, String, Date, String) -> Void)?
     
     func getTopics() -> [String: Any] {
@@ -40,6 +44,17 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
         }
         return endUser
     }
+    func getList() -> [Int:(String,String)] {
+        let lists = DataBaseHelper.shareInstance.fetchLists()
+        print(lists)
+        var userdic = [Int:(String,String)]()
+        var i = 0
+        for x in lists as [ListEntity] {
+            userdic[i] = (x.id!,x.title!)
+            i+=1
+        }
+        return userdic
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,7 +63,10 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(didTapSaveButton))
 
         // Do any additional setup after loading the view.
-        
+        topicPicker.tag = 1
+        listPicker.tag = 2
+        listPicker.delegate = self
+        listPicker.dataSource = self
         topicPicker.delegate = self
         topicPicker.dataSource = self
         pickerData = []
@@ -64,6 +82,14 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
             pickerData = ["No Topics Available", "Add Topics in Settings"]
         }
         noTopics = ["", "No Topics Available", "Add Topics in Settings"]
+        listPickerData.removeAll()
+        let list = getList()
+        for (index, (id, title)) in list {
+            if !((title as! String).isEmpty) {
+                listPickerData.append(title as! String)
+            }
+        }
+        
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -71,12 +97,25 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return pickerData.count
+        if pickerView.tag == 1{
+            return pickerData.count
+        }
+        else {
+            return listPickerData.count
+        }
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        currentTopic = pickerData[row]
-        return pickerData[row]
+        if pickerView.tag == 1{
+            currentTopic = pickerData[row]
+            return pickerData[row]
+        }
+        else {
+            currentTopic = listPickerData[row]
+            currentListIndex = row
+            return listPickerData[row]
+        }
+
     }
     
     @objc func didTapSaveButton() {

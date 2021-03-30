@@ -17,6 +17,8 @@ class DescriptionViewController: UIViewController {
     
     var topicStr: String?
     
+    var task: TaskEntity?
+    
     @IBOutlet var titleField: UILabel!
     
     @IBOutlet var dateField: UILabel!

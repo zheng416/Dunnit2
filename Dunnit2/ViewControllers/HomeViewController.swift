@@ -270,10 +270,12 @@ extension HomeViewController: UITableViewDelegate {
         if let indexPath = tableView.indexPathForSelectedRow {
             let destination = segue.destination as? DescriptionViewController
             let id = taskStore[indexPath.section][indexPath.row].id
+
             destination?.titleStr = taskStore[indexPath.section][indexPath.row].title!
             destination?.dateVal = taskStore[indexPath.section][indexPath.row].date!
             destination?.bodyStr = taskStore[indexPath.section][indexPath.row].body
             destination?.topicStr = taskStore[indexPath.section][indexPath.row].color
+            destination?.task = taskStore[indexPath.section][indexPath.row]
             tableView.deselectRow(at: indexPath, animated: true)
             destination?.completion = {title, body, date, color in
                 DispatchQueue.main.async {

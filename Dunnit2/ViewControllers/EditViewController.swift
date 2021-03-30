@@ -17,9 +17,11 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
     
     var topicStr: String?
     
+    var task:TaskEntity?
+    var currentListIndex:Int?
     var currentTopic: String?
     var noTopics: [String] = [String]()
-    
+    var listPickerData: [String] = [String]()
     @IBOutlet var titleField: UITextField!
     
     @IBOutlet var dateField: UIDatePicker!
@@ -28,9 +30,22 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
     
     @IBOutlet var topicPicker: UIPickerView!
     
+    @IBOutlet weak var listPicker: UIPickerView!
     var pickerData: [String] = [String]()
     
     public var completion: ((String, String, Date, String) -> Void)?
+    
+    func getList() -> [Int:(String,String)] {
+        let lists = DataBaseHelper.shareInstance.fetchLists()
+        print(lists)
+        var userdic = [Int:(String,String)]()
+        var i = 0
+        for x in lists as [ListEntity] {
+            userdic[i] = (x.id!,x.title!)
+            i+=1
+        }
+        return userdic
+    }
     
     func getTopics() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchTopics()
@@ -89,7 +104,16 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
         
         // Do any additional setup after loading the view.
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self.description, action: #selector(didTapSaveButton))
-
+        
+        listPicker.delegate = self
+        listPicker.dataSource = self
+        listPickerData.removeAll()
+        let list = getList()
+        for (index, (id, title)) in list {
+            if !((title as! String).isEmpty) {
+                listPickerData.append(title as! String)
+            }
+        }
         // Do any additional setup after loading the view.
     }
     
@@ -98,12 +122,24 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return pickerData.count
+        if pickerView.tag == 1{
+            return pickerData.count
+        }
+        else {
+            return listPickerData.count
+        }
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        currentTopic = pickerData[row]
-        return pickerData[row]
+        if pickerView.tag == 1{
+            currentTopic = pickerData[row]
+            return pickerData[row]
+        }
+        else {
+            currentTopic = listPickerData[row]
+            currentListIndex = row
+            return listPickerData[row]
+        }
     }
     
     @objc func didTapSaveButton() {
@@ -113,6 +149,7 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
             if noTopics.contains(currentTopic!) {
                 currentTopic = ""
             }
+            //task!.list = listPickerData[currentListIndex!].first!
             let selectedValue = pickerData[topicPicker.selectedRow(inComponent: 0)]
             completion?(titleText, bodyText, targetDate, selectedValue)
             print("Saved")
