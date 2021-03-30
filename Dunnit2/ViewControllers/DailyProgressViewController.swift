@@ -76,7 +76,7 @@ class DailyProgressViewController: UIViewController {
         
         // Fetch tasks for all tasks
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
-        let user = DataBaseHelper.shareInstance.fetchUser()
+        let user = DataBaseHelper.shareInstance.fetchLocalUser()
         taskStore = [tasks.filter{$0.isDone == false && $0.owner == user[0].email && Calendar.current.isDateInToday($0.date as! Date) }, tasks.filter{$0.isDone == true && $0.owner == user[0].email && Calendar.current.isDateInToday($0.date as! Date)}]
         
         

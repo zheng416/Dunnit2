@@ -104,7 +104,7 @@ class MonthlyProgressViewController: UIViewController {
         
         // Fetch tasks for all tasks
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask()
-        let user = DataBaseHelper.shareInstance.fetchUser()
+        let user = DataBaseHelper.shareInstance.fetchLocalUser()
         
         let partOne = tasks.filter{$0.isDone == false && $0.owner == user[0].email &&  ($0.date as! Date).isInThisMonth}
         let partTwo = tasks.filter{$0.isDone == true && $0.owner == user[0].email &&  ($0.date as! Date).isInThisMonth}

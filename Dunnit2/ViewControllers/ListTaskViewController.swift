@@ -19,7 +19,7 @@ class ListTaskViewController: UIViewController {
     var taskListStore = [[TaskEntity](), [TaskEntity]()]
     
     func getData() {
-        let user = DataBaseHelper.shareInstance.fetchUser()
+        let user = DataBaseHelper.shareInstance.fetchLocalUser()
         
         let sortKey = user[0].sortKey
         let sortAscending = user[0].sortAscending
@@ -57,7 +57,7 @@ class ListTaskViewController: UIViewController {
     
     // Dropdown menu
     private func setupSortMenuItem() {
-        let localUser = DataBaseHelper.shareInstance.fetchUser()
+        let localUser = DataBaseHelper.shareInstance.fetchLocalUser()
         self.sortMenu = UIMenu(title: "", children: [
             //TODO: Sort by task list function
             // Sort by title

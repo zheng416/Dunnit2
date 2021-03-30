@@ -61,7 +61,7 @@ class HomeViewController: UIViewController {
     //local
     func getData() {
         
-        let user = DataBaseHelper.shareInstance.fetchUser()
+        let user = DataBaseHelper.shareInstance.fetchLocalUser()
         
         let sortKey = user[0].sortKey
         let sortAscending = user[0].sortAscending
@@ -226,7 +226,7 @@ class HomeViewController: UIViewController {
     
     // Dropdown menu
     private func setupSortMenuItem() {
-        let localUser = DataBaseHelper.shareInstance.fetchUser()
+        let localUser = DataBaseHelper.shareInstance.fetchLocalUser()
         self.sortMenu = UIMenu(title: "", children: [
             // Sort by title
             UIAction(title: "By Title Ascending") { action in
@@ -287,7 +287,7 @@ class HomeViewController: UIViewController {
         // Do any additional setup after loading the view.
         
         // Clear filter everytime relaunch app (prevent missed lists)
-        let user = DataBaseHelper.shareInstance.fetchUser()
+        let user = DataBaseHelper.shareInstance.fetchLocalUser()
         DataBaseHelper.shareInstance.updateFilterPreference(email: user[0].email ?? "", filterKey: "")
         
         getData()
