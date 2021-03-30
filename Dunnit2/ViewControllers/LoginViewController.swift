@@ -10,6 +10,7 @@ import GoogleSignIn
 import FBSDKLoginKit
 import FirebaseAuth
 import Firebase
+import UserNotifications
 
 class LoginViewController: UIViewController, LoginButtonDelegate {
 
@@ -166,6 +167,13 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                             }
                             print("cannot load data from database")
                             return
+                        })
+                        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { success, error in
+                            if success {
+                                print("success for notifications")
+                            } else if let error = error {
+                                print("error occurred")
+                            }
                         })
                     }
                     else if message.contains("Error"){
