@@ -136,10 +136,7 @@ class HomeViewController: UIViewController {
             addChild(listVC)
             self.title = "Progress"
 
-            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
-            navigationItem.rightBarButtonItems = [addButton]
-            navigationItem.rightBarButtonItem?.isEnabled = false
-//            navigationItem.rightBarButtonItems = nil
+            navigationItem.rightBarButtonItems = nil
             menu = MenuType.progress
         
         case .shared:
@@ -149,7 +146,7 @@ class HomeViewController: UIViewController {
             self.topView = sharedVC.view
             addChild(sharedVC)
             self.title = "Shared Lists"
-            navigationItem.rightBarButtonItem?.isEnabled = false
+            navigationItem.rightBarButtonItems = nil
             menu = MenuType.shared
         case .settings:
             let storyboard = UIStoryboard(name: "Settings", bundle: nil)
@@ -158,7 +155,8 @@ class HomeViewController: UIViewController {
             self.topView = settingVC.view
             addChild(settingVC)
             menu = MenuType.settings
-            navigationItem.rightBarButtonItem?.isEnabled = false
+            
+            navigationItem.rightBarButtonItems = nil
         case .myList:
             let storyboard = UIStoryboard(name: "Home", bundle: nil)
             let listVC = storyboard.instantiateViewController(withIdentifier: "listsVC")
@@ -173,6 +171,9 @@ class HomeViewController: UIViewController {
 
         default:
             print("Default")
+            let sortButton = UIBarButtonItem(title: "Sort", menu: self.sortMenu)
+            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+            navigationItem.rightBarButtonItems = [addButton, sortButton]
             navigationItem.rightBarButtonItem?.isEnabled = true
             menu = MenuType.all
             getData()
