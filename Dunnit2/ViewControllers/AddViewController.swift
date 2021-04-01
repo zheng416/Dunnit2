@@ -25,13 +25,14 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
     @IBOutlet weak var listPicker: UIPickerView!
     var topicPickerData: [String] = [String]()
     var priorityPickerData: [String] = [String]()
-    
+    //var task:TaskEntity?
 
     public var completion: ((String, String, Date, String, Int16, String) -> Void)?
 
     var pickerData: [String] = [String]()
     //var listPickerData: [Int:(String,String)] = [Int:(String,String)]()
     var listPickerData: [String] = [String]()
+    var listDic:[Int:(id:String,title:String)] = [Int:(String,String)]()
     
     func getTopics() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchTopics()
@@ -51,16 +52,13 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
         }
         return endUser
     }
-    func getList() -> [Int:(String,String)] {
+    func getList() -> Void {
         let lists = DataBaseHelper.shareInstance.fetchLists()
-        print(lists)
-        var userdic = [Int:(String,String)]()
         var i = 0
         for x in lists as [ListEntity] {
-            userdic[i] = (x.id!,x.title!)
+            listDic[i] = (x.id!,x.title!)
             i+=1
         }
-        return userdic
     }
     
     override func viewDidLoad() {
@@ -95,12 +93,24 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
       
         noSelection = ["None"]
         listPickerData.removeAll()
-        let list = getList()
-        for (index, (id, title)) in list {
-            if !((title as! String).isEmpty) {
-                listPickerData.append(title as! String)
-            }
+        getList()
+        if listDic.count == 0{
+            currentListIndex = 0
+            listDic[listDic.count] = ("","")
+            listPickerData.append("N/A")
+            listPicker.selectRow(0, inComponent: 0, animated: false)
+            listPicker.reloadAllComponents()
+            return
         }
+        var j = -1
+        if j == -1 {
+            j = listDic.count
+        }
+        currentListIndex = j
+        listDic[listDic.count] = ("","")
+        listPickerData.append("N/A")
+        listPicker.selectRow(j, inComponent: 0, animated: false)
+        listPicker.reloadAllComponents()
         
     }
     
