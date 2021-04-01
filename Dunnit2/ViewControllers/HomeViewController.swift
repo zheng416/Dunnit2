@@ -422,7 +422,7 @@ extension HomeViewController: UITableViewDataSource {
                     .normal(" )")
             }
             cell.textLabel?.sizeToFit()
-            if date < Date() {
+            if (date < Date() && indexPath.section != 1) {
                 let dateStr = formatter.string(from: date)
                 let range = (dateStr as NSString).range(of: dateStr)
 
@@ -517,7 +517,7 @@ extension HomeViewController: UITableViewDataSource {
                     .normal(" )")
             }
             cell.textLabel?.sizeToFit()
-            if date < Date() {
+            if (date < Date() && indexPath.section != 1) {
                 let dateStr = formatter.string(from: date)
                 let range = (dateStr as NSString).range(of: dateStr)
 
