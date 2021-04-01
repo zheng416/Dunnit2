@@ -9,6 +9,7 @@ import UIKit
 import FirebaseAuth
 import GoogleSignIn
 import FBSDKLoginKit
+import UserNotifications
 
 class SettingsViewController: UITableViewController {
     
@@ -24,6 +25,9 @@ class SettingsViewController: UITableViewController {
     var userStore = [UserEntity]()
     var globalUser = [String: Any]()
     var authUser = Auth.auth().currentUser
+    
+    var taskStore = [[TaskEntity](), [TaskEntity]()]
+    
     //  Access databse functions
     //helper functions
     func getUser() -> [String: Any] {
@@ -46,6 +50,17 @@ class SettingsViewController: UITableViewController {
         print("user is \(endUser)")
         
         return endUser
+    }
+    func getData() {
+        let user = DataBaseHelper.shareInstance.fetchLocalUser()
+        
+        let sortKey = user[0].sortKey
+        let sortAscending = user[0].sortAscending
+        let filterKey = user[0].filterKey
+        
+        let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: sortKey, ascending: sortAscending, filterKey: filterKey)
+
+        taskStore = [tasks.filter{$0.isDone == false && $0.owner == user[0].email}, tasks.filter{$0.isDone == true && $0.owner == user[0].email}]
     }
     func checkError(error : Error?,message: String)->Bool{
         if let error = error{
@@ -93,6 +108,7 @@ class SettingsViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        getData()
         loadLabelValues()
         authUser = Auth.auth().currentUser
         print(authUser!.isEmailVerified)
@@ -122,9 +138,32 @@ class SettingsViewController: UITableViewController {
     
     @IBAction func toggleNotifications(){
         if notificationsToggle.isOn {
+            if taskStore[0].count >= 1 {
+                for i in 0...taskStore[0].count - 1 {
+                    let titleText = taskStore[0][i].title
+                    print("Title: " + titleText!)
+                    let bodyText = taskStore[0][i].body
+                    let targetDate = taskStore[0][i].date!
+                    let madeDate = taskStore[0][i].made!
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "MMM dd, YYYY HH:mm"
+                    let content = UNMutableNotificationContent()
+                    content.title = formatter.string(from: targetDate) + ": " + titleText!
+                    content.sound = .default
+                    content.body = bodyText!
+                    let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: targetDate), repeats: false)
+                    let request = UNNotificationRequest(identifier: madeDate, content: content, trigger: trigger)
+                    UNUserNotificationCenter.current().add(request, withCompletionHandler: {error in
+                        if error != nil {
+                            print("error for adding notification")
+                        }
+                    })
+                }
+            }
             DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,notification: true )
             DataBaseHelper.shareInstance.updateDBUser(email: globalUser["email"] as! String,notification: true )
         } else {
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
             DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,notification: false )
             DataBaseHelper.shareInstance.updateDBUser(email: globalUser["email"] as! String,notification: false )
         }

@@ -371,7 +371,7 @@ extension HomeViewController: UITableViewDataSource {
             let color = searchTasks[indexPath.section][indexPath.row].color
             let priority = searchTasks[indexPath.section][indexPath.row].priority
             let formatter = DateFormatter()
-            formatter.dateFormat = "MMM dd, YYYY"
+            formatter.dateFormat = "MMM dd, YYYY HH:mm"
             cell.textLabel?.attributedText = NSMutableAttributedString()
                 .normal(searchTasks[indexPath.section][indexPath.row].title!)
             if (priority != 0) {
@@ -390,6 +390,14 @@ extension HomeViewController: UITableViewDataSource {
             }
             cell.textLabel?.sizeToFit()
             cell.detailTextLabel?.text = formatter.string(from: date)
+            if date < Date() {
+                let dateStr = formatter.string(from: date)
+                let range = (dateStr as NSString).range(of: dateStr)
+
+                let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
+                cell.detailTextLabel?.attributedText = mutableAttributedString
+            }
 //            if !(color!.isEmpty) {
             if (color != nil && !color!.isEmpty) {
                 let label = UILabel()
@@ -452,7 +460,7 @@ extension HomeViewController: UITableViewDataSource {
             let color = taskStore[indexPath.section][indexPath.row].color
             let priority = taskStore[indexPath.section][indexPath.row].priority
             let formatter = DateFormatter()
-            formatter.dateFormat = "MMM dd, YYYY"
+            formatter.dateFormat = "MMM dd, YYYY HH:mm"
             cell.textLabel?.attributedText = NSMutableAttributedString()
                 .normal(taskStore[indexPath.section][indexPath.row].title!)
             if (priority != 0) {
@@ -471,6 +479,14 @@ extension HomeViewController: UITableViewDataSource {
             }
             cell.textLabel?.sizeToFit()
             cell.detailTextLabel?.text = formatter.string(from: date)
+            if date < Date() {
+                let dateStr = formatter.string(from: date)
+                let range = (dateStr as NSString).range(of: dateStr)
+
+                let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
+                cell.detailTextLabel?.attributedText = mutableAttributedString
+            }
 //            if !(color!.isEmpty) {
             if (color != nil && !color!.isEmpty) {
                 let label = UILabel()
