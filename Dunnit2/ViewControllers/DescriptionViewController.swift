@@ -52,7 +52,7 @@ class DescriptionViewController: UIViewController {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM dd, YYYY"
         dateField.text = formatter.string(from: self.dateVal!)
-        bodyField.text = bodyStr! + "\(task?.list)"
+        bodyField.text = bodyStr!
         if (topicStr != nil && !topicStr!.isEmpty) {
             topicField.text = "Topic: " + topicStr!
         }

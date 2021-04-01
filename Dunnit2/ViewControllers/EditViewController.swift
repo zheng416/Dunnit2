@@ -156,6 +156,14 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
         listPicker.dataSource = self
         listPickerData.removeAll()
         getList()
+        if listDic.count == 0{
+            currentListIndex = 0
+            listDic[listDic.count] = ("","")
+            listPickerData.append("N/A")
+            listPicker.selectRow(0, inComponent: 0, animated: false)
+            listPicker.reloadAllComponents()
+            return
+        }
         var j = -1
         for i in 0...listDic.count - 1{
             listPickerData.append(listDic[i]!.title as! String)
