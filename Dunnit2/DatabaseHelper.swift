@@ -1511,4 +1511,48 @@ class DataBaseHelper {
             }
         }
     }
+    
+    func validEmail(email: String, onSuccess: @escaping(Bool) -> Void) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        
+        do {
+        let user = try managedContext.fetch(fetchUser)
+        if user.count > 1{
+            print("multiple user was found ")
+            return
+        }
+        if (user.isEmpty || user.count == 0){
+            print("not local user was found when fetching data")
+            return
+        }
+        
+        let current = (user[0] as! UserEntity).email
+        
+        if (current == email) {
+            onSuccess(false)
+            return
+        }
+        } catch {
+            print(error)
+        }
+        
+        db.collection("users").whereField("email", isEqualTo: email).getDocuments() { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                if (querySnapshot?.count == 0){
+                    print("No shared found")
+                    onSuccess(false)
+                } else {
+                    onSuccess(true)
+                }
+            }
+            
+        }
+        
+    }
 }

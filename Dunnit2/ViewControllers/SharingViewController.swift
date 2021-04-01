@@ -42,8 +42,27 @@ class SharingViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func didTapShareButton() {
+        
         if let emailText = emailField.text, !emailText.isEmpty {
-            completion?(emailText)
+            DataBaseHelper.shareInstance.validEmail(email: emailText, onSuccess: {success in
+                if success {
+                    let dialogMessage = UIAlertController(title: "", message: "Successfully Shared", preferredStyle: .alert)
+                    self.present(dialogMessage, animated: true, completion: nil)
+                    let when = DispatchTime.now() + .seconds(3)
+                    DispatchQueue.main.asyncAfter(deadline: when) {
+                        dialogMessage.dismiss(animated: true, completion: nil)
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                    self.completion?(emailText)
+                } else {
+                    let dialogMessage = UIAlertController(title: "", message: "Error: sharing failed", preferredStyle: .alert)
+                    self.present(dialogMessage, animated: true, completion: nil)
+                    let when = DispatchTime.now() + .seconds(3)
+                    DispatchQueue.main.asyncAfter(deadline: when) {
+                        dialogMessage.dismiss(animated: true, completion: nil)
+                    }
+                }
+            })
         }
     }
     
