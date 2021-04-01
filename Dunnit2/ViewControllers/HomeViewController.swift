@@ -189,6 +189,7 @@ class HomeViewController: UIViewController {
         }
         
         
+        
         if (menu == MenuType.myList) {
             // Do Stuff
             print(menu!)
@@ -212,7 +213,7 @@ class HomeViewController: UIViewController {
             navigationController?.pushViewController(addlistVC, animated: true)
             return
         }
-
+        
         vc.title = "New Task"
         vc.navigationItem.largeTitleDisplayMode = .never
         vc.completion = {title, body, date, color, priority, made in
