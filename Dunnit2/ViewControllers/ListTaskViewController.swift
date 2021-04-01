@@ -228,13 +228,19 @@ extension ListTaskViewController: UITableViewDataSource {
                 .normal(" )")
         }
         cell.textLabel?.sizeToFit()
-        cell.detailTextLabel?.text = formatter.string(from: date)
         if date < Date() {
             let dateStr = formatter.string(from: date)
             let range = (dateStr as NSString).range(of: dateStr)
 
             let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
             mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
+            cell.detailTextLabel?.attributedText = mutableAttributedString
+        } else {
+            let dateStr = formatter.string(from: date)
+            let range = (dateStr as NSString).range(of: dateStr)
+
+            let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+            mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: range)
             cell.detailTextLabel?.attributedText = mutableAttributedString
         }
 //            if !(color!.isEmpty) {

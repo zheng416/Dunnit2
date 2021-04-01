@@ -333,22 +333,43 @@ extension HomeViewController: UITableViewDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let indexPath = tableView.indexPathForSelectedRow {
             let destination = segue.destination as? DescriptionViewController
-            let id = taskStore[indexPath.section][indexPath.row].id
-            print("THE ID IS    ")
-            print(id)
-            destination?.titleStr = taskStore[indexPath.section][indexPath.row].title!
-            destination?.dateVal = taskStore[indexPath.section][indexPath.row].date!
-            destination?.bodyStr = taskStore[indexPath.section][indexPath.row].body
-            destination?.topicStr = taskStore[indexPath.section][indexPath.row].color
-            destination?.priorityVal = Int(taskStore[indexPath.section][indexPath.row].priority)
-            destination?.madeVal = taskStore[indexPath.section][indexPath.row].made
-            destination?.task = taskStore[indexPath.section][indexPath.row]
-            tableView.deselectRow(at: indexPath, animated: true)
-            destination?.completion = {title, body, date, color, priority, made in
-                DispatchQueue.main.async {
-                    DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made)
-                    self.navigationController?.popViewController(animated: true)
-                    self.getData()
+            if searching {
+                let id = searchTasks[indexPath.section][indexPath.row].id
+                print("THE ID IS    ")
+                print(id)
+                destination?.titleStr = searchTasks[indexPath.section][indexPath.row].title!
+                destination?.dateVal = searchTasks[indexPath.section][indexPath.row].date!
+                destination?.bodyStr = searchTasks[indexPath.section][indexPath.row].body
+                destination?.topicStr = searchTasks[indexPath.section][indexPath.row].color
+                destination?.priorityVal = Int(searchTasks[indexPath.section][indexPath.row].priority)
+                destination?.madeVal = searchTasks[indexPath.section][indexPath.row].made
+                destination?.task = searchTasks[indexPath.section][indexPath.row]
+                tableView.deselectRow(at: indexPath, animated: true)
+                destination?.completion = {title, body, date, color, priority, made in
+                    DispatchQueue.main.async {
+                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made)
+                        self.navigationController?.popViewController(animated: true)
+                        self.getData()
+                    }
+                }
+            } else {
+                let id = taskStore[indexPath.section][indexPath.row].id
+                print("THE ID IS    ")
+                print(id)
+                destination?.titleStr = taskStore[indexPath.section][indexPath.row].title!
+                destination?.dateVal = taskStore[indexPath.section][indexPath.row].date!
+                destination?.bodyStr = taskStore[indexPath.section][indexPath.row].body
+                destination?.topicStr = taskStore[indexPath.section][indexPath.row].color
+                destination?.priorityVal = Int(taskStore[indexPath.section][indexPath.row].priority)
+                destination?.madeVal = taskStore[indexPath.section][indexPath.row].made
+                destination?.task = taskStore[indexPath.section][indexPath.row]
+                tableView.deselectRow(at: indexPath, animated: true)
+                destination?.completion = {title, body, date, color, priority, made in
+                    DispatchQueue.main.async {
+                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made)
+                        self.navigationController?.popViewController(animated: true)
+                        self.getData()
+                    }
                 }
             }
         }
@@ -401,13 +422,19 @@ extension HomeViewController: UITableViewDataSource {
                     .normal(" )")
             }
             cell.textLabel?.sizeToFit()
-            cell.detailTextLabel?.text = formatter.string(from: date)
             if date < Date() {
                 let dateStr = formatter.string(from: date)
                 let range = (dateStr as NSString).range(of: dateStr)
 
                 let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
                 mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
+                cell.detailTextLabel?.attributedText = mutableAttributedString
+            } else {
+                let dateStr = formatter.string(from: date)
+                let range = (dateStr as NSString).range(of: dateStr)
+
+                let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: range)
                 cell.detailTextLabel?.attributedText = mutableAttributedString
             }
 //            if !(color!.isEmpty) {
@@ -490,13 +517,19 @@ extension HomeViewController: UITableViewDataSource {
                     .normal(" )")
             }
             cell.textLabel?.sizeToFit()
-            cell.detailTextLabel?.text = formatter.string(from: date)
             if date < Date() {
                 let dateStr = formatter.string(from: date)
                 let range = (dateStr as NSString).range(of: dateStr)
 
                 let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
                 mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
+                cell.detailTextLabel?.attributedText = mutableAttributedString
+            } else {
+                let dateStr = formatter.string(from: date)
+                let range = (dateStr as NSString).range(of: dateStr)
+
+                let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: range)
                 cell.detailTextLabel?.attributedText = mutableAttributedString
             }
 //            if !(color!.isEmpty) {
