@@ -77,11 +77,16 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
         return endUser
     }
     func getList() -> Void {
+        let user = DataBaseHelper.shareInstance.fetchLocalUser()
         let lists = DataBaseHelper.shareInstance.fetchLists()
         var i = 0
+        print(lists.count)
+        print(lists[0])
         for x in lists as [ListEntity] {
-            listDic[i] = (x.id!,x.title!)
-            i+=1
+            if (x.owner == user[0].email){
+                listDic[i] = (x.id!,x.title!)
+                i+=1
+            }
         }
     }
     
@@ -94,7 +99,9 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
         titlefield.delegate = self // rid of keyboard
         bodyField.delegate = self
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(didTapSaveButton))
-
+        let date = datePicker.date
+        let modifiedDate = Calendar.current.date(byAdding: .day, value: 1, to: date)!
+        datePicker.date = modifiedDate
         // Do any additional setup after loading the view.
         topicPicker.tag = 1
         listPicker.tag = 3
