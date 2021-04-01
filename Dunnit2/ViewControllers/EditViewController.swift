@@ -25,6 +25,8 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
     
     var currentPriority: Int?
     
+    var notificationsOn: Bool?
+    
     var noTopics: [String] = [String]()
 
     @IBOutlet var titleField: UITextField!
@@ -72,6 +74,29 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
         return endUser
     }
     
+    func getUser() -> [String: Any] {
+        var user = DataBaseHelper.shareInstance.fetchLocalUser()
+        if user.isEmpty{
+            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
+            user = DataBaseHelper.shareInstance.fetchLocalUser()
+        }
+        
+        // Unpack user entity to dictionary
+        var endUser = [String:Any]()
+        for x in user as [UserEntity] {
+            endUser["name"] = x.name
+            endUser["email"] = x.email
+            endUser["darkMode"] = x.darkMode
+            endUser["notification"] = x.notification
+            endUser["sound"] = x.sound
+        }
+        
+        print("user is \(endUser)")
+        
+        return endUser
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -82,6 +107,9 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
         priorityPicker.tag = 2
         listPicker.tag = 3
 
+        let user = getUser()
+        notificationsOn = user["notification"] as! Bool        
+        
         titleField.text = titleStr
         dateField.date = dateVal!
         bodyField.text = bodyStr
@@ -197,17 +225,19 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "YY, MMM d, HH:mm:ss"
             let madeDate = dateFormatter.string(from: made)
-            let content = UNMutableNotificationContent()
-            content.title = "Deadline: " + titleText
-            content.sound = .default
-            content.body = bodyText
-            let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: targetDate), repeats: false)
-            let request = UNNotificationRequest(identifier: madeDate, content: content, trigger: trigger)
-            UNUserNotificationCenter.current().add(request, withCompletionHandler: {error in
-                if error != nil {
-                    print("error for adding notification")
-                }
-            })
+            if notificationsOn! {
+                let content = UNMutableNotificationContent()
+                content.title = "Deadline: " + titleText
+                content.sound = .default
+                content.body = bodyText
+                let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: targetDate), repeats: false)
+                let request = UNNotificationRequest(identifier: madeDate, content: content, trigger: trigger)
+                UNUserNotificationCenter.current().add(request, withCompletionHandler: {error in
+                    if error != nil {
+                        print("error for adding notification")
+                    }
+                })
+            }
             
             completion?(titleText, bodyText, targetDate, selectedValue, Int16(selectedPriorityValue), madeDate)
             print("Saved")

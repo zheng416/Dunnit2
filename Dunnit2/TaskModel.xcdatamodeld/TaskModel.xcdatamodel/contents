@@ -44,10 +44,10 @@
         <attribute name="email" optional="YES" attributeType="String"/>
         <attribute name="filterKey" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notification" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="notifications" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="sortAscending" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="sortKey" optional="YES" attributeType="String"/>
-        <attribute name="notification" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="sortPreference" optional="YES" attributeType="String"/>
         <attribute name="sound" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="topicid" optional="YES" attributeType="String"/>
@@ -57,6 +57,6 @@
         <element name="SharedEntity" positionX="-54" positionY="36" width="128" height="89"/>
         <element name="TaskEntity" positionX="-63" positionY="-18" width="128" height="179"/>
         <element name="TopicEntity" positionX="-54" positionY="36" width="128" height="223"/>
-        <element name="UserEntity" positionX="-54" positionY="18" width="128" height="134"/>
+        <element name="UserEntity" positionX="-54" positionY="18" width="128" height="194"/>
     </elements>
 </model>

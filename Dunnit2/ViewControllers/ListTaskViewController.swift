@@ -208,12 +208,37 @@ extension ListTaskViewController: UITableViewDataSource {
         viewWithTag?.removeFromSuperview()
         let date = taskListStore[indexPath.section][indexPath.row].date!
         let color = taskListStore[indexPath.section][indexPath.row].color
+        let priority = taskListStore[indexPath.section][indexPath.row].priority
         let formatter = DateFormatter()
-        formatter.dateFormat = "MMM dd, YYYY"
-        cell.textLabel?.text = taskListStore[indexPath.section][indexPath.row].title
+        formatter.dateFormat = "MMM dd, YYYY HH:mm"
+        cell.textLabel?.attributedText = NSMutableAttributedString()
+            .normal(taskListStore[indexPath.section][indexPath.row].title!)
+        if (priority != 0) {
+            var priorityText = ""
+            if (priority == 1) {
+                priorityText = "!"
+            } else if (priority == 2) {
+                priorityText = "!!"
+            } else {
+                priorityText = "!!!"
+            }
+            cell.textLabel?.attributedText = NSMutableAttributedString()
+                .normal(taskListStore[indexPath.section][indexPath.row].title! + "  ( ")
+                .boldAndRed(priorityText)
+                .normal(" )")
+        }
         cell.textLabel?.sizeToFit()
         cell.detailTextLabel?.text = formatter.string(from: date)
-        if (color != nil && !color!.isEmpty){
+        if date < Date() {
+            let dateStr = formatter.string(from: date)
+            let range = (dateStr as NSString).range(of: dateStr)
+
+            let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+            mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
+            cell.detailTextLabel?.attributedText = mutableAttributedString
+        }
+//            if !(color!.isEmpty) {
+        if (color != nil && !color!.isEmpty) {
             let label = UILabel()
             label.text = " " + color! + " "
             label.font = UIFont.boldSystemFont(ofSize: 16.0)
