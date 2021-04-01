@@ -22,13 +22,13 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
     @IBOutlet var datePicker: UIDatePicker!
     @IBOutlet weak var topicPicker: UIPickerView!
     @IBOutlet weak var priorityPicker: UIPickerView!
-    
+    @IBOutlet weak var listPicker: UIPickerView!
     var topicPickerData: [String] = [String]()
     var priorityPickerData: [String] = [String]()
     
+
     public var completion: ((String, String, Date, String, Int16, String) -> Void)?
-    @IBOutlet weak var listPicker: UIPickerView!
-    
+
     var pickerData: [String] = [String]()
     //var listPickerData: [Int:(String,String)] = [Int:(String,String)]()
     var listPickerData: [String] = [String]()
