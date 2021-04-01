@@ -1045,26 +1045,42 @@ class DataBaseHelper {
     }
     
     func fetchSharedDB(completion: @escaping (_ message: Bool) -> Void) {
-        var fetchingImage = [SharedEntity]()
+//        var fetchingImage = [SharedEntity]()
 
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let managedContext = appDelegate.persistentContainer.viewContext
-        var titlelist = [String]()
+//        var titlelist = [String]()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SharedEntity")
         let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        
+        // Delete Shared all
+
         do {
-            fetchingImage = try managedContext.fetch(fetchRequest) as! [SharedEntity]
-            print("countttt")
-            print(fetchingImage.count)
-            for result in fetchingImage as [SharedEntity] {
-                print(result.taskList)
-                var temp = "\(result.email!) + \(result.taskList!)"
-                print("TEMPPPEPPEPEP")
-                print(temp)
-                titlelist.append(temp)
+            let items = try managedContext.fetch(fetchRequest) as! [SharedEntity]
+            for item in items {
+                managedContext.delete(item)
             }
-            print("TITLELISTTTTT")
-            print(titlelist)
+            
+            try managedContext.save()
+        } catch {
+            print(error)
+        }
+        
+        // Then Fetch, could delete some of this part
+        
+        do {
+//            fetchingImage = try managedContext.fetch(fetchRequest) as! [SharedEntity]
+//            print("countttt")
+//            print(fetchingImage.count)
+//            for result in fetchingImage as [SharedEntity] {
+//                print(result.taskList)
+//                var temp = "\(result.email!) + \(result.taskList!)"
+//                print("TEMPPPEPPEPEP")
+//                print(temp)
+//                titlelist.append(temp)
+//            }
+//            print("TITLELISTTTTT")
+//            print(titlelist)
             let user = try managedContext.fetch(fetchUser)
             if user.count > 1{
                 print("multiple user was found ")
@@ -1096,10 +1112,10 @@ class DataBaseHelper {
                         let lid = document.get("lid")!
                         let id = document.get("id")!
                         print("\(owner) + \(taskList)")
-                        if titlelist.contains("\(owner) + \(taskList)" as! String){
-                            print("SAMMMMMEE")
-                            continue
-                        }
+//                        if titlelist.contains("\(owner) + \(taskList)" as! String){
+//                            print("SAMMMMMEE")
+//                            continue
+//                        }
                         let instance = SharedEntity(context: managedContext)
                         instance.email = owner as? String
                         instance.taskList = taskList  as? String
@@ -1236,7 +1252,6 @@ class DataBaseHelper {
         do {
             print("Fetching SharedLists.")
             fetchingImage = try managedContext.fetch(fetchRequest) as! [SharedEntity]
-            print("Number of Shared entities")
             print(fetchingImage.count)
             for result in fetchingImage as [SharedEntity] {
                 print("Inside Loopp")
