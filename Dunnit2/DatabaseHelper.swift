@@ -270,6 +270,7 @@ class DataBaseHelper {
             
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
         if (key != nil){
+            print("Sort by \(key)")
             let sort = NSSortDescriptor(key: key, ascending: ascending ?? true)
             fetchRequest.sortDescriptors = [sort]
         }

@@ -254,11 +254,20 @@ class HomeViewController: UIViewController {
                 
                 self.getData()
             },
-             UIAction(title: "By Priorities") { action in
+            UIAction(title: "By Priorities Ascending") { action in
                 // Duplicate Menu Child Selected
+                DataBaseHelper.shareInstance.updateSortPreference(key: "priority", ascending: true, email: localUser[0].email ?? "")
+                self.getData()
+            },
+            UIAction(title: "By Priorities Decending") { action in
+               // Duplicate Menu Child Selected
+               DataBaseHelper.shareInstance.updateSortPreference(key: "priority", ascending: false, email: localUser[0].email ?? "")
+               self.getData()
             },
              UIAction(title: "By Tags") { action in
                 //Move Menu Child Selected
+                DataBaseHelper.shareInstance.updateSortPreference(key: "color", ascending: true, email: localUser[0].email ?? "")
+                self.getData()
             },
             UIAction(title: "Filter Today") { action in
                 DataBaseHelper.shareInstance.updateFilterPreference(email: localUser[0].email ?? "", filterKey: "today")
