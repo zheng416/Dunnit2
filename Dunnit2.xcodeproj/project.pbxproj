@@ -10,6 +10,7 @@
 		5D3B626025FB762300EFA147 /* EditTopicsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3B625F25FB762300EFA147 /* EditTopicsViewController.swift */; };
 		5DA410AB25F1494D005D3E0B /* DescriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA410AA25F1494D005D3E0B /* DescriptionViewController.swift */; };
 		5DA410AE25F1BE6B005D3E0B /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA410AD25F1BE6B005D3E0B /* EditViewController.swift */; };
+		8D5594222614097100B4B1CC /* ForgetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D5594212614097100B4B1CC /* ForgetPasswordViewController.swift */; };
 		8D8632D2260BE92E00EAEB85 /* DailyProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8632D1260BE92E00EAEB85 /* DailyProgressViewController.swift */; };
 		8D8632D5260BEBDE00EAEB85 /* MonthlyProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8632D4260BEBDE00EAEB85 /* MonthlyProgressViewController.swift */; };
 		8DB602D82612B6810057F27C /* YearlyProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DB602D72612B6810057F27C /* YearlyProgressViewController.swift */; };
@@ -53,6 +54,7 @@
 		5D3B625F25FB762300EFA147 /* EditTopicsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTopicsViewController.swift; sourceTree = "<group>"; };
 		5DA410AA25F1494D005D3E0B /* DescriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptionViewController.swift; sourceTree = "<group>"; };
 		5DA410AD25F1BE6B005D3E0B /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
+		8D5594212614097100B4B1CC /* ForgetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgetPasswordViewController.swift; sourceTree = "<group>"; };
 		8D8632D1260BE92E00EAEB85 /* DailyProgressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyProgressViewController.swift; sourceTree = "<group>"; };
 		8D8632D4260BEBDE00EAEB85 /* MonthlyProgressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyProgressViewController.swift; sourceTree = "<group>"; };
 		8DB602D72612B6810057F27C /* YearlyProgressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearlyProgressViewController.swift; sourceTree = "<group>"; };
@@ -189,6 +191,7 @@
 				8D8632D4260BEBDE00EAEB85 /* MonthlyProgressViewController.swift */,
 				CE58F3C2260FF61F0049EB4B /* ChangeListViewController.swift */,
 				8DB602D72612B6810057F27C /* YearlyProgressViewController.swift */,
+				8D5594212614097100B4B1CC /* ForgetPasswordViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -368,6 +371,7 @@
 				9B46D56725DB7DB500E990CC /* Utilities.swift in Sources */,
 				9B6CC78025DB60DA00C0CAF7 /* SignUpViewController.swift in Sources */,
 				9B46D62625ED436500E990CC /* MenuViewController.swift in Sources */,
+				8D5594222614097100B4B1CC /* ForgetPasswordViewController.swift in Sources */,
 				9B6CC78325DB60F300C0CAF7 /* LoginViewController.swift in Sources */,
 				9BBAE66425ED7DF1003CC28B /* EditNameViewController.swift in Sources */,
 				9BBAE66125ED7DE1003CC28B /* SettingsViewController.swift in Sources */,
