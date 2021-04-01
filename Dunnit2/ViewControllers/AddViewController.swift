@@ -14,17 +14,24 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
     var currentTopic: String?
     var currentPriority: Int?
     var noSelection: [String] = [String]()
+    var currentListIndex: Int = 0
+    var noTopics: [String] = [String]()
     
     @IBOutlet var titlefield: UITextField!
     @IBOutlet var bodyField: UITextField!
     @IBOutlet var datePicker: UIDatePicker!
     @IBOutlet weak var topicPicker: UIPickerView!
     @IBOutlet weak var priorityPicker: UIPickerView!
-    
+    @IBOutlet weak var listPicker: UIPickerView!
     var topicPickerData: [String] = [String]()
     var priorityPickerData: [String] = [String]()
     
+
     public var completion: ((String, String, Date, String, Int16, String) -> Void)?
+
+    var pickerData: [String] = [String]()
+    //var listPickerData: [Int:(String,String)] = [Int:(String,String)]()
+    var listPickerData: [String] = [String]()
     
     func getTopics() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchTopics()
@@ -44,6 +51,17 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
         }
         return endUser
     }
+    func getList() -> [Int:(String,String)] {
+        let lists = DataBaseHelper.shareInstance.fetchLists()
+        print(lists)
+        var userdic = [Int:(String,String)]()
+        var i = 0
+        for x in lists as [ListEntity] {
+            userdic[i] = (x.id!,x.title!)
+            i+=1
+        }
+        return userdic
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,7 +70,10 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(didTapSaveButton))
 
         // Do any additional setup after loading the view.
-        
+        topicPicker.tag = 1
+        listPicker.tag = 3
+        listPicker.delegate = self
+        listPicker.dataSource = self
         topicPicker.delegate = self
         topicPicker.dataSource = self
         topicPickerData = []
@@ -70,9 +91,17 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
         priorityPickerData.insert("None", at: 0)
         priorityPickerData.insert("(!) Low Priority", at: 1)
         priorityPickerData.insert("(!!) Medium Priority", at: 2)
-        priorityPickerData.insert("(!!!) High Priority", at: 3)
-        
+        priorityPickerData.insert("(!!!) High Priority", at: 3) 
+      
         noSelection = ["None"]
+        listPickerData.removeAll()
+        let list = getList()
+        for (index, (id, title)) in list {
+            if !((title as! String).isEmpty) {
+                listPickerData.append(title as! String)
+            }
+        }
+        
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -82,8 +111,11 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         if pickerView.tag == 1 {
             return topicPickerData.count
-        } else {
+        }
+        else if (pickerView.tag == 2){
             return priorityPickerData.count
+        } else {
+          return listPickerData.count
         }
     }
     
@@ -91,10 +123,13 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
         if pickerView.tag == 1 {
             currentTopic = topicPickerData[row]
             return topicPickerData[row]
-        } else {
+        } else if pickerView.tag == 2  {
             currentPriority = row
             return priorityPickerData[row]
         }
+      else {
+            return listPickerData[row]
+      }
     }
     
     @objc func didTapSaveButton() {

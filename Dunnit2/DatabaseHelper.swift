@@ -378,7 +378,7 @@ class DataBaseHelper {
                         instance.owner = document.get("email")! as? String
                         instance.priority = (document.get("priority")! as? Int16)!
                         instance.made = document.get("made") as? String
-                        print(title)
+                        print("id \(instance.id), title\(instance.title), list \(instance.list)")
                         do{
                             try managedContext.save()//print("save to local.")
                         }
@@ -404,7 +404,7 @@ class DataBaseHelper {
     }
     
     //change the isDone for a task
-    func updateDBTask(id:String, body: String?, color: String?, date:Date?, isDone: Bool?, list:String?, owner:String?, title:String?, priority:Int16?, made: String?) {
+    func updateDBTask(id:String, body: String? = nil, color: String? = nil, date:Date? = nil, isDone: Bool? = nil, list:String? = nil, owner:String? = nil, title:String? = nil, priority:Int16? = nil, made: String? = nil) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -429,14 +429,18 @@ class DataBaseHelper {
             print("Error retrieving user")
         }
         
-        let docData: [String: Any]
+        var docData: [String: Any] = [String:Any]()
         
-        if (owner == nil || list == nil || isDone == nil) {
-            docData = ["title": title, "body": body, "color": color,"date": date, "priority": priority, "made": made]
-        } else {
-            docData = ["title": title, "body": body, "color": color,"date": date, "isDone": isDone, "list": list, "priority": priority, "made": made]
-        }
-        
+        if body != nil {docData["body"] = body}
+        if color != nil {docData["color"] = color}
+        if date != nil {docData["date"] = date}
+        if isDone != nil {docData["isDone"] = isDone}
+        if list != nil {docData["list"] = list}
+        if owner != nil {docData["owner"] = owner}
+        if title != nil {docData["title"] = title}
+        if priority != nil {docData["priority"] = priority}
+        if made != nil {docData["made"] = made}
+        print(docData)
         print("Status Change")
         db.collection("task").document(id).updateData(docData) {
             err in
@@ -863,6 +867,7 @@ class DataBaseHelper {
                     }
                     for document in querySnapshot!.documents {
                         let id = document.documentID
+                        print("list ID",document.documentID)
                         let title = document.get("title")!
                         let owner = document.get("email")!
                         let shared = document.get("shared")!

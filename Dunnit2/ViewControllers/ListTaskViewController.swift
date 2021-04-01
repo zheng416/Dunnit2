@@ -12,7 +12,7 @@ class ListTaskViewController: UIViewController {
     var titleList: String?
     var id: String?
     var sortMenu: UIMenu?
-    
+    var list:ListEntity?
     @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet var tableTaskView: UITableView!
     
@@ -27,7 +27,7 @@ class ListTaskViewController: UIViewController {
         
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: sortKey, ascending: sortAscending, filterKey: filterKey)
         
-        taskListStore = [tasks.filter{$0.isDone == false && $0.list == self.titleList}, tasks.filter{$0.isDone == true && $0.list == self.titleList}]
+        taskListStore = [tasks.filter{$0.isDone == false && $0.list == self.list?.id}, tasks.filter{$0.isDone == true && $0.list == self.list?.id}]
         
         let progressCount = (Float(taskListStore[1].count) / Float(taskListStore[0].count + taskListStore[1].count))
         self.progressView.setProgress(progressCount, animated: true)
@@ -123,6 +123,8 @@ class ListTaskViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
+
+    
     @objc func didTapShareButton() {
         let storyboard = UIStoryboard(name: "Home", bundle: nil)
         guard let vc = storyboard.instantiateViewController(identifier: "share") as? SharingViewController else {
@@ -164,7 +166,23 @@ class ListTaskViewController: UIViewController {
 
 extension ListTaskViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+        //tableView.deselectRow(at: indexPath, animated: true)
+        performSegue(withIdentifier: "showInfo", sender: self)
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let indexPath = tableTaskView.indexPathForSelectedRow {
+            let destination = segue.destination as? DescriptionViewController
+            destination?.task = taskListStore[indexPath.section][indexPath.row]
+            tableTaskView.deselectRow(at: indexPath, animated: true)
+            let id = taskListStore[indexPath.section][indexPath.row].id
+            destination?.completion = {title, body, date, color, priority, made in
+                DispatchQueue.main.async {
+                    DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made)
+                    self.navigationController?.popViewController(animated: true)
+                    self.getData()
+                }
+            }
+        }
     }
 }
 
@@ -281,3 +299,4 @@ extension ListTaskViewController {
         return UISwipeActionsConfiguration(actions: [deleteAction])
     }
 }
+

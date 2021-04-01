@@ -18,13 +18,15 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
     var topicStr: String?
     
     var priority: Int?
-    
+    var listDic:[Int:(id:String,title:String)] = [Int:(String,String)]()
+    var task:TaskEntity?
+    var currentListIndex:Int?
     var currentTopic: String?
     
     var currentPriority: Int?
     
     var noTopics: [String] = [String]()
-    
+
     @IBOutlet var titleField: UITextField!
     
     @IBOutlet var dateField: UIDatePicker!
@@ -34,11 +36,22 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
     @IBOutlet var topicPicker: UIPickerView!
     
     @IBOutlet var priorityPicker: UIPickerView!
+    @IBOutlet weak var listPicker: UIPickerView!
     
     var topicPickerData: [String] = [String]()
     var priorityPickerData: [String] = [String]()
-    
+    var listPickerData: [String] = [String]()
+  
     public var completion: ((String, String, Date, String, Int16, String) -> Void)?
+    
+    func getList() -> Void {
+        let lists = DataBaseHelper.shareInstance.fetchLists()
+        var i = 0
+        for x in lists as [ListEntity] {
+            listDic[i] = (x.id!,x.title!)
+            i+=1
+        }
+    }
     
     func getTopics() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchTopics()
@@ -61,6 +74,13 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+
+
+        
+        topicPicker.tag = 1
+        priorityPicker.tag = 2
+        listPicker.tag = 3
 
         titleField.text = titleStr
         dateField.date = dateVal!
@@ -102,20 +122,48 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
         noTopics = ["None"]
         
         // Do any additional setup after loading the view.
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self.description, action: #selector(didTapSaveButton))
-
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(didTapSaveButton))
+        
+        listPicker.delegate = self
+        listPicker.dataSource = self
+        listPickerData.removeAll()
+        getList()
+        var j = -1
+        for i in 0...listDic.count - 1{
+            listPickerData.append(listDic[i]!.title as! String)
+            if task!.list == listDic[i]!.id{
+                j = i
+            }
+        }
+        if j == -1 {
+            j = listDic.count
+        }
+        currentListIndex = j
+        listDic[listDic.count] = ("","")
+        listPickerData.append("N/A")
+        listPicker.selectRow(j, inComponent: 0, animated: false)
+        listPicker.reloadAllComponents()
         // Do any additional setup after loading the view.
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
-    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        if pickerView.tag == 3 {
+            currentListIndex = row
+            print(listDic[row])
+            print("Value changed \(currentListIndex)")
+        }
+    }
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         if pickerView.tag == 1 {
             return topicPickerData.count
-        } else {
+        }
+        else if (pickerView.tag == 2){
             return priorityPickerData.count
+        } else {
+          return listPickerData.count
         }
     }
     
@@ -123,13 +171,19 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
         if pickerView.tag == 1 {
             currentTopic = topicPickerData[row]
             return topicPickerData[row]
-        } else {
+        } else if pickerView.tag == 2  {
             currentPriority = row
             return priorityPickerData[row]
         }
+      else {
+            print("modify here \(row)" )
+            print(listDic[row])
+            return listPickerData[row]
+      }
     }
     
     @objc func didTapSaveButton() {
+        print("Save taped")
         if let titleText = titleField.text, !titleText.isEmpty,
            let bodyText = bodyField.text, !bodyText.isEmpty {
             let targetDate = dateField.date
@@ -157,6 +211,20 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
             
             completion?(titleText, bodyText, targetDate, selectedValue, Int16(selectedPriorityValue), madeDate)
             print("Saved")
+        }
+        print("index \(currentListIndex) ID , \(listDic[currentListIndex!]!.id) Task List \(task!.list) ")
+        print("title \(listDic[currentListIndex!]!.title)")
+        if listDic[currentListIndex!]!.id != task!.list {
+            task!.list = listDic[currentListIndex!]!.id
+            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+            let managedContext = appDelegate.persistentContainer.viewContext
+            do {
+                DataBaseHelper.shareInstance.updateDBTask(id: task!.id!, list:listDic[currentListIndex!]!.id )
+                print("Saved.")
+                try managedContext.save()
+            } catch let error as NSError {
+                print("Could not save. \(error), \(error.userInfo)")
+            }
         }
     }
 

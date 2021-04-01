@@ -331,6 +331,7 @@ extension HomeViewController: UITableViewDelegate {
             destination?.topicStr = taskStore[indexPath.section][indexPath.row].color
             destination?.priorityVal = Int(taskStore[indexPath.section][indexPath.row].priority)
             destination?.madeVal = taskStore[indexPath.section][indexPath.row].made
+            destination?.task = taskStore[indexPath.section][indexPath.row]
             tableView.deselectRow(at: indexPath, animated: true)
             destination?.completion = {title, body, date, color, priority, made in
                 DispatchQueue.main.async {

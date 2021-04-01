@@ -21,6 +21,7 @@ class DescriptionViewController: UIViewController {
     var priorityVal: Int?
     
     var madeVal: String?
+    var task: TaskEntity?
     
     @IBOutlet var titleField: UILabel!
     
@@ -37,11 +38,21 @@ class DescriptionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+
+        
+        //bodyField.text = bodyStr
+        titleStr = task?.title
+        dateVal = task?.date
+        bodyStr = task?.body
+        topicStr = task?.color
+        priorityVal = Int(task!.priority)
+        madeVal = task?.made
+        
         titleField.text = titleStr
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM dd, YYYY"
         dateField.text = formatter.string(from: self.dateVal!)
-        bodyField.text = bodyStr
+        bodyField.text = bodyStr! + "\(task?.list)"
         if (topicStr != nil && !topicStr!.isEmpty) {
             topicField.text = "Topic: " + topicStr!
         }
@@ -72,6 +83,7 @@ class DescriptionViewController: UIViewController {
         vc.bodyStr = self.bodyStr
         vc.topicStr = self.topicStr
         vc.priority = self.priorityVal
+        vc.task = self.task
         vc.title = "Edit"
         vc.navigationItem.largeTitleDisplayMode = .never
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [String(madeVal!)])
