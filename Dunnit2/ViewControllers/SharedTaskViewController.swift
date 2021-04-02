@@ -171,52 +171,52 @@ extension SharedTaskViewController: UITableViewDataSource {
             label.textColor = .white
             label.sizeToFit()
 
-            // Add a rectangle view
-            let rectangle = UIView(frame: CGRect(x: (cell.textLabel?.frame.size.width)! + 50, y: (cell.textLabel?.frame.size.height)! - 10, width: label.frame.size.width, height: 20))
-
-            var background = UIColor.white
-            if (topics["red"] as? String) == color {
-                background = UIColor.systemRed
-            }
-            else if (topics["orange"] as? String) == color {
-                background = UIColor.systemOrange
-            }
-            else if (topics["yellow"] as? String) == color {
-                background = UIColor.systemYellow
-            }
-            else if (topics["green"] as? String) == color {
-                background = UIColor.systemGreen
-            }
-            else if (topics["blue"] as? String) == color {
-                background = UIColor.systemBlue
-            }
-            else if (topics["purple"] as? String) == color {
-                background = UIColor.systemPurple
-            }
-            else if (topics["indigo"] as? String) == color {
-                background = UIColor.systemIndigo
-            }
-            else if (topics["teal"] as? String) == color {
-                background = UIColor.systemTeal
-            }
-            else if (topics["pink"] as? String) == color {
-                background = UIColor.systemPink
-            }
-            else if (topics["black"] as? String) == color {
-                background = UIColor.black
-            }
-            
-            rectangle.backgroundColor = background
-            
-            rectangle.layer.cornerRadius = 5
-            
-            rectangle.tag = 100
-
-            // Add the label to your rectangle
-            rectangle.addSubview(label)
-
-            // Add the rectangle to your cell
-            cell.addSubview(rectangle)
+//            // Add a rectangle view
+//            let rectangle = UIView(frame: CGRect(x: (cell.textLabel?.frame.size.width)! + 50, y: (cell.textLabel?.frame.size.height)! - 10, width: label.frame.size.width, height: 20))
+//
+//            var background = UIColor.white
+//            if (topics["red"] as? String) == color {
+//                background = UIColor.systemRed
+//            }
+//            else if (topics["orange"] as? String) == color {
+//                background = UIColor.systemOrange
+//            }
+//            else if (topics["yellow"] as? String) == color {
+//                background = UIColor.systemYellow
+//            }
+//            else if (topics["green"] as? String) == color {
+//                background = UIColor.systemGreen
+//            }
+//            else if (topics["blue"] as? String) == color {
+//                background = UIColor.systemBlue
+//            }
+//            else if (topics["purple"] as? String) == color {
+//                background = UIColor.systemPurple
+//            }
+//            else if (topics["indigo"] as? String) == color {
+//                background = UIColor.systemIndigo
+//            }
+//            else if (topics["teal"] as? String) == color {
+//                background = UIColor.systemTeal
+//            }
+//            else if (topics["pink"] as? String) == color {
+//                background = UIColor.systemPink
+//            }
+//            else if (topics["black"] as? String) == color {
+//                background = UIColor.black
+//            }
+//
+//            rectangle.backgroundColor = background
+//
+//            rectangle.layer.cornerRadius = 5
+//
+//            rectangle.tag = 100
+//
+//            // Add the label to your rectangle
+//            rectangle.addSubview(label)
+//
+//            // Add the rectangle to your cell
+//            cell.addSubview(rectangle)
         }
         return cell
     }
