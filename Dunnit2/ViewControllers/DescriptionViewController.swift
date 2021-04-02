@@ -50,7 +50,7 @@ class DescriptionViewController: UIViewController {
         
         titleField.text = titleStr
         let formatter = DateFormatter()
-        formatter.dateFormat = "MMM dd, YYYY"
+        formatter.dateFormat = "MMM dd, YYYY HH:mm"
         dateField.text = formatter.string(from: self.dateVal!)
         bodyField.text = bodyStr!
         if (topicStr != nil && !topicStr!.isEmpty) {
@@ -91,7 +91,7 @@ class DescriptionViewController: UIViewController {
             DispatchQueue.main.async {
                 self.titleField.text = title
                 let formatter = DateFormatter()
-                formatter.dateFormat = "MMM dd, YYYY"
+                formatter.dateFormat = "MMM dd, YYYY HH:mm"
                 self.dateField.text = formatter.string(from: date)
                 self.bodyField.text = body
                 self.topicField.text = color
