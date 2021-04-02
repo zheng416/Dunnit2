@@ -20,16 +20,16 @@ class SharedTaskViewController: UIViewController {
     func getData() {
         print("owner??")
         print(owner)
-         DataBaseHelper.shareInstance.fetchDBSharedTask(title: self.titleList!, owner: self.owner!, completion: {task in
+         DataBaseHelper.shareInstance.fetchDBSharedTask(title: self.id!, owner: self.owner!, completion: {task in
             if task != nil {
                 self.listtasks = task
-                print("RETRIEVED")
+                print("RETRIEVED \(task)")
                 
 //                print(self.listtasks[0].isDone)
 //                print(self.listtasks[0].isDone)
                 
                 
-                self.taskShareStore = [self.listtasks.filter{$0.isDone == false && $0.list == self.titleList}, self.listtasks.filter{$0.isDone == true && $0.list == self.titleList}]
+                self.taskShareStore = [self.listtasks.filter{$0.isDone == false && $0.list == self.id}, self.listtasks.filter{$0.isDone == true && $0.list == self.id}]
                 print("THis is what is inside tasks")
                 //print(listtasks)
                 print(self.taskShareStore)
