@@ -80,12 +80,14 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
         let user = DataBaseHelper.shareInstance.fetchLocalUser()
         let lists = DataBaseHelper.shareInstance.fetchLists()
         var i = 0
-        print(lists.count)
-        print(lists[0])
+        
         for x in lists as [ListEntity] {
-            if (x.owner == user[0].email){
+//            print("ownber \(x.owner) email \(user[0].email)")
+            if (x.owner! == user[0].email!){
+//                print("im in here \(user[0].email!) owner \(user[0].email!)")
                 listDic[i] = (x.id!,x.title!)
                 i+=1
+                print("listdic \(x.id!) \(x.title!) \(listDic[i-1])")
             }
         }
     }
@@ -129,6 +131,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
         noSelection = ["None"]
         listPickerData.removeAll()
         getList()
+        print("list count \(listDic.count)")
         if listDic.count == 0{
             currentListIndex = 0
             listDic[listDic.count] = ("","")
@@ -138,6 +141,9 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
             return
         }
         var j = -1
+        for i in 0...listDic.count - 1{
+            listPickerData.append(listDic[i]!.title as! String)
+        }
         if j == -1 {
             j = listDic.count
         }
@@ -177,6 +183,12 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
       }
     }
     
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        if pickerView.tag == 3 {
+            currentListIndex = row
+        }
+    }
+    
     @objc func didTapSaveButton() {
         if let titleText = titlefield.text, !titleText.isEmpty,
            let bodyText = bodyField.text, !bodyText.isEmpty {
@@ -204,6 +216,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
             
             let selectedTopicValue = topicPickerData[topicPicker.selectedRow(inComponent: 0)]
             let selectedPriorityValue = priorityPicker.selectedRow(inComponent: 0)
+            DataBaseHelper.shareInstance.saveTask(title: titleText, body: bodyText, date: targetDate, isDone: false, list: listDic[currentListIndex]!.id, color: selectedTopicValue, priority: Int16(selectedPriorityValue), made: madeDate)
             completion?(titleText, bodyText, targetDate, selectedTopicValue, Int16(selectedPriorityValue), madeDate)
         }
     }

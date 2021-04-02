@@ -219,7 +219,7 @@ class HomeViewController: UIViewController {
         vc.completion = {title, body, date, color, priority, made in
             DispatchQueue.main.async {
                 self.navigationController?.popToRootViewController(animated: true)
-                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: "all", color: color, priority: priority, made: made)
+//                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: "all", color: color, priority: priority, made: made)
                 self.getData()
             }
         }

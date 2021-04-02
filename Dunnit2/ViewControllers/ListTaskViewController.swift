@@ -153,15 +153,13 @@ class ListTaskViewController: UIViewController {
         vc.completion = {title, body, date, color, priority, made in
             DispatchQueue.main.async {
                 self.navigationController?.popViewController(animated: true)
-                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: self.titleList!, color: color, priority: priority, made: made)
+//                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: self.titleList!, color: color, priority: priority, made: made)
                 self.getData()
             }
         }
         navigationController?.pushViewController(vc, animated: true)
         
     }
-    
-
 }
 
 extension ListTaskViewController: UITableViewDelegate {

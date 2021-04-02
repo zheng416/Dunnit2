@@ -783,6 +783,7 @@ class DataBaseHelper {
             }
         }
     }
+    
     //Save local list
     func saveLocalList(title: String, shared: Bool, sharedWith: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
@@ -812,6 +813,7 @@ class DataBaseHelper {
             var ref: DatabaseReference?
             ref = Database.database().reference()
             guard let id = ref?.child("taskLists").childByAutoId().key else { return }
+            instance.id = id
             db.collection("taskLists").document(id).setData(docData) { err in
                 if err != nil {
                     // Show error message
@@ -819,7 +821,6 @@ class DataBaseHelper {
                     return
                 }
                 print("Saved list \(title) to DB")
-                instance.id = id
             }
         
             print("Saving List \(title) local.")
