@@ -1340,6 +1340,7 @@ class DataBaseHelper {
                         instance.color = document.get("color")! as? String
                         instance.list = document.get("list")! as? String
                         instance.owner = document.get("email")! as? String
+                        instance.priority = (document.get("priority")! as? Int16)!
                         print(title)
                         sharedTasks.append(instance)
                     }
