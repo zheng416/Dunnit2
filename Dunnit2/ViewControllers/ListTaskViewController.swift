@@ -148,6 +148,7 @@ class ListTaskViewController: UIViewController {
         guard let vc = storyboard.instantiateViewController(identifier: "add") as? AddViewController else {
             return
         }
+        vc.list = self.list
         vc.title = "New Task"
         vc.navigationItem.largeTitleDisplayMode = .never
         vc.completion = {title, body, date, color, priority, made in

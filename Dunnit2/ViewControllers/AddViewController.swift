@@ -16,7 +16,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
     var noSelection: [String] = [String]()
     var currentListIndex: Int = 0
     var noTopics: [String] = [String]()
-    
+    var list: ListEntity?
     var notificationsOn: Bool?
     
     @IBOutlet var titlefield: UITextField!
@@ -142,6 +142,9 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
         }
         var j = -1
         for i in 0...listDic.count - 1{
+            if list != nil && list!.id == listDic[i]!.id{
+                j = i
+            }
             listPickerData.append(listDic[i]!.title as! String)
         }
         if j == -1 {
