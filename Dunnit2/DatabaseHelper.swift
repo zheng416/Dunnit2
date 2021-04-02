@@ -1053,7 +1053,7 @@ class DataBaseHelper {
 //        var titlelist = [String]()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SharedEntity")
         let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
-        
+        let fetchList = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
         // Delete Shared all
 
         do {
@@ -1247,10 +1247,16 @@ class DataBaseHelper {
         let managedContext = appDelegate.persistentContainer.viewContext
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SharedEntity")
-        
+        let fetchList = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
         
         var shared = [ListEntity]()
         do {
+            var idList = [String]()
+            var fetchLists = try managedContext.fetch(fetchList) as! [ListEntity]
+            for result in fetchLists as [ListEntity] {
+                print(result.title!,result.id!)
+                idList.append(result.id!)
+            }
             print("Fetching SharedLists.")
             fetchingImage = try managedContext.fetch(fetchRequest) as! [SharedEntity]
             print(fetchingImage.count)
@@ -1267,6 +1273,18 @@ class DataBaseHelper {
                             print("No lists found")
                         } else {
                             for document in querySnapshot!.documents {
+                                if idList.contains(document.documentID as! String){
+                                    let predicate1 = NSPredicate(format: "id == %@", document.documentID)
+                                    fetchList.predicate = predicate1
+                                    do {
+                                    let thisList = try managedContext.fetch(fetchList) as! [ListEntity]
+                                    print("THIS LIST   \(thisList)")
+                                        shared.append(contentsOf: thisList)
+                                    continue
+                                    } catch {
+                                        print(error)
+                                    }
+                                }
                                 let instance = ListEntity(context: managedContext)
                                 //TODO change this to id
                                 instance.title = document.get("title")! as! String
