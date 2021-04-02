@@ -24,6 +24,9 @@ class UpdatePasswordViewController: UIViewController,UITextFieldDelegate {
         oriPassField.delegate = self
         newPassField1.delegate = self
         newPassField2.delegate = self
+        oriPassField.isSecureTextEntry = true
+        newPassField1.isSecureTextEntry = true
+        newPassField2.isSecureTextEntry = true
         //oriPassField.addTarget(self, action: "textFieldDidChange", for:UIControlE)
     }
     
@@ -130,6 +133,14 @@ class UpdatePasswordViewController: UIViewController,UITextFieldDelegate {
             updateUserPassword(email: email, password: oriPass, newpassword: newPass1)
         }
         else{
+            var message = "Two passwords do not match"
+            let dialogMessage = UIAlertController(title: "", message: message, preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .default) {
+                UIAlertAction in
+                print("Ok button pressed")
+            }
+            dialogMessage.addAction(ok)
+            self.present(dialogMessage, animated: true, completion: nil)
             print("Two passwords do not match")
         }
     }
