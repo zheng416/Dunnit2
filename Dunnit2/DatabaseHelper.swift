@@ -538,7 +538,7 @@ class DataBaseHelper {
         return
     }
     
-    func createNewUser(name: String="", email: String, darkMode: Bool = false, notification: Bool = true, sound: Bool = true ) {
+    func createNewUser(name: String="", email: String, darkMode: Bool = false, notification: Bool = true, sound: Bool = true, guest: Bool = false) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -551,6 +551,7 @@ class DataBaseHelper {
         instance.sound = sound
         instance.sortKey = "title"
         instance.sortAscending = true
+        instance.guest = guest
         
         do {
             print("Created New User.")

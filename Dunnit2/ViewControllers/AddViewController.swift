@@ -25,6 +25,10 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
     @IBOutlet weak var topicPicker: UIPickerView!
     @IBOutlet weak var priorityPicker: UIPickerView!
     @IBOutlet weak var listPicker: UIPickerView!
+    @IBOutlet weak var topicLabel: UILabel!
+    @IBOutlet weak var priorityLabel: UILabel!
+    @IBOutlet weak var listLabel: UILabel!
+    
     var topicPickerData: [String] = [String]()
     var priorityPickerData: [String] = [String]()
     //var task:TaskEntity?
@@ -51,6 +55,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
             endUser["darkMode"] = x.darkMode
             endUser["notification"] = x.notification
             endUser["sound"] = x.sound
+            endUser["guest"] = x.guest
         }
         
         print("user is \(endUser)")
@@ -105,6 +110,20 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
         let modifiedDate = Calendar.current.date(byAdding: .day, value: 1, to: date)!
         datePicker.date = modifiedDate
         // Do any additional setup after loading the view.
+        
+        let guest = user["guest"] as! Bool
+        
+        if (guest) {
+            topicPicker.isHidden = true
+            listPicker.isHidden = true
+            priorityPicker.isHidden = true
+            
+            topicLabel.isHidden = true
+            priorityLabel.isHidden = true
+            listLabel.isHidden = true
+            
+        }
+        
         topicPicker.tag = 1
         listPicker.tag = 3
         listPicker.delegate = self

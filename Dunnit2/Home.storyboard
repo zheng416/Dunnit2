@@ -336,9 +336,12 @@
                     <connections>
                         <outlet property="bodyField" destination="omx-qT-3X5" id="DAs-mL-MBl"/>
                         <outlet property="datePicker" destination="t6E-ET-qJ9" id="kkp-jJ-jx9"/>
+                        <outlet property="listLabel" destination="l83-Yp-gNx" id="GrY-gC-C7n"/>
                         <outlet property="listPicker" destination="N5y-fG-veE" id="NF7-XK-RvI"/>
+                        <outlet property="priorityLabel" destination="fZY-EK-pQu" id="eNd-ri-Fxb"/>
                         <outlet property="priorityPicker" destination="aR3-SZ-L7g" id="fOY-a1-BiS"/>
                         <outlet property="titlefield" destination="VSl-if-c9F" id="cZM-av-1VA"/>
+                        <outlet property="topicLabel" destination="MCF-HP-yiH" id="G7s-zu-WtO"/>
                         <outlet property="topicPicker" destination="QBz-pr-ONg" id="hyM-e8-GWb"/>
                     </connections>
                 </viewController>

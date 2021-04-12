@@ -45,6 +45,7 @@ class SettingsViewController: UITableViewController {
             endUser["darkMode"] = x.darkMode
             endUser["notification"] = x.notification
             endUser["sound"] = x.sound
+            endUser["guest"] = x.guest
         }
         
         print("user is \(endUser)")
@@ -88,9 +89,6 @@ class SettingsViewController: UITableViewController {
     
     
     func loadLabelValues() {
-//        if (DataBaseHelper.shareInstance.checkIfUserExists() == false) {
-//            DataBaseHelper.shareInstance.createNewUser(name: "Andrew", email: "andrew123@gmail.com")
-//        }
         
         let user = getUser()
         if user.isEmpty{
@@ -110,12 +108,15 @@ class SettingsViewController: UITableViewController {
         super.viewDidLoad()
         getData()
         loadLabelValues()
-        authUser = Auth.auth().currentUser
-        print(authUser!.isEmailVerified)
-        if authUser!.isEmailVerified{
-            verifyEmailButton.isUserInteractionEnabled = false
-            emailLabel.text = "Email Verified"
-            verifyLabel.text = "Email Verified"
+        let tempUser = getUser()
+        if (tempUser["email"] as! String != "guest@guest.com") {
+            authUser = Auth.auth().currentUser
+            print(authUser!.isEmailVerified)
+            if authUser!.isEmailVerified{
+                verifyEmailButton.isUserInteractionEnabled = false
+                emailLabel.text = "Email Verified"
+                verifyLabel.text = "Email Verified"
+            }
         }
     }
     
@@ -249,6 +250,23 @@ class SettingsViewController: UITableViewController {
             self.present(dialogMessage, animated: true, completion: nil)
             
         }
+    }
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let guestFlag = globalUser["guest"] as! Bool
+        
+        if (guestFlag) {
+            switch indexPath {
+            case [1,1]:
+                return 0.0
+            case [1,2]:
+                return 0.0
+            default:
+                return UITableView.automaticDimension
+            }
+        } else {
+            return UITableView.automaticDimension
+        }
+        
     }
 
 }
