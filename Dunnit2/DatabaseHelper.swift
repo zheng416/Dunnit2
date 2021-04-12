@@ -1374,15 +1374,15 @@ class DataBaseHelper {
     }
     
     // Removes shared entity and on firebase
-    func removeSharedEntityDB(title: String, sharedBy: String, completion: @escaping (_ message: Bool) -> Void) {
+    func removeSharedEntityDB(lid: String, sharedBy: String, completion: @escaping (_ message: Bool) -> Void) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SharedEntity")
         let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
-        let predicate1 = NSPredicate(format: "taskList == %@", title)
+        let predicate1 = NSPredicate(format: "lid == %@", lid)
         let predicate2 = NSPredicate(format: "email == %@", sharedBy)
-        let predicateCompound = NSCompoundPredicate.init(type: .or, subpredicates: [predicate1,predicate2])
+        let predicateCompound = NSCompoundPredicate.init(type: .and, subpredicates: [predicate1,predicate2])
         
         fetchRequest.predicate = predicateCompound
         
@@ -1413,9 +1413,9 @@ class DataBaseHelper {
             
             db.collection("sharedLists").document(listKey).delete() { err in
                 if err != nil {
-                    print("Error removing document named \(title): \(err)")
+                    print("Error removing document named \(lid): \(err)")
                 } else {
-                    print("Document \(title) successfully deleted!")
+                    print("Document \(lid) successfully deleted!")
                 }
             }
             print("AFTER DB")
