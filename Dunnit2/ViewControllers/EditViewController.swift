@@ -47,7 +47,7 @@ class EditViewController: UIViewController, UITextFieldDelegate, UIPickerViewDel
     public var completion: ((String, String, Date, String, Int16, String) -> Void)?
     
     func getList() -> Void {
-        let lists = DataBaseHelper.shareInstance.fetchLists()
+        let lists = DataBaseHelper.shareInstance.fetchLocalLists()
         var i = 0
         for x in lists as [ListEntity] {
             listDic[i] = (x.id!,x.title!)

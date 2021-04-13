@@ -83,7 +83,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Title" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="MyU-cm-fKp">
-                                <rect key="frame" x="10" y="70" width="394" height="52"/>
+                                <rect key="frame" x="10" y="70" width="370" height="52"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="394" id="HJP-oY-6GN"/>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="52" id="bU8-0f-4JI"/>
@@ -93,7 +93,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Body" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="a0g-LV-FgS">
-                                <rect key="frame" x="10" y="142" width="394" height="52"/>
+                                <rect key="frame" x="10" y="142" width="370" height="52"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="52" id="3O4-Dv-7OX"/>
                                     <constraint firstAttribute="width" constant="394" id="Sg6-bH-Dnk"/>

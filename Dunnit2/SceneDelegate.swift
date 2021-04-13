@@ -22,17 +22,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, GIDSignInDelegate {
         
         let loginStory = UIStoryboard(name: "Main", bundle: nil)
         let homeStory = UIStoryboard(name: "Home", bundle: nil)
-        let settingsStory = UIStoryboard(name:"Settings",bundle: nil)
+        let settingsStory = UIStoryboard(name:"Settings", bundle: nil)
         if let windowScene = scene as? UIWindowScene {
             self.window = UIWindow(windowScene: windowScene)
             if !DataBaseHelper.shareInstance.fetchLocalUser().isEmpty {
-//                print("HEREEEEEEEEEEEEEEEEEEEEEEEEEE", Auth.auth().currentUser!)
-//                 redirect to home controller
                 self.window!.rootViewController = homeStory.instantiateViewController(withIdentifier: "main")
-//                self.window!.rootViewController = settingsStory.instantiateViewController(withIdentifier: "settings")
             } else {
-                // redirect to login controller
-//                                self.window!.rootViewController = homeStory.instantiateViewController(withIdentifier: "main")
                 self.window!.rootViewController = loginStory.instantiateViewController(withIdentifier: "welcome")
             }
             self.window?.makeKeyAndVisible()
