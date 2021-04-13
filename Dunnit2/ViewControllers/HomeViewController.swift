@@ -141,20 +141,17 @@ class HomeViewController: UIViewController {
 //    }()
     
     func transitionToNew(_ menuType: MenuType) {
-        let title = String(describing: menuType).capitalized
-        self.title = title
-        
+       
         let guest = globalUser["email"] as! String == "Guest"
+        
+        // if is signed in user, then update title
+        if (!guest) {
+            let title = String(describing: menuType).capitalized
+            self.title = title
+        }
         
         topView?.removeFromSuperview()
         switch menuType {
-        
-        // Switch VIEW CONTROLLERS
-        // let profileVC = ProfileViewController()
-        // view.addSubview(profileVC.view)
-        // self.topView = profileVC.view
-        // addChild(profileVC)
-        
         case .progress:
             if (guest) {
                 let dialogMessage = UIAlertController(title: "", message: "Please Sign In to Access Premium Feature", preferredStyle: .alert)
