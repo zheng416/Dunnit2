@@ -29,6 +29,7 @@ import FirebaseFirestore
  fetchDBTask fetch Task from database
  updateDBUser
  updateLocalUser
+ duplicate task
  
  */
 
@@ -151,6 +152,29 @@ class DataBaseHelper {
             }
         }
     }
+    func saveDBTask(id: String, email: String, title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16, made: String) {
+        let docData: [String: Any] = [
+            "id" : id,
+            "email" : email,
+            "user" : "test",
+            "body" : body,
+            "title": title,
+            "date":date,
+            "isDone" : isDone,
+            "list": list,
+            "color": color,
+            "priority": priority,
+            "made": made
+        ]
+        
+        db.collection("task").document(id).setData(docData) { err in
+            if let err = err {
+                print("Error writing document: \(err)")
+            } else {
+                print("Document successfully written!")
+            }
+        }
+    }
     func saveTask(title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16, made: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
@@ -171,27 +195,6 @@ class DataBaseHelper {
         var ref: DatabaseReference?
         ref = Database.database().reference()
         guard let key = ref?.child("task").childByAutoId().key else { return }
-        let docData: [String: Any] = [
-            "id" : key,
-            "email" : email,
-            "user" : "test",
-            "body" : body,
-            "title": title,
-            "date":date,
-            "isDone" : isDone,
-            "list": list,
-            "color": color,
-            "priority": priority,
-            "made": made
-        ]
-        
-        db.collection("task").document(key).setData(docData) { err in
-            if let err = err {
-                print("Error writing document: \(err)")
-            } else {
-                print("Document successfully written!")
-            }
-        }
         let instance = TaskEntity(context: managedContext)
         instance.id = key
         instance.title = title
@@ -203,12 +206,14 @@ class DataBaseHelper {
         instance.owner = email
         instance.priority = priority
         instance.made = made
-        print(instance.date!)
         do {
             print("Saved.")
             try managedContext.save()
         } catch let error as NSError {
             print("Could not save. \(error), \(error.userInfo)")
+        }
+        if (email != "Guest"){
+            self.saveDBTask(id: key, email: email,title: title, body: body, date: date, isDone: isDone, list: list, color: color, priority: priority, made: made)
         }
     }
     
@@ -807,9 +812,9 @@ class DataBaseHelper {
                 print("not local user was found when fetching data")
                 return
             }
-            let email = (user[0] as! UserEntity).email
+            let email = (user[0] as! UserEntity).email!
             instance.owner = email
-            let docData: [String: Any] = ["title" : title, "email": email!, "shared": shared, "sharedWith": sharedWith, "sharedArr": []]
+            let docData: [String: Any] = ["title" : title, "email": email, "shared": shared, "sharedWith": sharedWith, "sharedArr": []]
             var ref: DatabaseReference?
             ref = Database.database().reference()
             guard let id = ref?.child("taskLists").childByAutoId().key else { return }
@@ -825,8 +830,38 @@ class DataBaseHelper {
         
             print("Saving List \(title) local.")
             try managedContext.save()
+            if email != "Guest"{
+             saveDBList(id: id, email: email, title: title, shared: shared, sharedWith: sharedWith)
+            }
         } catch {
             print("Could not save")
+        }
+        
+    }
+    //SaveDBList
+    func saveDBList(id: String, email: String,title: String, shared: Bool, sharedWith: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let instance = ListEntity(context: managedContext)
+        instance.title = title
+        instance.shared = shared
+        instance.sharedWith = sharedWith
+        
+        // Get user's email
+        let docData: [String: Any] = ["title" : title, "email": email, "shared": shared, "sharedWith": sharedWith, "sharedArr": []]
+        var ref: DatabaseReference?
+        ref = Database.database().reference()
+        guard let id = ref?.child("taskLists").childByAutoId().key else { return }
+        instance.id = id
+        db.collection("taskLists").document(id).setData(docData) { err in
+            if err != nil {
+                // Show error message
+                print("Error saving user data\(err)")
+                return
+            }
+            print("Saved list \(title) to DB")
         }
         
     }
@@ -905,7 +940,7 @@ class DataBaseHelper {
         }
     }
     
-    func fetchLists() -> [ListEntity] {
+    func fetchLocalLists() -> [ListEntity] {
         var fetchingImage = [ListEntity]()
         
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
@@ -1575,4 +1610,33 @@ class DataBaseHelper {
         }
         
     }
+    func duplicateTask(task: TaskEntity){
+        self.saveTask(title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!)
+    }
+        
+    func checkLocalTask()->Void{
+        let tasks = fetchLocalTask() as [TaskEntity]
+        if tasks.isEmpty {
+            return
+        }
+        for task in tasks{
+            saveDBTask(id: task.id!, email: task.owner!, title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!)
+        }
+    }
+        
+    func checkLocalList()->Void{
+        let lists = fetchLocalLists() as [ListEntity]
+        if lists.isEmpty {
+            return
+        }
+        for list in lists{
+            saveDBList(id: list.id!, email: list.owner!, title: list.title!, shared: list.shared, sharedWith: list.sharedWith!)
+        }
+    }
+        
+    func saveToDB()->Void{
+        self.checkLocalTask()
+        self.checkLocalList()
+    }
+
 }
