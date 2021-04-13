@@ -144,12 +144,6 @@ class HomeViewController: UIViewController {
        
         let guest = globalUser["email"] as! String == "Guest"
         
-        // if is signed in user, then update title
-        if (!guest) {
-            let title = String(describing: menuType).capitalized
-            self.title = title
-        }
-        
         topView?.removeFromSuperview()
         switch menuType {
         case .progress:
@@ -160,6 +154,9 @@ class HomeViewController: UIViewController {
                 dialogMessage.addAction(ok)
                 self.present(dialogMessage, animated: true, completion: nil)
             } else {
+                let title = String(describing: menuType).capitalized
+                self.title = title
+                
                 let storyboard = UIStoryboard(name: "Home", bundle: nil)
                 let listVC = storyboard.instantiateViewController(withIdentifier: "progressTabVC")
                 view.addSubview(listVC.view)
@@ -179,6 +176,9 @@ class HomeViewController: UIViewController {
                 dialogMessage.addAction(ok)
                 self.present(dialogMessage, animated: true, completion: nil)
             } else {
+                let title = String(describing: menuType).capitalized
+                self.title = title
+                
                 let storyboard = UIStoryboard(name: "Home", bundle: nil)
                 let sharedVC = storyboard.instantiateViewController(withIdentifier: "sharedVC")
                 view.addSubview(sharedVC.view)
@@ -189,6 +189,9 @@ class HomeViewController: UIViewController {
                 menu = MenuType.shared
             }
         case .settings:
+            let title = String(describing: menuType).capitalized
+            self.title = title
+            
             let storyboard = UIStoryboard(name: "Settings", bundle: nil)
             let settingVC = storyboard.instantiateViewController(withIdentifier: "settings")
             view.addSubview(settingVC.view)
@@ -198,6 +201,9 @@ class HomeViewController: UIViewController {
             
             navigationItem.rightBarButtonItems = nil
         case .myList:
+            let title = String(describing: menuType).capitalized
+            self.title = title
+            
             let storyboard = UIStoryboard(name: "Home", bundle: nil)
             let listVC = storyboard.instantiateViewController(withIdentifier: "listsVC")
             view.addSubview(listVC.view)
@@ -210,6 +216,9 @@ class HomeViewController: UIViewController {
             menu = MenuType.myList
 
         default:
+            let title = String(describing: menuType).capitalized
+            self.title = title
+            
             print("Default")
             let sortButton = UIBarButtonItem(title: "Sort", menu: self.sortMenu)
             let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))

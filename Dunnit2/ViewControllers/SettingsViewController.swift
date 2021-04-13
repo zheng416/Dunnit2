@@ -28,30 +28,6 @@ class SettingsViewController: UITableViewController {
     
     var taskStore = [[TaskEntity](), [TaskEntity]()]
     
-    //  Access databse functions
-    //helper functions
-//    func getUser() -> [String: Any] {
-//        var user = DataBaseHelper.shareInstance.fetchLocalUser()
-//        if user.isEmpty{
-//            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
-//            user = DataBaseHelper.shareInstance.fetchLocalUser()
-//        }
-//
-//        // Unpack user entity to dictionary
-//        var endUser = [String:Any]()
-//        for x in user as [UserEntity] {
-//            endUser["name"] = x.name
-//            endUser["email"] = x.email
-//            endUser["darkMode"] = x.darkMode
-//            endUser["notification"] = x.notification
-//            endUser["sound"] = x.sound
-//        }
-//
-//        print("user is \(endUser)")
-//
-//        return endUser
-//    }
-    
     func getData() {
         let user = DataBaseHelper.shareInstance.fetchLocalUser()
         
@@ -63,6 +39,7 @@ class SettingsViewController: UITableViewController {
 
         taskStore = [tasks.filter{$0.isDone == false && $0.owner == user[0].email}, tasks.filter{$0.isDone == true && $0.owner == user[0].email}]
     }
+    
     func checkError(error : Error?,message: String)->Bool{
         if let error = error{
             print("error \(message) \(error)\n")
@@ -185,8 +162,7 @@ class SettingsViewController: UITableViewController {
         globalUser = DataBaseHelper.shareInstance.parsedLocalUser()
     }
     
-
-
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        print("selected row is :\(indexPath)")
         
@@ -195,7 +171,7 @@ class SettingsViewController: UITableViewController {
         let verifyEmailIndex = [1,2] as IndexPath
         
         if (indexPath == logoutIndex) {
-            print("Logout?")
+            print("Logout")
             let dialogMessage = UIAlertController(title: "", message: "Would you like to logout?", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .default) {
                 UIAlertAction in
@@ -239,8 +215,6 @@ class SettingsViewController: UITableViewController {
                 // TODO: Verification for peter? Not sure what else to add here
                 self.verifyemail()
                 print("Ok button pressed")
-                
-                
             }
             let cancel = UIAlertAction(title: "No", style: .cancel) {
                 UIAlertAction in
@@ -255,7 +229,7 @@ class SettingsViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         let guestFlag = globalUser["email"] as! String == "Guest"
-        
+
         if (guestFlag) {
             switch section {
             case 0: return 0.0
@@ -270,7 +244,7 @@ class SettingsViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let guestFlag = globalUser["email"] as! String == "Guest"
-        
+
         if (guestFlag) {
             switch indexPath {
             case [0,0]: return 0.0
@@ -284,7 +258,7 @@ class SettingsViewController: UITableViewController {
         } else {
             return UITableView.automaticDimension
         }
-        
+
     }
 
 }
