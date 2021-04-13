@@ -22,21 +22,21 @@ class EditTopicsViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet var blackTopic: UITextField!
     
     //  Access databse functions
-    func getUser() -> [String: Any] {
-        let user = DataBaseHelper.shareInstance.fetchLocalUser()
-        
-        // Unpack user entity to dictionary
-        var endUser = [String:Any]()
-        for x in user as [UserEntity] {
-            endUser["name"] = x.name
-            endUser["email"] = x.email
-            endUser["darkMode"] = x.darkMode
-            endUser["notification"] = x.notification
-            endUser["sound"] = x.sound
-        }
-        
-        return endUser
-    }
+//    func getUser() -> [String: Any] {
+//        let user = DataBaseHelper.shareInstance.fetchLocalUser()
+//
+//        // Unpack user entity to dictionary
+//        var endUser = [String:Any]()
+//        for x in user as [UserEntity] {
+//            endUser["name"] = x.name
+//            endUser["email"] = x.email
+//            endUser["darkMode"] = x.darkMode
+//            endUser["notification"] = x.notification
+//            endUser["sound"] = x.sound
+//        }
+//
+//        return endUser
+//    }
     
     func getTopics() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchTopics()
@@ -61,7 +61,8 @@ class EditTopicsViewController: UITableViewController, UITextFieldDelegate {
         super.viewDidLoad()
         self.title = "Add / Edit Topics"
         
-        let user = getUser()
+//        let user = getUser()
+        let user = DataBaseHelper.shareInstance.parsedLocalUser()
         let topics = getTopics()
         redTopic.text = topics["red"] as? String
         orangeTopic.text = topics["orange"] as? String
@@ -113,7 +114,9 @@ class EditTopicsViewController: UITableViewController, UITextFieldDelegate {
             blackTopic.text = ""
         }
         DispatchQueue.main.async { [self] in
-            let user = self.getUser()
+//            let user = self.getUser()
+            let user = DataBaseHelper.shareInstance.parsedLocalUser()
+            
             // Update Name based on email
             if getTopics().isEmpty {
                 DataBaseHelper.shareInstance.saveTopics(red: self.redTopic.text!, orange: self.orangeTopic.text!, yellow: self.yellowTopic.text!, green: self.greenTopic.text!, blue: self.blueTopic.text!, purple: self.purpleTopic.text!, indigo: self.indigoTopic.text!, teal: self.tealTopic.text!, pink: self.pinkTopic.text!, black: self.blackTopic.text!)

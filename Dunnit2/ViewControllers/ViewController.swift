@@ -43,17 +43,12 @@ class ViewController: UIViewController /*, LoginButtonDelegate*/ {
     }
     
     @IBAction func guestButtonTapped(_ sender: Any) {
+        // Hardcode guest email
+        let email = "Guest"
         
-        // TODO: Validate Text Fields
-        print("guest tapped")
-        
-        // Create cleaned versions of the text field
-        let email = "guest@guest.com"
-        
-        DataBaseHelper.shareInstance.createNewUser(email: email, guest: true)
-        
+        DataBaseHelper.shareInstance.createNewUser(email: email)
+        self.transitionToHome()
         
     }
-    
 }
 

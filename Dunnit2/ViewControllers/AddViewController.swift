@@ -40,28 +40,27 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
     var listPickerData: [String] = [String]()
     var listDic:[Int:(id:String,title:String)] = [Int:(String,String)]()
     
-    func getUser() -> [String: Any] {
-        var user = DataBaseHelper.shareInstance.fetchLocalUser()
-        if user.isEmpty{
-            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
-            user = DataBaseHelper.shareInstance.fetchLocalUser()
-        }
-        
-        // Unpack user entity to dictionary
-        var endUser = [String:Any]()
-        for x in user as [UserEntity] {
-            endUser["name"] = x.name
-            endUser["email"] = x.email
-            endUser["darkMode"] = x.darkMode
-            endUser["notification"] = x.notification
-            endUser["sound"] = x.sound
-            endUser["guest"] = x.guest
-        }
-        
-        print("user is \(endUser)")
-        
-        return endUser
-    }
+//    func getUser() -> [String: Any] {
+//        var user = DataBaseHelper.shareInstance.fetchLocalUser()
+//        if user.isEmpty{
+//            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
+//            user = DataBaseHelper.shareInstance.fetchLocalUser()
+//        }
+//
+//        // Unpack user entity to dictionary
+//        var endUser = [String:Any]()
+//        for x in user as [UserEntity] {
+//            endUser["name"] = x.name
+//            endUser["email"] = x.email
+//            endUser["darkMode"] = x.darkMode
+//            endUser["notification"] = x.notification
+//            endUser["sound"] = x.sound
+//        }
+//
+//        print("user is \(endUser)")
+//
+//        return endUser
+//    }
     
     func getTopics() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchTopics()
@@ -100,7 +99,8 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let user = getUser()
+//        let user = getUser()
+        let user = DataBaseHelper.shareInstance.parsedLocalUser()
         notificationsOn = user["notification"] as! Bool
         
         titlefield.delegate = self // rid of keyboard
@@ -111,7 +111,8 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
         datePicker.date = modifiedDate
         // Do any additional setup after loading the view.
         
-        let guest = user["guest"] as! Bool
+        
+        let guest = (user["email"] as! String == "Guest")
         
         if (guest) {
             topicPicker.isHidden = true
