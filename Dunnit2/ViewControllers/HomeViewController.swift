@@ -146,7 +146,8 @@ class HomeViewController: UIViewController {
             self.topView = sharedVC.view
             addChild(sharedVC)
             self.title = "Shared Lists"
-            navigationItem.rightBarButtonItems = nil
+            let inboxButton = UIBarButtonItem(title: "Inbox", style: .plain, target: self, action: #selector(didTapInboxButton))
+            navigationItem.rightBarButtonItems = [inboxButton]
             menu = MenuType.shared
         case .settings:
             let storyboard = UIStoryboard(name: "Settings", bundle: nil)
@@ -179,6 +180,14 @@ class HomeViewController: UIViewController {
             getData()
             break
         }
+    }
+    
+    @objc func didTapInboxButton() {
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        guard let vc = storyboard.instantiateViewController(identifier: "inviteView") as? SharedInviteViewController else {
+            return
+        }
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func didTapAddButton() {

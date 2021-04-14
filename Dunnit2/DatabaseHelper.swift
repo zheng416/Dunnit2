@@ -1006,7 +1006,7 @@ class DataBaseHelper {
             }
             let email = (user[0] as! UserEntity).email
             
-            let docData: [String: Any] = ["owner": email!, "tasklist": taskList, "to": to, "lid": lid, "id": id]
+            let docData: [String: Any] = ["owner": email!, "tasklist": taskList, "to": to, "lid": lid, "id": id, "accepted": false]
             
             db.collection("sharedLists").document(id).setData(docData) { err in
                 if err != nil {
@@ -1018,7 +1018,8 @@ class DataBaseHelper {
                 //QUESTION why update here??????
                 print("THE LID ISSSS")
                 print(lid)
-                DataBaseHelper.shareInstance.updateListsShared(id: lid, email: email!, shared: true, sharedWith: to, title: taskList)
+                // NOT YET
+                DataBaseHelper.shareInstance.updateListsShared(id: lid, email: email!, shared: true, sharedWith: to, title: taskList, pending: true)
                 print("DONEEEEEE Update")
             }
         } catch {
@@ -1026,14 +1027,20 @@ class DataBaseHelper {
         }
     }
     
-    func updateListsShared(id : String,email: String, shared: Bool, sharedWith: String, title: String ) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-                
-                let managedContext = appDelegate.persistentContainer.viewContext
-                
-                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
+    func updateListsShared(id : String,email: String, shared: Bool, sharedWith: String, title: String, pending: Bool) {
+//        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+//
+//                let managedContext = appDelegate.persistentContainer.viewContext
+//
+//                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
+        var invite = String()
+        if (pending == false) {
+            invite = sharedWith
+        } else {
+            invite = "\(sharedWith) (Pending)"
+        }
         
-        let docData: [String: Any] = ["email": email , "shared": shared, "sharedWith": sharedWith, "title": title, "sharedArr": FieldValue.arrayUnion([sharedWith])]
+        let docData: [String: Any] = ["email": email , "shared": shared, "sharedWith": sharedWith, "title": title, "sharedArr": FieldValue.arrayUnion([invite])]
         //let listKey = "\(email ?? "")+\(title ?? "")"
         db.collection("taskLists").document(id).updateData(docData) { err in
                     if err != nil {
@@ -1095,7 +1102,7 @@ class DataBaseHelper {
             let email = (user[0] as! UserEntity).email
             print(email)
             print("Ckecking for duplicate Data.")
-            self.db.collection("sharedLists").whereField("to", isEqualTo: email).getDocuments() { (querySnapshot, err) in
+            self.db.collection("sharedLists").whereField("to", isEqualTo: email).whereField("accepted", isEqualTo: true).getDocuments() { (querySnapshot, err) in
                 
                 print("Count from Database")
                 print(querySnapshot!.count)
@@ -1112,6 +1119,7 @@ class DataBaseHelper {
                         let owner = document.get("owner")!
                         let lid = document.get("lid")!
                         let id = document.get("id")!
+                        let accepted = document.get("accepted")!
                         print("\(owner) + \(taskList)")
 //                        if titlelist.contains("\(owner) + \(taskList)" as! String){
 //                            print("SAMMMMMEE")
@@ -1122,6 +1130,7 @@ class DataBaseHelper {
                         instance.taskList = taskList  as? String
                         instance.lid = lid as? String
                         instance.id = id as? String
+                        instance.accepted = accepted as! Bool
                         do{
                             //try managedContext.save()//print("save to local.")
                             print("SAVING TO DB SHARE")
@@ -1575,4 +1584,156 @@ class DataBaseHelper {
         }
         
     }
+    
+    
+    
+    func fetchInvites(completion: @escaping (_ list: [SharedEntity]) -> Void) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SharedEntity")
+        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        let fetchList = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
+        // Delete Shared all
+        do {
+            let items = try managedContext.fetch(fetchRequest) as! [SharedEntity]
+            for item in items {
+                managedContext.delete(item)
+            }
+            try managedContext.save()
+        } catch {
+            print(error)
+        }
+        
+        // Then Fetch, could delete some of this part
+        var invites = [SharedEntity]()
+        do {
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                completion(invites)
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            let email = (user[0] as! UserEntity).email
+            print(email)
+            print("Ckecking for duplicate Data.")
+            self.db.collection("sharedLists").whereField("to", isEqualTo: email).whereField("accepted",isEqualTo: false).getDocuments() { (querySnapshot, err) in
+                
+                print("Count from Database")
+                print(querySnapshot!.count)
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                } else {
+                    if (querySnapshot?.count == 0){
+                        print("No lists found")
+                        completion(invites)
+                    }
+                    for document in querySnapshot!.documents {
+                        print("HEREEEEEEE")
+                        let taskList = document.get("tasklist")!
+                        let owner = document.get("owner")!
+                        let lid = document.get("lid")!
+                        let id = document.get("id")!
+                        let accepted = document.get("accepted")!
+                        print("\(owner) + \(taskList)")
+//                        if titlelist.contains("\(owner) + \(taskList)" as! String){
+//                            print("SAMMMMMEE")
+//                            continue
+//                        }
+                        let instance = SharedEntity(context: managedContext)
+                        instance.email = owner as? String
+                        instance.taskList = taskList  as? String
+                        instance.lid = lid as? String
+                        instance.id = id as? String
+                        instance.accepted = accepted as! Bool
+                        do{
+                            //try managedContext.save()//print("save to local.")
+                            invites.append(instance)
+                            print("SAVING TO DB SHARE")
+                            print(instance.email)
+                            print(instance.taskList)
+                        }
+                        catch{
+                            print("loading error")
+                            //completion(invites)
+                        }
+                    }
+                }
+                
+                print(invites)
+                completion(invites)
+            }
+        } catch {
+            print(error)
+            //completion(invites)
+        }
+        print("LIFE SUCKSSSS")
+    }
+    
+    
+    
+    func acceptInvite(id: String, lid: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        let managedContext = appDelegate.persistentContainer.viewContext
+        do {
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            let email = (user[0] as! UserEntity).email
+            
+            print("THIS IS EMAILLLLL")
+            print(email)
+            
+            let pending = "\(email!) (Pending)"
+            
+            print("THIS IS PENDING (\(pending)")
+            
+            self.db.collection("sharedLists").document(id).updateData(["accepted": true])
+            self.db.collection("taskLists").document(lid).updateData(["sharedArr": FieldValue.arrayRemove([pending])])
+            self.db.collection("taskLists").document(lid).updateData(["sharedArr": FieldValue.arrayUnion([email])])
+        } catch {
+            print(error)
+        }
+    }
+    
+    func declineInvite(lid: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        let managedContext = appDelegate.persistentContainer.viewContext
+        do {
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            let email = (user[0] as! UserEntity).email
+            
+            print("THIS IS EMAILLLLL")
+            print(email)
+            
+            let pending = "\(email!) (Pending)"
+            
+            print("THIS IS PENDING (\(pending)")
+            
+            self.db.collection("taskLists").document(lid).updateData(["sharedArr": FieldValue.arrayRemove([pending])])
+        } catch {
+            print(error)
+        }
+    }
+    
 }
