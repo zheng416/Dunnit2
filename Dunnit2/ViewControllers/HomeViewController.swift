@@ -11,14 +11,36 @@ import Firebase
 
 extension NSMutableAttributedString {
     var fontSize:CGFloat { return 18 }
+    var mediumFontSize:CGFloat { return 20 }
+    var largeFontSize:CGFloat { return 30 }
     var boldFont:UIFont { return UIFont(name: "AvenirNext-Bold", size: fontSize) ?? UIFont.boldSystemFont(ofSize: fontSize) }
     var normalFont:UIFont { return UIFont(name: "AvenirNext-Regular", size: fontSize) ?? UIFont.systemFont(ofSize: fontSize)}
+    var boldTitleFont:UIFont { return UIFont(name: "AvenirNext-Bold", size: largeFontSize) ?? UIFont.boldSystemFont(ofSize: largeFontSize) }
+    var bodyNormalFont:UIFont { return UIFont(name: "AvenirNext-Regular", size: mediumFontSize) ?? UIFont.systemFont(ofSize: mediumFontSize) }
     
     func boldAndRed(_ value:String) -> NSMutableAttributedString {
         
         let attributes:[NSAttributedString.Key : Any] = [
             .font : boldFont,
             .foregroundColor : UIColor.red
+        ]
+        
+        self.append(NSAttributedString(string: value, attributes:attributes))
+        return self
+    }
+    
+    func boldTitle(_ value:String) -> NSMutableAttributedString {
+        let attributes:[NSAttributedString.Key : Any] = [
+            .font : boldTitleFont,
+        ]
+        
+        self.append(NSAttributedString(string: value, attributes:attributes))
+        return self
+    }
+    
+    func bodyNormal(_ value:String) -> NSMutableAttributedString {
+        let attributes:[NSAttributedString.Key : Any] = [
+            .font : bodyNormalFont,
         ]
         
         self.append(NSAttributedString(string: value, attributes:attributes))

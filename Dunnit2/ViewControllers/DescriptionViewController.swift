@@ -48,25 +48,25 @@ class DescriptionViewController: UIViewController {
         priorityVal = Int(task!.priority)
         madeVal = task?.made
         
-        titleField.text = titleStr
+        titleField.attributedText =  NSMutableAttributedString().boldTitle(titleStr!)
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM dd, YYYY HH:mm"
-        dateField.text = formatter.string(from: self.dateVal!)
-        bodyField.text = bodyStr!
+        dateField.attributedText =  NSMutableAttributedString().bodyNormal(formatter.string(from: self.dateVal!))
+        bodyField.attributedText =  NSMutableAttributedString().bodyNormal(bodyStr!)
         if (topicStr != nil && !topicStr!.isEmpty) {
-            topicField.text = "Topic: " + topicStr!
+            topicField.attributedText =  NSMutableAttributedString().bodyNormal("Topic: " + topicStr!)
         }
         else {
-            topicField.text = topicStr
+            topicField.attributedText =  NSMutableAttributedString().bodyNormal(topicStr!)
         }
         if (priorityVal == 0) {
-            priorityField.text = ""
+            priorityField.attributedText =  NSMutableAttributedString().bodyNormal("")
         } else if (priorityVal == 1) {
-            priorityField.text = "Priority: Low"
+            priorityField.attributedText =  NSMutableAttributedString().bodyNormal("Priority: Low")
         } else if (priorityVal == 2) {
-            priorityField.text = "Priority: Medium"
+            priorityField.attributedText =  NSMutableAttributedString().bodyNormal("Priority: Medium")
         } else {
-            priorityField.text = "Priority: High"
+            priorityField.attributedText =  NSMutableAttributedString().bodyNormal("Priority: High")
         }
         // Do any additional setup after loading the view.
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(didTapEditButton))
@@ -89,22 +89,22 @@ class DescriptionViewController: UIViewController {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [String(madeVal!)])
         vc.completion = {title, body, date, color, priority, made in
             DispatchQueue.main.async {
-                self.titleField.text = title
+                self.titleField.attributedText =  NSMutableAttributedString().boldTitle(title)
                 let formatter = DateFormatter()
                 formatter.dateFormat = "MMM dd, YYYY HH:mm"
-                self.dateField.text = formatter.string(from: date)
-                self.bodyField.text = body
-                self.topicField.text = color
+                self.dateField.attributedText =  NSMutableAttributedString().bodyNormal(formatter.string(from: date))
+                self.bodyField.attributedText =  NSMutableAttributedString().bodyNormal(body)
+                self.topicField.attributedText =  NSMutableAttributedString().bodyNormal(color)
                 self.madeVal = made
                 /*DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false)*/
                 if (priority == 0) {
-                    self.priorityField.text = ""
+                    self.priorityField.attributedText =  NSMutableAttributedString().bodyNormal("")
                 } else if (priority == 1) {
-                    self.priorityField.text = "Priority: Low"
+                    self.priorityField.attributedText =  NSMutableAttributedString().bodyNormal("Priority: Low")
                 } else if (priority == 2) {
-                    self.priorityField.text = "Priority: Medium"
+                    self.priorityField.attributedText =  NSMutableAttributedString().bodyNormal("Priority: Medium")
                 } else {
-                    self.priorityField.text = "Priority: High"
+                    self.priorityField.attributedText =  NSMutableAttributedString().bodyNormal("Priority: High")
                 }
                 self.completion?(title, body, date, color, priority, made)
             }
