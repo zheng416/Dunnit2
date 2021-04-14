@@ -640,7 +640,15 @@ extension HomeViewController {
         }
         doneAction.image = UIImage(systemName: "checkmark.circle")
         doneAction.backgroundColor = .systemGreen
-        return indexPath.section == 0 ? UISwipeActionsConfiguration(actions: [doneAction]) : nil
+        
+        let duplicateAction = UIContextualAction(style: .normal, title: nil) { (action, sourceView, completionHandler) in
+            DataBaseHelper.shareInstance.duplicateTask(task: self.taskStore[0][indexPath.row])
+            self.getData()
+        }
+        duplicateAction.image = UIImage(systemName: "doc.on.doc")
+        duplicateAction.backgroundColor = .systemBlue
+        return UISwipeActionsConfiguration(actions: [doneAction,duplicateAction])
+        //return indexPath.section == 0 ? UISwipeActionsConfiguration(actions: [doneAction]) : nil
     }
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

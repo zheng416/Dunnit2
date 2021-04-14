@@ -78,7 +78,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
     }
     func getList() -> Void {
         let user = DataBaseHelper.shareInstance.fetchLocalUser()
-        let lists = DataBaseHelper.shareInstance.fetchLists()
+        let lists = DataBaseHelper.shareInstance.fetchLocalLists()
         var i = 0
         
         for x in lists as [ListEntity] {
