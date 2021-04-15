@@ -115,8 +115,6 @@ class EditViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
 
         let user = getUser()
-        let darkModeOn = user["darkMode"] as! Bool
-        
         notificationsOn = user["notification"] as! Bool        
         
         titlefield.text = titleStr

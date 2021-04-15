@@ -35,10 +35,36 @@ class DescriptionViewController: UIViewController {
     
     public var completion: ((String, String, Date, String, Int16, String) -> Void)?
     
+    func getUser() -> [String: Any] {
+        var user = DataBaseHelper.shareInstance.fetchLocalUser()
+        if user.isEmpty{
+            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
+            user = DataBaseHelper.shareInstance.fetchLocalUser()
+        }
+        
+        // Unpack user entity to dictionary
+        var endUser = [String:Any]()
+        for x in user as [UserEntity] {
+            endUser["name"] = x.name
+            endUser["email"] = x.email
+            endUser["darkMode"] = x.darkMode
+            endUser["notification"] = x.notification
+            endUser["sound"] = x.sound
+        }
+        
+        print("user is \(endUser)")
+        
+        return endUser
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-
+        let user = getUser()
+        /*let darkModeOn = user["darkMode"] as! Bool
+        if darkModeOn {
+            overrideUserInterfaceStyle = .dark
+        }*/
         
         //bodyField.text = bodyStr
         titleStr = task?.title

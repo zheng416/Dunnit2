@@ -104,6 +104,10 @@ class AddViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
         let user = getUser()
+        /*let darkModeOn = user["darkMode"] as! Bool
+        if darkModeOn {
+            overrideUserInterfaceStyle = .dark
+        }*/
         notificationsOn = user["notification"] as! Bool
         
         titlefield.delegate = self // rid of keyboard

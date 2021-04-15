@@ -120,6 +120,28 @@ class HomeViewController: UIViewController {
         tableView.reloadData()
     }
     
+    func getUser() -> [String: Any] {
+        var user = DataBaseHelper.shareInstance.fetchLocalUser()
+        if user.isEmpty{
+            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
+            user = DataBaseHelper.shareInstance.fetchLocalUser()
+        }
+        
+        // Unpack user entity to dictionary
+        var endUser = [String:Any]()
+        for x in user as [UserEntity] {
+            endUser["name"] = x.name
+            endUser["email"] = x.email
+            endUser["darkMode"] = x.darkMode
+            endUser["notification"] = x.notification
+            endUser["sound"] = x.sound
+        }
+        
+        print("user is \(endUser)")
+        
+        return endUser
+    }
+    
     func getTopics() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchTopics()
         print(user)
@@ -197,8 +219,8 @@ class HomeViewController: UIViewController {
             self.topView = settingVC.view
             addChild(settingVC)
             menu = MenuType.settings
-            
             navigationItem.rightBarButtonItems = nil
+            getData()
         case .myList:
             let storyboard = UIStoryboard(name: "Home", bundle: nil)
             let listVC = storyboard.instantiateViewController(withIdentifier: "listsVC")
@@ -335,7 +357,7 @@ class HomeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        overrideUserInterfaceStyle = .light
+        // overrideUserInterfaceStyle = .light
         searchBar.autocapitalizationType = .none
         // Do any additional setup after loading the view.
         
@@ -349,6 +371,14 @@ class HomeViewController: UIViewController {
         let sortButton = UIBarButtonItem(title: "Sort", menu: self.sortMenu)
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
         navigationItem.rightBarButtonItems = [addButton, sortButton]
+        
+        let userInfo = getUser()
+        let darkModeOn = userInfo["darkMode"] as! Bool
+        if darkModeOn {
+            overrideUserInterfaceStyle = .dark
+        } else {
+            overrideUserInterfaceStyle = .light
+        }
     }
     
 
