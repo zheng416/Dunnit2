@@ -11,14 +11,56 @@ import Firebase
 
 extension NSMutableAttributedString {
     var fontSize:CGFloat { return 18 }
+    var mediumFontSize:CGFloat { return 20 }
+    var largeFontSize:CGFloat { return 30 }
     var boldFont:UIFont { return UIFont(name: "AvenirNext-Bold", size: fontSize) ?? UIFont.boldSystemFont(ofSize: fontSize) }
     var normalFont:UIFont { return UIFont(name: "AvenirNext-Regular", size: fontSize) ?? UIFont.systemFont(ofSize: fontSize)}
+    var boldTitleFont:UIFont { return UIFont(name: "AvenirNext-Bold", size: largeFontSize) ?? UIFont.boldSystemFont(ofSize: largeFontSize) }
+    var bodyNormalFont:UIFont { return UIFont(name: "AvenirNext-Regular", size: mediumFontSize) ?? UIFont.systemFont(ofSize: mediumFontSize) }
     
     func boldAndRed(_ value:String) -> NSMutableAttributedString {
         
         let attributes:[NSAttributedString.Key : Any] = [
             .font : boldFont,
             .foregroundColor : UIColor.red
+        ]
+        
+        self.append(NSAttributedString(string: value, attributes:attributes))
+        return self
+    }
+    
+    func boldTitle(_ value:String) -> NSMutableAttributedString {
+        let attributes:[NSAttributedString.Key : Any] = [
+            .font : boldTitleFont,
+        ]
+        
+        self.append(NSAttributedString(string: value, attributes:attributes))
+        return self
+    }
+    
+    func bodyNormal(_ value:String) -> NSMutableAttributedString {
+        let attributes:[NSAttributedString.Key : Any] = [
+            .font : bodyNormalFont,
+        ]
+        
+        self.append(NSAttributedString(string: value, attributes:attributes))
+        return self
+    }
+    
+    func gray(_ value:String) -> NSMutableAttributedString {
+        
+        let attributes:[NSAttributedString.Key : Any] = [
+            .foregroundColor : UIColor.gray
+        ]
+        
+        self.append(NSAttributedString(string: value, attributes:attributes))
+        return self
+    }
+    
+    func bold(_ value:String) -> NSMutableAttributedString {
+        
+        let attributes:[NSAttributedString.Key : Any] = [
+            .font : boldFont
         ]
         
         self.append(NSAttributedString(string: value, attributes:attributes))
@@ -76,6 +118,28 @@ class HomeViewController: UIViewController {
         self.progressView.setProgress(progressCount, animated: true)
         
         tableView.reloadData()
+    }
+    
+    func getUser() -> [String: Any] {
+        var user = DataBaseHelper.shareInstance.fetchLocalUser()
+        if user.isEmpty{
+            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
+            user = DataBaseHelper.shareInstance.fetchLocalUser()
+        }
+        
+        // Unpack user entity to dictionary
+        var endUser = [String:Any]()
+        for x in user as [UserEntity] {
+            endUser["name"] = x.name
+            endUser["email"] = x.email
+            endUser["darkMode"] = x.darkMode
+            endUser["notification"] = x.notification
+            endUser["sound"] = x.sound
+        }
+        
+        print("user is \(endUser)")
+        
+        return endUser
     }
     
     func getTopics() -> [String: Any] {
@@ -156,8 +220,8 @@ class HomeViewController: UIViewController {
             self.topView = settingVC.view
             addChild(settingVC)
             menu = MenuType.settings
-            
             navigationItem.rightBarButtonItems = nil
+            getData()
         case .myList:
             let storyboard = UIStoryboard(name: "Home", bundle: nil)
             let listVC = storyboard.instantiateViewController(withIdentifier: "listsVC")
@@ -302,7 +366,7 @@ class HomeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        overrideUserInterfaceStyle = .light
+        // overrideUserInterfaceStyle = .light
         searchBar.autocapitalizationType = .none
         // Do any additional setup after loading the view.
         
@@ -316,6 +380,14 @@ class HomeViewController: UIViewController {
         let sortButton = UIBarButtonItem(title: "Sort", menu: self.sortMenu)
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
         navigationItem.rightBarButtonItems = [addButton, sortButton]
+        
+        let userInfo = getUser()
+        let darkModeOn = userInfo["darkMode"] as! Bool
+        if darkModeOn {
+            overrideUserInterfaceStyle = .dark
+        } else {
+            overrideUserInterfaceStyle = .light
+        }
     }
     
 

@@ -9,32 +9,43 @@ import UIKit
 import UserNotifications
 
 
-class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
+class AddViewController: UIViewController, UITextFieldDelegate {
     
     var currentTopic: String?
     var currentPriority: Int?
-    var noSelection: [String] = [String]()
-    var currentListIndex: Int = 0
-    var noTopics: [String] = [String]()
-    var list: ListEntity?
+    var currentList: String?
+    var listString: String?
+    var currentReminder: String?
     var notificationsOn: Bool?
+    var list: ListEntity?
     
     @IBOutlet var titlefield: UITextField!
     @IBOutlet var bodyField: UITextField!
     @IBOutlet var datePicker: UIDatePicker!
-    @IBOutlet weak var topicPicker: UIPickerView!
-    @IBOutlet weak var priorityPicker: UIPickerView!
-    @IBOutlet weak var listPicker: UIPickerView!
-    var topicPickerData: [String] = [String]()
-    var priorityPickerData: [String] = [String]()
-    //var task:TaskEntity?
+    @IBOutlet var topicField: UILabel!
+    @IBOutlet var priorityField: UILabel!
+    @IBOutlet var listField: UILabel!
+    
+    @IBOutlet var addTopic: UIButton!
+    @IBOutlet var cancelTopic: UIButton!
+    @IBOutlet var addPriority: UIButton!
+    @IBOutlet var cancelPriority: UIButton!
+    @IBOutlet var addList: UIButton!
+    @IBOutlet var cancelList: UIButton!
+    
+    var topicMenu: UIMenu?
+    var priorityMenu: UIMenu?
+    var listMenu: UIMenu?
+    
+    @IBOutlet weak var notificationToggle: UISwitch!
+    @IBOutlet var notificationLabel: UILabel!
+    @IBOutlet var reminderField: UILabel!
+    @IBOutlet var addReminder: UIButton!
+    @IBOutlet var cancelReminder: UIButton!
+    
+    var reminderMenu: UIMenu?
 
     public var completion: ((String, String, Date, String, Int16, String) -> Void)?
-
-    var pickerData: [String] = [String]()
-    //var listPickerData: [Int:(String,String)] = [Int:(String,String)]()
-    var listPickerData: [String] = [String]()
-    var listDic:[Int:(id:String,title:String)] = [Int:(String,String)]()
     
     func getUser() -> [String: Any] {
         var user = DataBaseHelper.shareInstance.fetchLocalUser()
@@ -61,41 +72,42 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
     func getTopics() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchTopics()
         print(user)
-        var endUser = [String:Any]()
+        var endTopic = [String:Any]()
         for x in user as [TopicEntity] {
-            endUser["red"] = x.red
-            endUser["orange"] = x.orange
-            endUser["yellow"] = x.yellow
-            endUser["green"] = x.green
-            endUser["blue"] = x.blue
-            endUser["purple"] = x.purple
-            endUser["indigo"] = x.indigo
-            endUser["teal"] = x.teal
-            endUser["pink"] = x.pink
-            endUser["black"] = x.black
+            endTopic["red"] = x.red
+            endTopic["orange"] = x.orange
+            endTopic["yellow"] = x.yellow
+            endTopic["green"] = x.green
+            endTopic["blue"] = x.blue
+            endTopic["purple"] = x.purple
+            endTopic["indigo"] = x.indigo
+            endTopic["teal"] = x.teal
+            endTopic["pink"] = x.pink
+            endTopic["black"] = x.black
         }
-        return endUser
+        return endTopic
     }
-    func getList() -> Void {
+    
+    func getList() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchLocalUser()
-        let lists = DataBaseHelper.shareInstance.fetchLocalLists()
-        var i = 0
-        
+        let lists = DataBaseHelper.shareInstance.fetchLists()
+        var endList = [String: Any]()
         for x in lists as [ListEntity] {
-//            print("ownber \(x.owner) email \(user[0].email)")
             if (x.owner! == user[0].email!){
-//                print("im in here \(user[0].email!) owner \(user[0].email!)")
-                listDic[i] = (x.id!,x.title!)
-                i+=1
-                print("listdic \(x.id!) \(x.title!) \(listDic[i-1])")
+                endList[x.id!] = x.title!
             }
         }
+        return endList
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         let user = getUser()
+        /*let darkModeOn = user["darkMode"] as! Bool
+        if darkModeOn {
+            overrideUserInterfaceStyle = .dark
+        }*/
         notificationsOn = user["notification"] as! Bool
         
         titlefield.delegate = self // rid of keyboard
@@ -105,90 +117,200 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
         let modifiedDate = Calendar.current.date(byAdding: .day, value: 1, to: date)!
         datePicker.date = modifiedDate
         // Do any additional setup after loading the view.
-        topicPicker.tag = 1
-        listPicker.tag = 3
-        listPicker.delegate = self
-        listPicker.dataSource = self
-        topicPicker.delegate = self
-        topicPicker.dataSource = self
-        topicPickerData = []
-        let topics = getTopics()
-        for (color, topics) in topics {
-            if !((topics as! String).isEmpty) {
-                topicPickerData.append(topics as! String)
-            }
-        }
-        topicPickerData.sort()
-        topicPickerData.insert("None", at: 0)
+        self.cancelTopic.tintColor = UIColor.gray
+        self.cancelPriority.tintColor = UIColor.gray
+        self.cancelList.tintColor = UIColor.gray
+        self.cancelReminder.tintColor = UIColor.gray
         
-        priorityPicker.delegate = self
-        priorityPicker.dataSource = self
-        priorityPickerData.insert("None", at: 0)
-        priorityPickerData.insert("(!) Low Priority", at: 1)
-        priorityPickerData.insert("(!!) Medium Priority", at: 2)
-        priorityPickerData.insert("(!!!) High Priority", at: 3) 
-      
-        noSelection = ["None"]
-        listPickerData.removeAll()
-        getList()
-        print("list count \(listDic.count)")
-        if listDic.count == 0{
-            currentListIndex = 0
-            listDic[listDic.count] = ("","")
-            listPickerData.append("N/A")
-            listPicker.selectRow(0, inComponent: 0, animated: false)
-            listPicker.reloadAllComponents()
-            return
-        }
-        var j = -1
-        for i in 0...listDic.count - 1{
-            if list != nil && list!.id == listDic[i]!.id{
-                j = i
-            }
-            listPickerData.append(listDic[i]!.title as! String)
-        }
-        if j == -1 {
-            j = listDic.count
-        }
-        currentListIndex = j
-        listDic[listDic.count] = ("","")
-        listPickerData.append("N/A")
-        listPicker.selectRow(j, inComponent: 0, animated: false)
-        listPicker.reloadAllComponents()
+        setupTopicMenu()
+        setupPriorityMenuItem()
+        setupReminderMenuItem()
         
-    }
-    
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        if pickerView.tag == 1 {
-            return topicPickerData.count
-        }
-        else if (pickerView.tag == 2){
-            return priorityPickerData.count
+        self.currentTopic = ""
+        self.currentPriority = 0
+        self.currentList = ""
+        self.topicField.attributedText = NSMutableAttributedString().gray("Add a Topic")
+        self.priorityField.attributedText = NSMutableAttributedString().gray("Add a Priority")
+        
+        self.addTopic.menu = self.topicMenu
+        self.addTopic.showsMenuAsPrimaryAction = true
+        self.addPriority.menu = self.priorityMenu
+        self.addPriority.showsMenuAsPrimaryAction = true
+        
+        self.cancelTopic.addTarget(self, action: #selector(removeTopic), for: .touchUpInside)
+        self.cancelPriority.addTarget(self, action: #selector(removePriority), for: .touchUpInside)
+        
+        if list != nil {
+            self.listString = ""
+            self.listField.attributedText = NSMutableAttributedString().normal((list?.title)!)
+            self.addList.isEnabled = false
+            self.cancelList.isEnabled = false
         } else {
-          return listPickerData.count
+            setupListMenuItem()
+            self.listField.attributedText = NSMutableAttributedString().gray("Add a List")
+            self.addList.menu = self.listMenu
+            self.addList.showsMenuAsPrimaryAction = true
+            self.cancelList.addTarget(self, action: #selector(removeList), for: .touchUpInside)
         }
+        
+        
+        self.currentReminder = ""
+        self.notificationLabel.attributedText = NSMutableAttributedString().bold("Notification")
+        self.notificationToggle.isOn = false
+        self.reminderField.attributedText = NSMutableAttributedString().gray("Add a Reminder")
+        self.addReminder.isEnabled = false
+        self.cancelReminder.isEnabled = false
+        
+        self.addReminder.menu = self.reminderMenu
+        self.addReminder.showsMenuAsPrimaryAction = true
+        self.cancelReminder.addTarget(self, action: #selector(removeReminder), for: .touchUpInside)
     }
     
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        if pickerView.tag == 1 {
-            currentTopic = topicPickerData[row]
-            return topicPickerData[row]
-        } else if pickerView.tag == 2  {
-            currentPriority = row
-            return priorityPickerData[row]
+    private func setupTopicMenu() {
+        let topics = getTopics()
+        var topicsData = [String]()
+        for (_, topic) in topics {
+            if !((topic as! String).isEmpty) {
+                topicsData.append(topic as! String)
+            }
         }
-      else {
-            return listPickerData[row]
-      }
+        topicsData.sort()
+        var topicsChildren = [UIAction]()
+        for child in topicsData {
+            print(child)
+            topicsChildren.append(
+                UIAction(title: child) {action in
+                    self.currentTopic = child
+                    self.topicField.attributedText = NSMutableAttributedString().normal(child)
+                    self.addTopic.isEnabled = false
+                }
+            )
+        }
+        self.topicMenu = UIMenu(title: "", children: topicsChildren)
     }
     
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        if pickerView.tag == 3 {
-            currentListIndex = row
+    private func setupPriorityMenuItem() {
+        self.priorityMenu = UIMenu(title: "", children: [
+            UIAction(title: "Low Priority") {action in
+                self.currentPriority = 1
+                self.priorityField.attributedText = NSMutableAttributedString().normal("Low Priority")
+                self.addPriority.isEnabled = false
+            },
+            UIAction(title: "Medium Priority") {action in
+                self.currentPriority = 2
+                self.priorityField.attributedText = NSMutableAttributedString().normal("Medium Priority")
+                self.addPriority.isEnabled = false
+            },
+            UIAction(title: "High Priority") {action in
+                self.currentPriority = 3
+                self.priorityField.attributedText = NSMutableAttributedString().normal("High Priority")
+                self.addPriority.isEnabled = false
+            }
+        ])
+    }
+    
+    private func setupListMenuItem() {
+        let lists = getList()
+        var listsId = [String]()
+        var listsData = [String]()
+        for (id, list) in lists {
+            if !((list as! String).isEmpty) {
+                listsId.append(id)
+                listsData.append(list as! String)
+            }
+        }
+        var listsChildren = [UIAction]()
+        for (childId, childName) in zip(listsId, listsData) {
+            listsChildren.append(
+                UIAction(title: childName) {action in
+                    self.currentList = childId
+                    self.listString = childName
+                    self.listField.attributedText = NSMutableAttributedString().normal(childName)
+                    self.addList.isEnabled = false
+                }
+            )
+        }
+        self.listMenu = UIMenu(title: "", children: listsChildren)
+    }
+    
+    private func setupReminderMenuItem() {
+        self.reminderMenu = UIMenu(title: "", children: [
+            UIAction(title: "Deadline") {action in
+                self.currentReminder = "Deadline"
+                self.reminderField.attributedText = NSMutableAttributedString().normal("Deadline")
+                self.addReminder.isEnabled = false
+            },
+            UIAction(title: "15 Minutes") {action in
+                self.currentReminder = "15 Minutes"
+                self.reminderField.attributedText = NSMutableAttributedString().normal("15 Minutes")
+                self.addReminder.isEnabled = false
+            },
+            UIAction(title: "30 Minutes") {action in
+                self.currentReminder = "30 Minutes"
+                self.reminderField.attributedText = NSMutableAttributedString().normal("30 Minutes")
+                self.addReminder.isEnabled = false
+            },
+            UIAction(title: "1 Hour") {action in
+                self.currentReminder = "1 Hour"
+                self.reminderField.attributedText = NSMutableAttributedString().normal("1 Hour")
+                self.addReminder.isEnabled = false
+            },
+            UIAction(title: "12 Hours") {action in
+                self.currentReminder = "12 Hours"
+                self.reminderField.attributedText = NSMutableAttributedString().normal("12 Hours")
+                self.addReminder.isEnabled = false
+            },
+            UIAction(title: "24 Hours") {action in
+                self.currentReminder = "24 Hours"
+                self.reminderField.attributedText = NSMutableAttributedString().normal("24 Hours")
+                self.addReminder.isEnabled = false
+            }
+        ])
+    }
+    
+    @objc private func removeTopic() {
+        self.currentTopic = ""
+        self.topicField.attributedText = NSMutableAttributedString().gray("Add a Topic")
+        self.addTopic.isEnabled = true
+    }
+    
+    @objc private func removePriority() {
+        self.currentPriority = 0
+        self.priorityField.attributedText = NSMutableAttributedString().gray("Add a Priority")
+        self.addPriority.isEnabled = true
+    }
+    
+    @objc private func removeList() {
+        self.currentList = ""
+        self.listField.attributedText = NSMutableAttributedString().gray("Add a List")
+        self.addList.isEnabled = true
+    }
+    
+    @objc private func removeReminder() {
+        self.currentReminder = ""
+        self.reminderField.attributedText = NSMutableAttributedString().gray("Add a Reminder")
+        self.addReminder.isEnabled = true
+    }
+    
+    @IBAction func toggleReminders() {
+        if notificationToggle.isOn {
+            self.notificationToggle.isOn = true
+            if currentReminder == "" {
+                self.reminderField.attributedText = NSMutableAttributedString().gray("Add a Reminder")
+            } else {
+                self.reminderField.attributedText = NSMutableAttributedString().normal(currentReminder!)
+            }
+            self.addReminder.isEnabled = true
+            self.cancelReminder.isEnabled = true
+        } else {
+            self.notificationToggle.isOn = false
+            if currentReminder == "" {
+                self.reminderField.attributedText = NSMutableAttributedString().gray("Add a Reminder")
+            } else {
+                self.reminderField.attributedText = NSMutableAttributedString().gray(currentReminder!)
+            }
+            self.addReminder.isEnabled = false
+            self.cancelReminder.isEnabled = false
         }
     }
     
@@ -196,19 +318,31 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
         if let titleText = titlefield.text, !titleText.isEmpty,
            let bodyText = bodyField.text, !bodyText.isEmpty {
             let targetDate = datePicker.date
-            if noSelection.contains(currentTopic!) {
-                currentTopic = ""
-            }
             let made = Date()
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "YY, MMM d, HH:mm:ss"
             let madeDate = dateFormatter.string(from: made)
-            if notificationsOn! {
+            if (notificationsOn! && currentReminder != "") {
+                var timeMultiplier = 0
+                if currentReminder == "15 Minutes" {
+                    timeMultiplier = 15
+                } else if currentReminder == "30 Minutes" {
+                    timeMultiplier = 30
+                } else if currentReminder == "1 Hour" {
+                    timeMultiplier = 60
+                } else if currentReminder == "6 Hours" {
+                    timeMultiplier = 60 * 6
+                } else if currentReminder == "12 Hours" {
+                    timeMultiplier = 60 * 12
+                } else if currentReminder == "24 Hours" {
+                    timeMultiplier = 60 * 24
+                }
+                let reminderDate = targetDate.addingTimeInterval(TimeInterval(-timeMultiplier * 60))
                 let content = UNMutableNotificationContent()
-                content.title = "Deadline: " + titleText
+                content.title = currentReminder! + ": " + titleText
                 content.sound = .default
                 content.body = bodyText
-                let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: targetDate), repeats: false)
+                let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminderDate), repeats: false)
                 let request = UNNotificationRequest(identifier: madeDate, content: content, trigger: trigger)
                 UNUserNotificationCenter.current().add(request, withCompletionHandler: {error in
                     if error != nil {
@@ -216,11 +350,8 @@ class AddViewController: UIViewController, UITextFieldDelegate, UIPickerViewDele
                     }
                 })
             }
-            
-            let selectedTopicValue = topicPickerData[topicPicker.selectedRow(inComponent: 0)]
-            let selectedPriorityValue = priorityPicker.selectedRow(inComponent: 0)
-            DataBaseHelper.shareInstance.saveTask(title: titleText, body: bodyText, date: targetDate, isDone: false, list: listDic[currentListIndex]!.id, color: selectedTopicValue, priority: Int16(selectedPriorityValue), made: madeDate)
-            completion?(titleText, bodyText, targetDate, selectedTopicValue, Int16(selectedPriorityValue), madeDate)
+            DataBaseHelper.shareInstance.saveTask(title: titleText, body: bodyText, date: targetDate, isDone: false, list: currentList!, color: currentTopic!, priority: Int16(currentPriority!), made: madeDate)
+            completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate)
         }
     }
 

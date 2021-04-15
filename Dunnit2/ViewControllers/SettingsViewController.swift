@@ -180,9 +180,11 @@ class SettingsViewController: UITableViewController {
         if darkModeToggle.isOn {
             DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,darkMode: true)
             DataBaseHelper.shareInstance.updateDBUser(email: globalUser["email"] as! String,darkMode: true)
+            overrideUserInterfaceStyle = .dark
         } else {
             DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,darkMode: false)
             DataBaseHelper.shareInstance.updateDBUser(email: globalUser["email"] as! String,darkMode: false)
+            overrideUserInterfaceStyle = .light
         }
         
         globalUser = self.getUser()
