@@ -44,6 +44,7 @@
 		9BBAE66C25EDA714003CC28B /* ListsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE66B25EDA714003CC28B /* ListsViewController.swift */; };
 		9BBAE66F25EEAC3E003CC28B /* AddListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE66E25EEAC3D003CC28B /* AddListViewController.swift */; };
 		9BBAE67625F15EB7003CC28B /* ListTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE67525F15EB6003CC28B /* ListTaskViewController.swift */; };
+		9BFA4896262613EE00A9512E /* SharedInviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BFA4895262613EE00A9512E /* SharedInviteViewController.swift */; };
 		CE4912C42602E3B800896E14 /* UpdatePassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4912C32602E3B800896E14 /* UpdatePassViewController.swift */; };
 		CE58F3C3260FF61F0049EB4B /* ChangeListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE58F3C2260FF61F0049EB4B /* ChangeListViewController.swift */; };
 		D999FD13777EE2C0EA48865A /* Pods_Dunnit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA12CDEBDC4CE346BF760AAE /* Pods_Dunnit2.framework */; };
@@ -91,6 +92,7 @@
 		9BBAE66B25EDA714003CC28B /* ListsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsViewController.swift; sourceTree = "<group>"; };
 		9BBAE66E25EEAC3D003CC28B /* AddListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddListViewController.swift; sourceTree = "<group>"; };
 		9BBAE67525F15EB6003CC28B /* ListTaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTaskViewController.swift; sourceTree = "<group>"; };
+		9BFA4895262613EE00A9512E /* SharedInviteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedInviteViewController.swift; sourceTree = "<group>"; };
 		CE4912C32602E3B800896E14 /* UpdatePassViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePassViewController.swift; sourceTree = "<group>"; };
 		CE58F3C2260FF61F0049EB4B /* ChangeListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeListViewController.swift; sourceTree = "<group>"; };
 		FA12CDEBDC4CE346BF760AAE /* Pods_Dunnit2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dunnit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -192,6 +194,7 @@
 				CE4912C32602E3B800896E14 /* UpdatePassViewController.swift */,
 				9B6CC76E25DB5F5A00C0CAF7 /* ViewController.swift */,
 				8DB602D72612B6810057F27C /* YearlyProgressViewController.swift */,
+				9BFA4895262613EE00A9512E /* SharedInviteViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -375,6 +378,7 @@
 				9B6CC78325DB60F300C0CAF7 /* LoginViewController.swift in Sources */,
 				9BBAE66425ED7DF1003CC28B /* EditNameViewController.swift in Sources */,
 				9BBAE66125ED7DE1003CC28B /* SettingsViewController.swift in Sources */,
+				9BFA4896262613EE00A9512E /* SharedInviteViewController.swift in Sources */,
 				9B6CC76D25DB5F5A00C0CAF7 /* SceneDelegate.swift in Sources */,
 				9B6CC78625DB60FD00C0CAF7 /* HomeViewController.swift in Sources */,
 				8DC9D4AC25FB024F00353402 /* SortingViewController.swift in Sources */,

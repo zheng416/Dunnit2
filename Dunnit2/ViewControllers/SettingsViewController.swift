@@ -21,7 +21,8 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var notificationsToggle: UISwitch!
     @IBOutlet weak var darkModeToggle: UISwitch!
     
-    @IBOutlet weak var verifyEmailLabel: UIView!
+    @IBOutlet weak var logoutLabel: UILabel!
+    @IBOutlet weak var logoutButton: UITableViewCell!
     var userStore = [UserEntity]()
     var globalUser = [String: Any]()
     var authUser = Auth.auth().currentUser
@@ -112,6 +113,10 @@ class SettingsViewController: UITableViewController {
         loadLabelValues()
         authUser = Auth.auth().currentUser
         print(authUser!.isEmailVerified)
+        //TODO redirect them to sign in and login in
+        if (globalUser["email"] as! String == "Guest"){
+            logoutLabel.text = "Sign Up / Login"
+        }
         if authUser!.isEmailVerified{
             verifyEmailButton.isUserInteractionEnabled = false
             emailLabel.text = "Email Verified"

@@ -210,7 +210,8 @@ class HomeViewController: UIViewController {
             self.topView = sharedVC.view
             addChild(sharedVC)
             self.title = "Shared Lists"
-            navigationItem.rightBarButtonItems = nil
+            let inboxButton = UIBarButtonItem(title: "Inbox", style: .plain, target: self, action: #selector(didTapInboxButton))
+            navigationItem.rightBarButtonItems = [inboxButton]
             menu = MenuType.shared
         case .settings:
             let storyboard = UIStoryboard(name: "Settings", bundle: nil)
@@ -243,6 +244,14 @@ class HomeViewController: UIViewController {
             getData()
             break
         }
+    }
+    
+    @objc func didTapInboxButton() {
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        guard let vc = storyboard.instantiateViewController(identifier: "inviteView") as? SharedInviteViewController else {
+            return
+        }
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func didTapAddButton() {
@@ -703,7 +712,15 @@ extension HomeViewController {
         }
         doneAction.image = UIImage(systemName: "checkmark.circle")
         doneAction.backgroundColor = .systemGreen
-        return indexPath.section == 0 ? UISwipeActionsConfiguration(actions: [doneAction]) : nil
+        
+        let duplicateAction = UIContextualAction(style: .normal, title: nil) { (action, sourceView, completionHandler) in
+            DataBaseHelper.shareInstance.duplicateTask(task: self.taskStore[0][indexPath.row])
+            self.getData()
+        }
+        duplicateAction.image = UIImage(systemName: "doc.on.doc")
+        duplicateAction.backgroundColor = .systemBlue
+        return UISwipeActionsConfiguration(actions: [doneAction,duplicateAction])
+        //return indexPath.section == 0 ? UISwipeActionsConfiguration(actions: [doneAction]) : nil
     }
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

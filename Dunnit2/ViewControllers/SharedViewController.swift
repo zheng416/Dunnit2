@@ -50,10 +50,8 @@ class SharedViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        getLists()
+       getLists()
     }
-    
-
    
 
 }

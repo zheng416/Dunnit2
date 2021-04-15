@@ -52,7 +52,7 @@ class EditViewController: UIViewController, UITextFieldDelegate {
     
   
     public var completion: ((String, String, Date, String, Int16, String) -> Void)?
-    
+   
     func getUser() -> [String: Any] {
         var user = DataBaseHelper.shareInstance.fetchLocalUser()
         if user.isEmpty{
