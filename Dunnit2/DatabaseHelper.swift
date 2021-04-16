@@ -500,6 +500,28 @@ class DataBaseHelper {
     }
     
     // User section -- Start
+    func parsedLocalUser() -> [String: Any] {
+        var user = fetchLocalUser()
+        if user.isEmpty{
+            createNewUser(name: "test", email:"test@email.com")
+            user = DataBaseHelper.shareInstance.fetchLocalUser()
+        }
+        
+        // Unpack user entity to dictionary
+        var endUser = [String:Any]()
+        for x in user as [UserEntity] {
+            endUser["name"] = x.name
+            endUser["email"] = x.email
+            endUser["darkMode"] = x.darkMode
+            endUser["notification"] = x.notification
+            endUser["sound"] = x.sound
+        }
+        
+        print("user is \(endUser)")
+        
+        return endUser
+    }
+    
     func fetchLocalUser() -> [UserEntity] {
         var fetchingImage = [UserEntity]()
         
@@ -543,7 +565,7 @@ class DataBaseHelper {
         return
     }
     
-    func createNewUser(name: String="", email: String, darkMode: Bool = false, notification: Bool = true, sound: Bool = true ) {
+    func createNewUser(name: String="", email: String, darkMode: Bool = false, notification: Bool = true, sound: Bool = true) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext

@@ -29,29 +29,6 @@ class SettingsViewController: UITableViewController {
     
     var taskStore = [[TaskEntity](), [TaskEntity]()]
     
-    //  Access databse functions
-    //helper functions
-    func getUser() -> [String: Any] {
-        var user = DataBaseHelper.shareInstance.fetchLocalUser()
-        if user.isEmpty{
-            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
-            user = DataBaseHelper.shareInstance.fetchLocalUser()
-        }
-        
-        // Unpack user entity to dictionary
-        var endUser = [String:Any]()
-        for x in user as [UserEntity] {
-            endUser["name"] = x.name
-            endUser["email"] = x.email
-            endUser["darkMode"] = x.darkMode
-            endUser["notification"] = x.notification
-            endUser["sound"] = x.sound
-        }
-        
-        print("user is \(endUser)")
-        
-        return endUser
-    }
     func getData() {
         let user = DataBaseHelper.shareInstance.fetchLocalUser()
         
@@ -63,6 +40,7 @@ class SettingsViewController: UITableViewController {
 
         taskStore = [tasks.filter{$0.isDone == false && $0.owner == user[0].email}, tasks.filter{$0.isDone == true && $0.owner == user[0].email}]
     }
+    
     func checkError(error : Error?,message: String)->Bool{
         if let error = error{
             print("error \(message) \(error)\n")
@@ -89,11 +67,9 @@ class SettingsViewController: UITableViewController {
     
     
     func loadLabelValues() {
-//        if (DataBaseHelper.shareInstance.checkIfUserExists() == false) {
-//            DataBaseHelper.shareInstance.createNewUser(name: "Andrew", email: "andrew123@gmail.com")
-//        }
         
-        let user = getUser()
+//        let user = getUser()
+        let user = DataBaseHelper.shareInstance.parsedLocalUser()
         if user.isEmpty{
             print("user is empty")
             return
@@ -111,16 +87,20 @@ class SettingsViewController: UITableViewController {
         super.viewDidLoad()
         getData()
         loadLabelValues()
-        authUser = Auth.auth().currentUser
-        print(authUser!.isEmailVerified)
-        //TODO redirect them to sign in and login in
-        if (globalUser["email"] as! String == "Guest"){
-            logoutLabel.text = "Sign Up / Login"
-        }
-        if authUser!.isEmailVerified{
-            verifyEmailButton.isUserInteractionEnabled = false
-            emailLabel.text = "Email Verified"
-            verifyLabel.text = "Email Verified"
+
+        let tempUser = DataBaseHelper.shareInstance.parsedLocalUser()
+        if (tempUser["email"] as! String != "Guest") {
+            authUser = Auth.auth().currentUser
+            print(authUser!.isEmailVerified)
+            //TODO redirect them to sign in and login in
+            if (globalUser["email"] as! String == "Guest"){
+                logoutLabel.text = "Sign Up / Login"
+            }
+            if authUser!.isEmailVerified{
+                verifyEmailButton.isUserInteractionEnabled = false
+                emailLabel.text = "Email Verified"
+                verifyLabel.text = "Email Verified"
+            }
         }
     }
     
@@ -138,7 +118,7 @@ class SettingsViewController: UITableViewController {
             DataBaseHelper.shareInstance.updateDBUser(email: globalUser["email"] as! String,sound: false )
         }
         
-        globalUser = self.getUser()
+        globalUser = DataBaseHelper.shareInstance.parsedLocalUser()
     }
     
     @IBAction func toggleNotifications(){
@@ -173,7 +153,7 @@ class SettingsViewController: UITableViewController {
             DataBaseHelper.shareInstance.updateDBUser(email: globalUser["email"] as! String,notification: false )
         }
         
-        globalUser = self.getUser()
+        globalUser = DataBaseHelper.shareInstance.parsedLocalUser()
     }
     
     @IBAction func toggleDark(){
@@ -187,11 +167,10 @@ class SettingsViewController: UITableViewController {
             overrideUserInterfaceStyle = .light
         }
         
-        globalUser = self.getUser()
+        globalUser = DataBaseHelper.shareInstance.parsedLocalUser()
     }
     
-
-
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        print("selected row is :\(indexPath)")
         
@@ -200,7 +179,7 @@ class SettingsViewController: UITableViewController {
         let verifyEmailIndex = [1,2] as IndexPath
         
         if (indexPath == logoutIndex) {
-            print("Logout?")
+            print("Logout")
             let dialogMessage = UIAlertController(title: "", message: "Would you like to logout?", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .default) {
                 UIAlertAction in
@@ -244,8 +223,6 @@ class SettingsViewController: UITableViewController {
                 // TODO: Verification for peter? Not sure what else to add here
                 self.verifyemail()
                 print("Ok button pressed")
-                
-                
             }
             let cancel = UIAlertAction(title: "No", style: .cancel) {
                 UIAlertAction in
@@ -256,6 +233,40 @@ class SettingsViewController: UITableViewController {
             self.present(dialogMessage, animated: true, completion: nil)
             
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        let guestFlag = globalUser["email"] as! String == "Guest"
+
+        if (guestFlag) {
+            switch section {
+            case 0: return 0.0
+            case 1: return 0.0
+            default:
+                return UITableView.automaticDimension
+            }
+        } else {
+            return UITableView.automaticDimension
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let guestFlag = globalUser["email"] as! String == "Guest"
+
+        if (guestFlag) {
+            switch indexPath {
+            case [0,0]: return 0.0
+            case [0,1]: return 0.0
+            case [1,0]: return 0.0
+            case [1,1]: return 0.0
+            case [1,2]: return 0.0
+            default:
+                return UITableView.automaticDimension
+            }
+        } else {
+            return UITableView.automaticDimension
+        }
+
     }
 
 }

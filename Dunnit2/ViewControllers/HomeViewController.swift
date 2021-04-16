@@ -100,6 +100,31 @@ class HomeViewController: UIViewController {
     
     var taskStore = [[TaskEntity](), [TaskEntity]()]
     var filteredTaskStore = [[TaskEntity](), [TaskEntity]()]
+    var globalUser = [String: Any]()
+    
+    //helper functions
+//    func getUser() -> [String: Any] {
+//        var user = DataBaseHelper.shareInstance.fetchLocalUser()
+//        if user.isEmpty{
+//            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
+//            user = DataBaseHelper.shareInstance.fetchLocalUser()
+//        }
+//        
+//        // Unpack user entity to dictionary
+//        var endUser = [String:Any]()
+//        for x in user as [UserEntity] {
+//            endUser["name"] = x.name
+//            endUser["email"] = x.email
+//            endUser["darkMode"] = x.darkMode
+//            endUser["notification"] = x.notification
+//            endUser["sound"] = x.sound
+//        }
+//        
+//        print("user is \(endUser)")
+//        
+//        return endUser
+//    }
+    
     //local
     func getData() {
         
@@ -180,40 +205,58 @@ class HomeViewController: UIViewController {
 //    }()
     
     func transitionToNew(_ menuType: MenuType) {
-        let title = String(describing: menuType).capitalized
-        self.title = title
+       
+        let guest = globalUser["email"] as! String == "Guest"
         
         topView?.removeFromSuperview()
         switch menuType {
-        
-        // Switch VIEW CONTROLLERS
-        // let profileVC = ProfileViewController()
-        // view.addSubview(profileVC.view)
-        // self.topView = profileVC.view
-        // addChild(profileVC)
-        
         case .progress:
-            let storyboard = UIStoryboard(name: "Home", bundle: nil)
-            let listVC = storyboard.instantiateViewController(withIdentifier: "progressTabVC")
-            view.addSubview(listVC.view)
-            self.topView = listVC.view
-            addChild(listVC)
-            self.title = "Progress"
+            if (guest) {
+                let dialogMessage = UIAlertController(title: "", message: "Please Sign In to Access Premium Feature", preferredStyle: .alert)
+                let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+                })
+                dialogMessage.addAction(ok)
+                self.present(dialogMessage, animated: true, completion: nil)
+            } else {
+                let title = String(describing: menuType).capitalized
+                self.title = title
+                
+                let storyboard = UIStoryboard(name: "Home", bundle: nil)
+                let listVC = storyboard.instantiateViewController(withIdentifier: "progressTabVC")
+                view.addSubview(listVC.view)
+                self.topView = listVC.view
+                addChild(listVC)
+                self.title = "Progress"
 
-            navigationItem.rightBarButtonItems = nil
-            menu = MenuType.progress
+                navigationItem.rightBarButtonItems = nil
+                menu = MenuType.progress
+            }
         
         case .shared:
-            let storyboard = UIStoryboard(name: "Home", bundle: nil)
-            let sharedVC = storyboard.instantiateViewController(withIdentifier: "sharedVC")
-            view.addSubview(sharedVC.view)
-            self.topView = sharedVC.view
-            addChild(sharedVC)
-            self.title = "Shared Lists"
-            let inboxButton = UIBarButtonItem(title: "Inbox", style: .plain, target: self, action: #selector(didTapInboxButton))
-            navigationItem.rightBarButtonItems = [inboxButton]
-            menu = MenuType.shared
+            if (guest) {
+                let dialogMessage = UIAlertController(title: "", message: "Please Sign In to Access Premium Feature", preferredStyle: .alert)
+                let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+                })
+                dialogMessage.addAction(ok)
+                self.present(dialogMessage, animated: true, completion: nil)
+            } else {
+                let title = String(describing: menuType).capitalized
+                self.title = title
+                
+                let storyboard = UIStoryboard(name: "Home", bundle: nil)
+                let sharedVC = storyboard.instantiateViewController(withIdentifier: "sharedVC")
+                view.addSubview(sharedVC.view)
+                self.topView = sharedVC.view
+                addChild(sharedVC)
+                self.title = "Shared Lists"
+                let inboxButton = UIBarButtonItem(title: "Inbox", style: .plain, target: self, action: #selector(didTapInboxButton))
+                navigationItem.rightBarButtonItems = [inboxButton]
+                menu = MenuType.shared
+            }
         case .settings:
+            let title = String(describing: menuType).capitalized
+            self.title = title
+            
             let storyboard = UIStoryboard(name: "Settings", bundle: nil)
             let settingVC = storyboard.instantiateViewController(withIdentifier: "settings")
             view.addSubview(settingVC.view)
@@ -223,6 +266,9 @@ class HomeViewController: UIViewController {
             navigationItem.rightBarButtonItems = nil
             getData()
         case .myList:
+            let title = String(describing: menuType).capitalized
+            self.title = title
+            
             let storyboard = UIStoryboard(name: "Home", bundle: nil)
             let listVC = storyboard.instantiateViewController(withIdentifier: "listsVC")
             view.addSubview(listVC.view)
@@ -235,6 +281,9 @@ class HomeViewController: UIViewController {
             menu = MenuType.myList
 
         default:
+            let title = String(describing: menuType).capitalized
+            self.title = title
+            
             print("Default")
             let sortButton = UIBarButtonItem(title: "Sort", menu: self.sortMenu)
             let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
@@ -372,6 +421,9 @@ class HomeViewController: UIViewController {
         
         // Clear filter everytime relaunch app (prevent missed lists)
         let user = DataBaseHelper.shareInstance.fetchLocalUser()
+//        globalUser = getUser()
+        globalUser = DataBaseHelper.shareInstance.parsedLocalUser()
+        
         DataBaseHelper.shareInstance.updateFilterPreference(email: user[0].email ?? "", filterKey: "")
         
         getData()

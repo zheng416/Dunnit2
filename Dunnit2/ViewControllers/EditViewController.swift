@@ -114,7 +114,9 @@ class EditViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let user = getUser()
+//        let user = getUser()
+        let user = DataBaseHelper.shareInstance.parsedLocalUser()
+        
         notificationsOn = user["notification"] as! Bool        
         
         titlefield.text = titleStr
