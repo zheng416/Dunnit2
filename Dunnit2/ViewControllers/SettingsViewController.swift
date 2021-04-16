@@ -87,15 +87,15 @@ class SettingsViewController: UITableViewController {
         super.viewDidLoad()
         getData()
         loadLabelValues()
-
-        let tempUser = DataBaseHelper.shareInstance.parsedLocalUser()
-        if (tempUser["email"] as! String != "Guest") {
+        globalUser = DataBaseHelper.shareInstance.parsedLocalUser()
+        
+        if (globalUser["email"] as! String == "Guest"){
+            //TODO redirect them to sign in and login in
+            logoutLabel.text = "Sign Up / Login"
+        } else {
             authUser = Auth.auth().currentUser
             print(authUser!.isEmailVerified)
-            //TODO redirect them to sign in and login in
-            if (globalUser["email"] as! String == "Guest"){
-                logoutLabel.text = "Sign Up / Login"
-            }
+            
             if authUser!.isEmailVerified{
                 verifyEmailButton.isUserInteractionEnabled = false
                 emailLabel.text = "Email Verified"

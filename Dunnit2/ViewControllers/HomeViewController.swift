@@ -749,7 +749,6 @@ extension HomeViewController {
         duplicateAction.image = UIImage(systemName: "doc.on.doc")
         duplicateAction.backgroundColor = .systemBlue
         return indexPath.section == 0 ? UISwipeActionsConfiguration(actions: [doneAction,duplicateAction]) : nil
-        //return indexPath.section == 0 ? UISwipeActionsConfiguration(actions: [doneAction]) : nil
     }
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
