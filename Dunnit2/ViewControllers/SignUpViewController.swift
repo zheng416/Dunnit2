@@ -183,7 +183,7 @@ class SignUpViewController: UIViewController, LoginButtonDelegate {
                     print("storing to database")
 
                     let db = Firestore.firestore()
-                    
+                    DataBaseHelper.shareInstance.saveToDB()
                     db.collection("users").addDocument(data: ["name" : name, "uid" : result!.user.uid,"email": email]) { (error) in
                         if error != nil {
                             // Show error message
@@ -253,6 +253,7 @@ class SignUpViewController: UIViewController, LoginButtonDelegate {
                 // Save to firestore
 
                 let db = Firestore.firestore()
+                DataBaseHelper.shareInstance.saveToDB()
                 request.start(completionHandler: {connection, result, error in
                     if (error == nil) {
                         guard let userDict = result as? [String:Any] else {

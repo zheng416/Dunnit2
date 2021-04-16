@@ -11,14 +11,56 @@ import Firebase
 
 extension NSMutableAttributedString {
     var fontSize:CGFloat { return 18 }
+    var mediumFontSize:CGFloat { return 20 }
+    var largeFontSize:CGFloat { return 30 }
     var boldFont:UIFont { return UIFont(name: "AvenirNext-Bold", size: fontSize) ?? UIFont.boldSystemFont(ofSize: fontSize) }
     var normalFont:UIFont { return UIFont(name: "AvenirNext-Regular", size: fontSize) ?? UIFont.systemFont(ofSize: fontSize)}
+    var boldTitleFont:UIFont { return UIFont(name: "AvenirNext-Bold", size: largeFontSize) ?? UIFont.boldSystemFont(ofSize: largeFontSize) }
+    var bodyNormalFont:UIFont { return UIFont(name: "AvenirNext-Regular", size: mediumFontSize) ?? UIFont.systemFont(ofSize: mediumFontSize) }
     
     func boldAndRed(_ value:String) -> NSMutableAttributedString {
         
         let attributes:[NSAttributedString.Key : Any] = [
             .font : boldFont,
             .foregroundColor : UIColor.red
+        ]
+        
+        self.append(NSAttributedString(string: value, attributes:attributes))
+        return self
+    }
+    
+    func boldTitle(_ value:String) -> NSMutableAttributedString {
+        let attributes:[NSAttributedString.Key : Any] = [
+            .font : boldTitleFont,
+        ]
+        
+        self.append(NSAttributedString(string: value, attributes:attributes))
+        return self
+    }
+    
+    func bodyNormal(_ value:String) -> NSMutableAttributedString {
+        let attributes:[NSAttributedString.Key : Any] = [
+            .font : bodyNormalFont,
+        ]
+        
+        self.append(NSAttributedString(string: value, attributes:attributes))
+        return self
+    }
+    
+    func gray(_ value:String) -> NSMutableAttributedString {
+        
+        let attributes:[NSAttributedString.Key : Any] = [
+            .foregroundColor : UIColor.gray
+        ]
+        
+        self.append(NSAttributedString(string: value, attributes:attributes))
+        return self
+    }
+    
+    func bold(_ value:String) -> NSMutableAttributedString {
+        
+        let attributes:[NSAttributedString.Key : Any] = [
+            .font : boldFont
         ]
         
         self.append(NSAttributedString(string: value, attributes:attributes))
@@ -103,6 +145,28 @@ class HomeViewController: UIViewController {
         tableView.reloadData()
     }
     
+    func getUser() -> [String: Any] {
+        var user = DataBaseHelper.shareInstance.fetchLocalUser()
+        if user.isEmpty{
+            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
+            user = DataBaseHelper.shareInstance.fetchLocalUser()
+        }
+        
+        // Unpack user entity to dictionary
+        var endUser = [String:Any]()
+        for x in user as [UserEntity] {
+            endUser["name"] = x.name
+            endUser["email"] = x.email
+            endUser["darkMode"] = x.darkMode
+            endUser["notification"] = x.notification
+            endUser["sound"] = x.sound
+        }
+        
+        print("user is \(endUser)")
+        
+        return endUser
+    }
+    
     func getTopics() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchTopics()
         print(user)
@@ -185,7 +249,8 @@ class HomeViewController: UIViewController {
                 self.topView = sharedVC.view
                 addChild(sharedVC)
                 self.title = "Shared Lists"
-                navigationItem.rightBarButtonItems = nil
+                let inboxButton = UIBarButtonItem(title: "Inbox", style: .plain, target: self, action: #selector(didTapInboxButton))
+                navigationItem.rightBarButtonItems = [inboxButton]
                 menu = MenuType.shared
             }
         case .settings:
@@ -198,8 +263,8 @@ class HomeViewController: UIViewController {
             self.topView = settingVC.view
             addChild(settingVC)
             menu = MenuType.settings
-            
             navigationItem.rightBarButtonItems = nil
+            getData()
         case .myList:
             let title = String(describing: menuType).capitalized
             self.title = title
@@ -228,6 +293,14 @@ class HomeViewController: UIViewController {
             getData()
             break
         }
+    }
+    
+    @objc func didTapInboxButton() {
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        guard let vc = storyboard.instantiateViewController(identifier: "inviteView") as? SharedInviteViewController else {
+            return
+        }
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func didTapAddButton() {
@@ -342,7 +415,7 @@ class HomeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        overrideUserInterfaceStyle = .light
+        // overrideUserInterfaceStyle = .light
         searchBar.autocapitalizationType = .none
         // Do any additional setup after loading the view.
         
@@ -359,6 +432,14 @@ class HomeViewController: UIViewController {
         let sortButton = UIBarButtonItem(title: "Sort", menu: self.sortMenu)
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
         navigationItem.rightBarButtonItems = [addButton, sortButton]
+        
+        let userInfo = getUser()
+        let darkModeOn = userInfo["darkMode"] as! Bool
+        if darkModeOn {
+            overrideUserInterfaceStyle = .dark
+        } else {
+            overrideUserInterfaceStyle = .light
+        }
     }
     
 
@@ -683,7 +764,15 @@ extension HomeViewController {
         }
         doneAction.image = UIImage(systemName: "checkmark.circle")
         doneAction.backgroundColor = .systemGreen
-        return indexPath.section == 0 ? UISwipeActionsConfiguration(actions: [doneAction]) : nil
+        
+        let duplicateAction = UIContextualAction(style: .normal, title: nil) { (action, sourceView, completionHandler) in
+            DataBaseHelper.shareInstance.duplicateTask(task: self.taskStore[0][indexPath.row])
+            self.getData()
+        }
+        duplicateAction.image = UIImage(systemName: "doc.on.doc")
+        duplicateAction.backgroundColor = .systemBlue
+        return UISwipeActionsConfiguration(actions: [doneAction,duplicateAction])
+        //return indexPath.section == 0 ? UISwipeActionsConfiguration(actions: [doneAction]) : nil
     }
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

@@ -32,7 +32,7 @@ class InfoViewController: UIViewController {
         print(titleList)
         print(owner)
         print(id)
-        DataBaseHelper.shareInstance.removeSharedEntityDB(title: titleList!, sharedBy: owner!, completion: {success in
+        DataBaseHelper.shareInstance.removeSharedEntityDB(lid: id!, sharedBy: owner!, completion: {success in
             if success {
                 DataBaseHelper.shareInstance.removedSharedLocal(title: self.titleList!, owner: self.owner!, id: self.id!,  completion: {success in
                     if success {

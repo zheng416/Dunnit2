@@ -21,7 +21,8 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var notificationsToggle: UISwitch!
     @IBOutlet weak var darkModeToggle: UISwitch!
     
-    @IBOutlet weak var verifyEmailLabel: UIView!
+    @IBOutlet weak var logoutLabel: UILabel!
+    @IBOutlet weak var logoutButton: UITableViewCell!
     var userStore = [UserEntity]()
     var globalUser = [String: Any]()
     var authUser = Auth.auth().currentUser
@@ -86,10 +87,15 @@ class SettingsViewController: UITableViewController {
         super.viewDidLoad()
         getData()
         loadLabelValues()
+
         let tempUser = DataBaseHelper.shareInstance.parsedLocalUser()
         if (tempUser["email"] as! String != "Guest") {
             authUser = Auth.auth().currentUser
             print(authUser!.isEmailVerified)
+            //TODO redirect them to sign in and login in
+            if (globalUser["email"] as! String == "Guest"){
+                logoutLabel.text = "Sign Up / Login"
+            }
             if authUser!.isEmailVerified{
                 verifyEmailButton.isUserInteractionEnabled = false
                 emailLabel.text = "Email Verified"
@@ -154,9 +160,11 @@ class SettingsViewController: UITableViewController {
         if darkModeToggle.isOn {
             DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,darkMode: true)
             DataBaseHelper.shareInstance.updateDBUser(email: globalUser["email"] as! String,darkMode: true)
+            overrideUserInterfaceStyle = .dark
         } else {
             DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,darkMode: false)
             DataBaseHelper.shareInstance.updateDBUser(email: globalUser["email"] as! String,darkMode: false)
+            overrideUserInterfaceStyle = .light
         }
         
         globalUser = DataBaseHelper.shareInstance.parsedLocalUser()
