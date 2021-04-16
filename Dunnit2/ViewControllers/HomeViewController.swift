@@ -145,28 +145,6 @@ class HomeViewController: UIViewController {
         tableView.reloadData()
     }
     
-    func getUser() -> [String: Any] {
-        var user = DataBaseHelper.shareInstance.fetchLocalUser()
-        if user.isEmpty{
-            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
-            user = DataBaseHelper.shareInstance.fetchLocalUser()
-        }
-        
-        // Unpack user entity to dictionary
-        var endUser = [String:Any]()
-        for x in user as [UserEntity] {
-            endUser["name"] = x.name
-            endUser["email"] = x.email
-            endUser["darkMode"] = x.darkMode
-            endUser["notification"] = x.notification
-            endUser["sound"] = x.sound
-        }
-        
-        print("user is \(endUser)")
-        
-        return endUser
-    }
-    
     func getTopics() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchTopics()
         print(user)
@@ -421,7 +399,7 @@ class HomeViewController: UIViewController {
         
         // Clear filter everytime relaunch app (prevent missed lists)
         let user = DataBaseHelper.shareInstance.fetchLocalUser()
-//        globalUser = getUser()
+
         globalUser = DataBaseHelper.shareInstance.parsedLocalUser()
         
         DataBaseHelper.shareInstance.updateFilterPreference(email: user[0].email ?? "", filterKey: "")
@@ -433,8 +411,7 @@ class HomeViewController: UIViewController {
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
         navigationItem.rightBarButtonItems = [addButton, sortButton]
         
-        let userInfo = getUser()
-        let darkModeOn = userInfo["darkMode"] as! Bool
+        let darkModeOn = globalUser["darkMode"] as! Bool
         if darkModeOn {
             overrideUserInterfaceStyle = .dark
         } else {
@@ -771,7 +748,7 @@ extension HomeViewController {
         }
         duplicateAction.image = UIImage(systemName: "doc.on.doc")
         duplicateAction.backgroundColor = .systemBlue
-        return UISwipeActionsConfiguration(actions: [doneAction,duplicateAction])
+        return indexPath.section == 0 ? UISwipeActionsConfiguration(actions: [doneAction,duplicateAction]) : nil
         //return indexPath.section == 0 ? UISwipeActionsConfiguration(actions: [doneAction]) : nil
     }
     

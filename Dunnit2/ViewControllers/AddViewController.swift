@@ -22,6 +22,8 @@ class AddViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var titlefield: UITextField!
     @IBOutlet var bodyField: UITextField!
     @IBOutlet var datePicker: UIDatePicker!
+    
+    // Premium Features
     @IBOutlet var topicField: UILabel!
     @IBOutlet var priorityField: UILabel!
     @IBOutlet var listField: UILabel!
@@ -46,28 +48,7 @@ class AddViewController: UIViewController, UITextFieldDelegate {
     var reminderMenu: UIMenu?
 
     public var completion: ((String, String, Date, String, Int16, String) -> Void)?
-    
-//    func getUser() -> [String: Any] {
-//        var user = DataBaseHelper.shareInstance.fetchLocalUser()
-//        if user.isEmpty{
-//            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
-//            user = DataBaseHelper.shareInstance.fetchLocalUser()
-//        }
-//
-//        // Unpack user entity to dictionary
-//        var endUser = [String:Any]()
-//        for x in user as [UserEntity] {
-//            endUser["name"] = x.name
-//            endUser["email"] = x.email
-//            endUser["darkMode"] = x.darkMode
-//            endUser["notification"] = x.notification
-//            endUser["sound"] = x.sound
-//        }
-//
-//        print("user is \(endUser)")
-//
-//        return endUser
-//    }
+ 
     
     func getTopics() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchTopics()
@@ -90,7 +71,7 @@ class AddViewController: UIViewController, UITextFieldDelegate {
     
     func getList() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchLocalUser()
-        let lists = DataBaseHelper.shareInstance.fetchLists()
+        let lists = DataBaseHelper.shareInstance.fetchLocalLists()
         var endList = [String: Any]()
         for x in lists as [ListEntity] {
             if (x.owner! == user[0].email!){
@@ -98,6 +79,25 @@ class AddViewController: UIViewController, UITextFieldDelegate {
             }
         }
         return endList
+    }
+    
+    func hidePremiumFields() -> Void {
+        topicField.isHidden = true
+        priorityField.isHidden = true
+        listField.isHidden = true
+        
+        addTopic.isHidden = true
+        cancelTopic.isHidden = true
+        addPriority.isHidden = true
+        cancelPriority.isHidden = true
+        addList.isHidden = true
+        cancelList.isHidden = true
+        
+        notificationToggle.isHidden = true
+        notificationLabel.isHidden = true
+        reminderField.isHidden = true
+        addReminder.isHidden = true
+        cancelReminder.isHidden = true
     }
     
     override func viewDidLoad() {
@@ -122,15 +122,9 @@ class AddViewController: UIViewController, UITextFieldDelegate {
         let guest = (user["email"] as! String == "Guest")
         
         if (guest) {
-//             topicPicker.isHidden = true
-//             listPicker.isHidden = true
-//             priorityPicker.isHidden = true
-            
-//             topicLabel.isHidden = true
-//             priorityLabel.isHidden = true
-//             listLabel.isHidden = true
-            
+            hidePremiumFields()
         }
+        
         self.cancelTopic.tintColor = UIColor.gray
         self.cancelPriority.tintColor = UIColor.gray
         self.cancelList.tintColor = UIColor.gray
