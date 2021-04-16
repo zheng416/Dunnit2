@@ -59,6 +59,16 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3P6-Ty-nZs">
+                                <rect key="frame" x="143" y="738" width="128" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Continue As Guest">
+                                    <color key="titleColor" name="AccentColor"/>
+                                </state>
+                                <connections>
+                                    <action selector="guestButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Od3-WM-pFA"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemGray5Color"/>
@@ -71,6 +81,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="Hts-Pe-Los"/>
                     <connections>
+                        <outlet property="guestButton" destination="3P6-Ty-nZs" id="NBq-YJ-XGl"/>
                         <outlet property="loginButton" destination="A5u-tt-3yE" id="eNR-mh-xRp"/>
                         <outlet property="signUpButton" destination="icE-xF-8XD" id="Yjz-SN-uWF"/>
                     </connections>
