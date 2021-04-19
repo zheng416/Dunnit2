@@ -717,6 +717,9 @@ class DataBaseHelper {
     func logout(email: String) {
         // Delete user instance
         deleteUser(email: email)
+        if (email == "Guest"){
+            return
+        }
         
         
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
@@ -1795,29 +1798,32 @@ class DataBaseHelper {
         self.saveTask(title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!)
     }
         
-    func checkLocalTask()->Void{
+    func checkLocalTask(email:String)->Void{
         let tasks = fetchLocalTask() as [TaskEntity]
         if tasks.isEmpty {
+            print("Task is empty")
             return
         }
         for task in tasks{
+            task.owner = email
             saveDBTask(id: task.id!, email: task.owner!, title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!)
         }
     }
         
-    func checkLocalList()->Void{
+    func checkLocalList(email:String)->Void{
         let lists = fetchLocalLists() as [ListEntity]
         if lists.isEmpty {
             return
         }
         for list in lists{
+            list.owner = email
             saveDBList(id: list.id!, email: list.owner!, title: list.title!, shared: list.shared, sharedWith: list.sharedWith!)
         }
     }
         
-    func saveToDB()->Void{
-        self.checkLocalTask()
-        self.checkLocalList()
+    func saveToDB(email:String)->Void{
+        self.checkLocalTask(email:email)
+        self.checkLocalList(email:email)
     }
 
 }

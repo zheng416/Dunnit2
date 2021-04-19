@@ -185,7 +185,7 @@ class SettingsViewController: UITableViewController {
                 UIAlertAction in
                 // Clear storage
                 DataBaseHelper.shareInstance.logout(email: self.globalUser["email"] as! String)
-                
+                               
                 // Clear local firebase auth
                 do {
                     try Auth.auth().signOut()
@@ -210,7 +210,17 @@ class SettingsViewController: UITableViewController {
             }
             dialogMessage.addAction(ok)
             dialogMessage.addAction(cancel)
-            self.present(dialogMessage, animated: true, completion: nil)
+            if (globalUser["email"] as! String != "Guest"){
+                self.present(dialogMessage, animated: true, completion: nil)
+            }
+            else{
+                DataBaseHelper.shareInstance.logout(email: self.globalUser["email"] as! String)
+                let loginStory = UIStoryboard(name: "Main", bundle: nil)
+                let startVC = loginStory.instantiateViewController(withIdentifier: "welcome")
+                let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as! SceneDelegate
+                sceneDelegate.window?.rootViewController = startVC
+            }
+            
         } else if (indexPath == verifyEmailIndex){
             if authUser!.isEmailVerified{
                 print("User already verified")

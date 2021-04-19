@@ -45,8 +45,10 @@ class ViewController: UIViewController /*, LoginButtonDelegate*/ {
     @IBAction func guestButtonTapped(_ sender: Any) {
         // Hardcode guest email
         let email = "Guest"
-        
-        DataBaseHelper.shareInstance.createNewUser(email: email)
+        let user  = DataBaseHelper.shareInstance.fetchLocalUser()
+        if (user.isEmpty){
+            DataBaseHelper.shareInstance.createNewUser(email: email)
+        }
         self.transitionToHome()
         
     }
