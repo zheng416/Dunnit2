@@ -53,26 +53,23 @@ class EditViewController: UIViewController, UITextFieldDelegate {
   
     public var completion: ((String, String, Date, String, Int16, String) -> Void)?
    
-    func getUser() -> [String: Any] {
-        var user = DataBaseHelper.shareInstance.fetchLocalUser()
-        if user.isEmpty{
-            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
-            user = DataBaseHelper.shareInstance.fetchLocalUser()
-        }
+    func hidePremiumFields() -> Void {
+        topicField.isHidden = true
+        priorityField.isHidden = true
+        listField.isHidden = true
         
-        // Unpack user entity to dictionary
-        var endUser = [String:Any]()
-        for x in user as [UserEntity] {
-            endUser["name"] = x.name
-            endUser["email"] = x.email
-            endUser["darkMode"] = x.darkMode
-            endUser["notification"] = x.notification
-            endUser["sound"] = x.sound
-        }
+        addTopic.isHidden = true
+        cancelTopic.isHidden = true
+        addPriority.isHidden = true
+        cancelPriority.isHidden = true
+        addList.isHidden = true
+        cancelList.isHidden = true
         
-        print("user is \(endUser)")
-        
-        return endUser
+        notificationToggle.isHidden = true
+        notificationLabel.isHidden = true
+        reminderField.isHidden = true
+        addReminder.isHidden = true
+        cancelReminder.isHidden = true
     }
     
     func getTopics() -> [String: Any] {
@@ -114,7 +111,14 @@ class EditViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let user = getUser()
+        let user = DataBaseHelper.shareInstance.parsedLocalUser()
+        
+        let guest = (user["email"] as! String == "Guest")
+        
+        if (guest) {
+            hidePremiumFields()
+        }
+        
         notificationsOn = user["notification"] as! Bool        
         
         titlefield.text = titleStr

@@ -18,6 +18,7 @@ enum MenuType: Int {
 class MenuViewController: UITableViewController {
     
     var didTapMenuType: ((MenuType) -> Void)?
+
     func getUser() -> [String: Any] {
         var user = DataBaseHelper.shareInstance.fetchLocalUser()
         if user.isEmpty{
@@ -39,9 +40,9 @@ class MenuViewController: UITableViewController {
         
         return endUser
     }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Do any additional setup after loading the view.
         let userInfo = getUser()
         let darkModeOn = userInfo["darkMode"] as! Bool
@@ -60,5 +61,4 @@ class MenuViewController: UITableViewController {
             self?.didTapMenuType?(menuType)
         }
     }
-
 }

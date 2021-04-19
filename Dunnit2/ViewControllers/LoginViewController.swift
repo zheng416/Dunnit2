@@ -151,6 +151,7 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                 }
                 //TODO update using the 
                 DataBaseHelper.shareInstance.createNewUser(email: email)
+                DataBaseHelper.shareInstance.saveToDB(email:email)
                 DataBaseHelper.shareInstance.fetchDBUser(email: email, completion:{message in
                     if message.contains("Success"){
                         DataBaseHelper.shareInstance.fetchListsDB(completion: {success in
@@ -218,6 +219,7 @@ class LoginViewController: UIViewController, LoginButtonDelegate {
                         guard let userDict = result as? [String:Any] else {
                                             return
                         }
+                        DataBaseHelper.shareInstance.saveToDB(email: userDict["email"] as! String)
                         DataBaseHelper.shareInstance.createNewUser(email: userDict["email"] as! String)
                         DataBaseHelper.shareInstance.FBfetchuname(email: userDict["email"] as! String, completion: {name in
                             print("name",name)

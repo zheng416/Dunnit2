@@ -52,6 +52,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, GIDSignInDelegate {
                         print(error.localizedDescription)
                         return
                     }
+                    DataBaseHelper.shareInstance.saveToDB(email: email!)
                     DataBaseHelper.shareInstance.saveuser(email: email!, name: name!, uid: uid!, completion: {result in
                         if result{
                             print("Google INFO \(name) \(email)")

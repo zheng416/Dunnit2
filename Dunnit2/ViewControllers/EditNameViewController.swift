@@ -20,26 +20,27 @@ class EditNameViewController: UIViewController, UITextFieldDelegate {
     public var completion: ((String) -> Void)?
     
     //  Access databse functions
-    func getUser() -> [String: Any] {
-        let user = DataBaseHelper.shareInstance.fetchLocalUser()
-        
-        // Unpack user entity to dictionary
-        var endUser = [String:Any]()
-        for x in user as [UserEntity] {
-            endUser["name"] = x.name
-            endUser["email"] = x.email
-            endUser["darkMode"] = x.darkMode
-            endUser["notification"] = x.notification
-            endUser["sound"] = x.sound
-        }
-        
-        return endUser
-    }
+//    func getUser() -> [String: Any] {
+//        let user = DataBaseHelper.shareInstance.fetchLocalUser()
+//
+//        // Unpack user entity to dictionary
+//        var endUser = [String:Any]()
+//        for x in user as [UserEntity] {
+//            endUser["name"] = x.name
+//            endUser["email"] = x.email
+//            endUser["darkMode"] = x.darkMode
+//            endUser["notification"] = x.notification
+//            endUser["sound"] = x.sound
+//        }
+//
+//        return endUser
+//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let user = getUser()
+//        let user = getUser()
+        let user = DataBaseHelper.shareInstance.parsedLocalUser()
         
         nameField.text = user["name"] as! String
         nameField.returnKeyType = .done
@@ -90,11 +91,13 @@ class EditNameViewController: UIViewController, UITextFieldDelegate {
                 dialogMessage.dismiss(animated: true, completion: nil)
             }
             DispatchQueue.main.async {
-                let user = self.getUser()
+//                let user = self.getUser()
+                let user = DataBaseHelper.shareInstance.parsedLocalUser()
                 // Update Name based on email
                 DataBaseHelper.shareInstance.updateName(name: name, email: user["email"] as! String)
                 DataBaseHelper.shareInstance.updateNameDB(name: name, email: user["email"] as! String)
-                self.getUser()
+//                self.getUser()
+                DataBaseHelper.shareInstance.parsedLocalUser()
                 self.navigationController?.popViewController(animated: true)
                 
             }
@@ -109,10 +112,10 @@ class EditNameViewController: UIViewController, UITextFieldDelegate {
             // Update name here
             
             DispatchQueue.main.async {
-                let user = self.getUser()
+//                let user = self.getUser()
+                let user = DataBaseHelper.shareInstance.parsedLocalUser()
                 // Update Name based on email
                 DataBaseHelper.shareInstance.updateName(name: name, email: user["email"] as! String)
-                self.getUser()
                 self.navigationController?.popViewController(animated: true)
                 
             }
