@@ -96,7 +96,7 @@ class EditViewController: UIViewController, UITextFieldDelegate {
     
     func getList() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchLocalUser()
-        let lists = DataBaseHelper.shareInstance.fetchLists()
+        let lists = DataBaseHelper.shareInstance.fetchLocalLists()
         var endList = [String: Any]()
         for x in lists as [ListEntity] {
             if (x.owner! == user[0].email!){
@@ -188,6 +188,18 @@ class EditViewController: UIViewController, UITextFieldDelegate {
         self.addReminder.menu = self.reminderMenu
         self.addReminder.showsMenuAsPrimaryAction = true
         self.cancelReminder.addTarget(self, action: #selector(removeReminder), for: .touchUpInside)
+        let userInfo = getUser()
+        let darkModeOn = userInfo["darkMode"] as! Bool
+        if darkModeOn {
+            overrideUserInterfaceStyle = .dark
+            navigationController?.navigationBar.barTintColor = UIColor.black
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.white]
+        } else {
+            overrideUserInterfaceStyle = .light
+            navigationController?.navigationBar.barTintColor = UIColor.white
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black]
+            
+        }
     }
     
     private func setupTopicMenu() {
