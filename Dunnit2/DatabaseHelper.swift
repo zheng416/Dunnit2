@@ -500,6 +500,28 @@ class DataBaseHelper {
     }
     
     // User section -- Start
+    func parsedLocalUser() -> [String: Any] {
+        var user = fetchLocalUser()
+        if user.isEmpty{
+            createNewUser(name: "test", email:"test@email.com")
+            user = DataBaseHelper.shareInstance.fetchLocalUser()
+        }
+        
+        // Unpack user entity to dictionary
+        var endUser = [String:Any]()
+        for x in user as [UserEntity] {
+            endUser["name"] = x.name
+            endUser["email"] = x.email
+            endUser["darkMode"] = x.darkMode
+            endUser["notification"] = x.notification
+            endUser["sound"] = x.sound
+        }
+        
+        print("user is \(endUser)")
+        
+        return endUser
+    }
+    
     func fetchLocalUser() -> [UserEntity] {
         var fetchingImage = [UserEntity]()
         
@@ -543,7 +565,7 @@ class DataBaseHelper {
         return
     }
     
-    func createNewUser(name: String="", email: String, darkMode: Bool = false, notification: Bool = true, sound: Bool = true ) {
+    func createNewUser(name: String="", email: String, darkMode: Bool = false, notification: Bool = true, sound: Bool = true) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -695,6 +717,9 @@ class DataBaseHelper {
     func logout(email: String) {
         // Delete user instance
         deleteUser(email: email)
+        if (email == "Guest"){
+            return
+        }
         
         
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
@@ -1773,29 +1798,32 @@ class DataBaseHelper {
         self.saveTask(title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!)
     }
         
-    func checkLocalTask()->Void{
+    func checkLocalTask(email:String)->Void{
         let tasks = fetchLocalTask() as [TaskEntity]
         if tasks.isEmpty {
+            print("Task is empty")
             return
         }
         for task in tasks{
+            task.owner = email
             saveDBTask(id: task.id!, email: task.owner!, title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!)
         }
     }
         
-    func checkLocalList()->Void{
+    func checkLocalList(email:String)->Void{
         let lists = fetchLocalLists() as [ListEntity]
         if lists.isEmpty {
             return
         }
         for list in lists{
+            list.owner = email
             saveDBList(id: list.id!, email: list.owner!, title: list.title!, shared: list.shared, sharedWith: list.sharedWith!)
         }
     }
         
-    func saveToDB()->Void{
-        self.checkLocalTask()
-        self.checkLocalList()
+    func saveToDB(email:String)->Void{
+        self.checkLocalTask(email:email)
+        self.checkLocalList(email:email)
     }
 
 }
