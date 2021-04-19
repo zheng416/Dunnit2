@@ -70,27 +70,27 @@ class UpdatePasswordViewController: UIViewController,UITextFieldDelegate {
         dialogMessage.addAction(ok)
         self.present(dialogMessage, animated: true, completion: nil)
     }
-//    func getUser() -> [String: Any] {
-//        var user = DataBaseHelper.shareInstance.fetchLocalUser()
-//        if user.isEmpty{
-//            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
-//            user = DataBaseHelper.shareInstance.fetchLocalUser()
-//        }
-//
-//        // Unpack user entity to dictionary
-//        var endUser = [String:Any]()
-//        for x in user as [UserEntity] {
-//            endUser["name"] = x.name
-//            endUser["email"] = x.email
-//            endUser["darkMode"] = x.darkMode
-//            endUser["notification"] = x.notification
-//            endUser["sound"] = x.sound
-//        }
-//
-//        print("user is \(endUser)")
-//
-//        return endUser
-//    }
+    func getUser() -> [String: Any] {
+        var user = DataBaseHelper.shareInstance.fetchLocalUser()
+        if user.isEmpty{
+            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
+            user = DataBaseHelper.shareInstance.fetchLocalUser()
+        }
+
+        // Unpack user entity to dictionary
+        var endUser = [String:Any]()
+        for x in user as [UserEntity] {
+            endUser["name"] = x.name
+            endUser["email"] = x.email
+            endUser["darkMode"] = x.darkMode
+            endUser["notification"] = x.notification
+            endUser["sound"] = x.sound
+        }
+
+        print("user is \(endUser)")
+
+        return endUser
+    }
     func checkError(error : Error?,message: String)->Bool{
         if let error = error{
             print("error \(message) \(error)\n")
