@@ -161,10 +161,14 @@ class SettingsViewController: UITableViewController {
             DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,darkMode: true)
             DataBaseHelper.shareInstance.updateDBUser(email: globalUser["email"] as! String,darkMode: true)
             overrideUserInterfaceStyle = .dark
+            navigationController?.navigationBar.barTintColor = UIColor.black
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.white]
         } else {
             DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,darkMode: false)
             DataBaseHelper.shareInstance.updateDBUser(email: globalUser["email"] as! String,darkMode: false)
             overrideUserInterfaceStyle = .light
+            navigationController?.navigationBar.barTintColor = UIColor.white
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black]
         }
         
         globalUser = DataBaseHelper.shareInstance.parsedLocalUser()

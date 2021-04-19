@@ -18,6 +18,28 @@ class ListTaskViewController: UIViewController {
     
     var taskListStore = [[TaskEntity](), [TaskEntity]()]
     
+    func getUser() -> [String: Any] {
+        var user = DataBaseHelper.shareInstance.fetchLocalUser()
+        if user.isEmpty{
+            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
+            user = DataBaseHelper.shareInstance.fetchLocalUser()
+        }
+        
+        // Unpack user entity to dictionary
+        var endUser = [String:Any]()
+        for x in user as [UserEntity] {
+            endUser["name"] = x.name
+            endUser["email"] = x.email
+            endUser["darkMode"] = x.darkMode
+            endUser["notification"] = x.notification
+            endUser["sound"] = x.sound
+        }
+        
+        print("user is \(endUser)")
+        
+        return endUser
+    }
+    
     func getData() {
         let user = DataBaseHelper.shareInstance.fetchLocalUser()
         
@@ -121,6 +143,18 @@ class ListTaskViewController: UIViewController {
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
         navigationItem.rightBarButtonItems = [addButton, shareButton, sortButton]
         // Do any additional setup after loading the view.
+        let userInfo = getUser()
+        let darkModeOn = userInfo["darkMode"] as! Bool
+        if darkModeOn {
+            overrideUserInterfaceStyle = .dark
+            navigationController?.navigationBar.barTintColor = UIColor.black
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.white]
+        } else {
+            overrideUserInterfaceStyle = .light
+            navigationController?.navigationBar.barTintColor = UIColor.white
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black]
+            
+        }
     }
     
 
@@ -238,8 +272,14 @@ extension ListTaskViewController: UITableViewDataSource {
             let dateStr = formatter.string(from: date)
             let range = (dateStr as NSString).range(of: dateStr)
 
+            let userInfo = getUser()
+            let darkModeOn = userInfo["darkMode"] as! Bool
             let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
-            mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: range)
+            if darkModeOn {
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range: range)
+            } else {
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: range)
+            }
             cell.detailTextLabel?.attributedText = mutableAttributedString
         }
 //            if !(color!.isEmpty) {

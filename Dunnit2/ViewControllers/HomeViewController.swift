@@ -271,6 +271,18 @@ class HomeViewController: UIViewController {
             getData()
             break
         }
+        let userInfo = getUser()
+        let darkModeOn = userInfo["darkMode"] as! Bool
+        if darkModeOn {
+            overrideUserInterfaceStyle = .dark
+            navigationController?.navigationBar.barTintColor = UIColor.black
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.white]
+        } else {
+            overrideUserInterfaceStyle = .light
+            navigationController?.navigationBar.barTintColor = UIColor.white
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black]
+            
+        }
     }
     
     @objc func didTapInboxButton() {
@@ -414,8 +426,13 @@ class HomeViewController: UIViewController {
         let darkModeOn = globalUser["darkMode"] as! Bool
         if darkModeOn {
             overrideUserInterfaceStyle = .dark
+            navigationController?.navigationBar.barTintColor = UIColor.black
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.white]
         } else {
             overrideUserInterfaceStyle = .light
+            navigationController?.navigationBar.barTintColor = UIColor.white
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black]
+            
         }
     }
     
@@ -543,8 +560,14 @@ extension HomeViewController: UITableViewDataSource {
                 let dateStr = formatter.string(from: date)
                 let range = (dateStr as NSString).range(of: dateStr)
 
+                let userInfo = getUser()
+                let darkModeOn = userInfo["darkMode"] as! Bool
                 let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
-                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: range)
+                if darkModeOn {
+                    mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range: range)
+                } else {
+                    mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: range)
+                }
                 cell.detailTextLabel?.attributedText = mutableAttributedString
             }
 //            if !(color!.isEmpty) {
@@ -637,9 +660,15 @@ extension HomeViewController: UITableViewDataSource {
             } else {
                 let dateStr = formatter.string(from: date)
                 let range = (dateStr as NSString).range(of: dateStr)
-
+                
+                let userInfo = getUser()
+                let darkModeOn = userInfo["darkMode"] as! Bool
                 let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
-                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: range)
+                if darkModeOn {
+                    mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range: range)
+                } else {
+                    mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: range)
+                }
                 cell.detailTextLabel?.attributedText = mutableAttributedString
             }
 //            if !(color!.isEmpty) {
