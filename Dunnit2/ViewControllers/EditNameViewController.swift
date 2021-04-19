@@ -20,21 +20,21 @@ class EditNameViewController: UIViewController, UITextFieldDelegate {
     public var completion: ((String) -> Void)?
     
     //  Access databse functions
-//    func getUser() -> [String: Any] {
-//        let user = DataBaseHelper.shareInstance.fetchLocalUser()
-//
-//        // Unpack user entity to dictionary
-//        var endUser = [String:Any]()
-//        for x in user as [UserEntity] {
-//            endUser["name"] = x.name
-//            endUser["email"] = x.email
-//            endUser["darkMode"] = x.darkMode
-//            endUser["notification"] = x.notification
-//            endUser["sound"] = x.sound
-//        }
-//
-//        return endUser
-//    }
+    func getUser() -> [String: Any] {
+        let user = DataBaseHelper.shareInstance.fetchLocalUser()
+
+        // Unpack user entity to dictionary
+        var endUser = [String:Any]()
+        for x in user as [UserEntity] {
+            endUser["name"] = x.name
+            endUser["email"] = x.email
+            endUser["darkMode"] = x.darkMode
+            endUser["notification"] = x.notification
+            endUser["sound"] = x.sound
+        }
+
+        return endUser
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
