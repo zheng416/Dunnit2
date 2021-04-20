@@ -152,7 +152,7 @@ class DataBaseHelper {
             }
         }
     }
-    func saveDBTask(id: String, email: String, title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16, made: String) {
+    func saveDBTask(id: String, email: String, title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16, made: String, notiDate: Date, notiOn: Bool) {
         let docData: [String: Any] = [
             "id" : id,
             "email" : email,
@@ -164,7 +164,9 @@ class DataBaseHelper {
             "list": list,
             "color": color,
             "priority": priority,
-            "made": made
+            "made": made,
+            "notiDate": notiDate,
+            "notiOn": notiOn
         ]
         
         db.collection("task").document(id).setData(docData) { err in
@@ -175,7 +177,7 @@ class DataBaseHelper {
             }
         }
     }
-    func saveTask(title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16, made: String) {
+    func saveTask(title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16, made: String, notiDate: Date, notiOn: Bool) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -206,6 +208,8 @@ class DataBaseHelper {
         instance.owner = email
         instance.priority = priority
         instance.made = made
+        instance.notiDate = notiDate
+        instance.notiOn = notiOn
         do {
             print("Saved.")
             try managedContext.save()
@@ -213,7 +217,7 @@ class DataBaseHelper {
             print("Could not save. \(error), \(error.userInfo)")
         }
         if (email != "Guest"){
-            self.saveDBTask(id: key, email: email,title: title, body: body, date: date, isDone: isDone, list: list, color: color, priority: priority, made: made)
+            self.saveDBTask(id: key, email: email,title: title, body: body, date: date, isDone: isDone, list: list, color: color, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
         }
     }
     
@@ -410,7 +414,7 @@ class DataBaseHelper {
     }
     
     //change the isDone for a task
-    func updateDBTask(id:String, body: String? = nil, color: String? = nil, date:Date? = nil, isDone: Bool? = nil, list:String? = nil, owner:String? = nil, title:String? = nil, priority:Int16? = 0, made: String? = nil) {
+    func updateDBTask(id:String, body: String? = nil, color: String? = nil, date:Date? = nil, isDone: Bool? = nil, list:String? = nil, owner:String? = nil, title:String? = nil, priority:Int16? = 0, made: String? = nil, notiDate:Date? = nil, notiOn: Bool? = nil) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -448,6 +452,8 @@ class DataBaseHelper {
         
         if priority != 0 {docData["priority"] = priority}
         if made != nil {docData["made"] = made}
+        if notiDate != nil {docData["notiDate"] = notiDate}
+        if notiOn != nil {docData["notiOn"] = notiOn}
         print(docData)
         print("Status Change")
         db.collection("task").document(id).updateData(docData) {
@@ -469,7 +475,7 @@ class DataBaseHelper {
         }
     }
     // update local task
-    func updateLocalTask(id:String, body: String? = nil, color: String? = nil, date:Date? = nil, isDone: Bool? = nil, list:String? = nil, owner:String? = nil, title:String? = nil, priority:Int16? = 0, made:String? = nil) {
+    func updateLocalTask(id:String, body: String? = nil, color: String? = nil, date:Date? = nil, isDone: Bool? = nil, list:String? = nil, owner:String? = nil, title:String? = nil, priority:Int16? = 0, made:String? = nil, notiDate:Date? = nil, notiOn:Bool? = nil) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -489,11 +495,13 @@ class DataBaseHelper {
             if owner != nil {foundTasks.first?.owner = owner}
             if priority != 0 {foundTasks.first?.priority = priority!}
             if made != nil {foundTasks.first?.made = made}
+            if notiDate != nil {foundTasks.first?.notiDate = notiDate}
+            if notiOn != nil {foundTasks.first?.notiOn = notiOn!}
 //            foundTasks.first?.color = color
             try managedContext.save()
             print("Updated local task. \(color)")
 
-            updateDBTask(id: id, body: body, color: color, date: date, isDone: isDone, list: list, owner: owner, title: title, priority: priority, made: made)
+            updateDBTask(id: id, body: body, color: color, date: date, isDone: isDone, list: list, owner: owner, title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
         } catch {
             print("Update error.")
         }
@@ -1795,7 +1803,7 @@ class DataBaseHelper {
     }
     
     func duplicateTask(task: TaskEntity){
-        self.saveTask(title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!)
+        self.saveTask(title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!, notiDate: task.notiDate!, notiOn: task.notiOn)
     }
         
     func checkLocalTask(email:String)->Void{
@@ -1806,7 +1814,7 @@ class DataBaseHelper {
         }
         for task in tasks{
             task.owner = email
-            saveDBTask(id: task.id!, email: task.owner!, title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!)
+            saveDBTask(id: task.id!, email: task.owner!, title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!, notiDate: task.notiDate!, notiOn: task.notiOn)
         }
     }
         

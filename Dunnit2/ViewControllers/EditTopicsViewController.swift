@@ -21,22 +21,27 @@ class EditTopicsViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet var pinkTopic: UITextField!
     @IBOutlet var blackTopic: UITextField!
     
-    //  Access databse functions
-//    func getUser() -> [String: Any] {
-//        let user = DataBaseHelper.shareInstance.fetchLocalUser()
-//
-//        // Unpack user entity to dictionary
-//        var endUser = [String:Any]()
-//        for x in user as [UserEntity] {
-//            endUser["name"] = x.name
-//            endUser["email"] = x.email
-//            endUser["darkMode"] = x.darkMode
-//            endUser["notification"] = x.notification
-//            endUser["sound"] = x.sound
-//        }
-//
-//        return endUser
-//    }
+    func getUser() -> [String: Any] {
+        var user = DataBaseHelper.shareInstance.fetchLocalUser()
+        if user.isEmpty{
+            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
+            user = DataBaseHelper.shareInstance.fetchLocalUser()
+        }
+        
+        // Unpack user entity to dictionary
+        var endUser = [String:Any]()
+        for x in user as [UserEntity] {
+            endUser["name"] = x.name
+            endUser["email"] = x.email
+            endUser["darkMode"] = x.darkMode
+            endUser["notification"] = x.notification
+            endUser["sound"] = x.sound
+        }
+        
+        print("user is \(endUser)")
+        
+        return endUser
+    }
     
     func getTopics() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchTopics()
@@ -78,6 +83,18 @@ class EditTopicsViewController: UITableViewController, UITextFieldDelegate {
         print(topics)
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(didTapSaveButton))
+        let userInfo = getUser()
+        let darkModeOn = userInfo["darkMode"] as! Bool
+        if darkModeOn {
+            overrideUserInterfaceStyle = .dark
+            navigationController?.navigationBar.barTintColor = UIColor.black
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.white]
+        } else {
+            overrideUserInterfaceStyle = .light
+            navigationController?.navigationBar.barTintColor = UIColor.white
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black]
+            
+        }
     }
     
     @objc func didTapSaveButton() {

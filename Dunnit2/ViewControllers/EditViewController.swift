@@ -14,6 +14,8 @@ class EditViewController: UIViewController, UITextFieldDelegate {
     var bodyStr: String?
     var topicStr: String?
     var priority: Int?
+    var notifications: Bool?
+    var notificationDate: Date?
     var task:TaskEntity?
     
     var currentTopic: String?
@@ -21,6 +23,9 @@ class EditViewController: UIViewController, UITextFieldDelegate {
     var currentList: String?
     var listString: String?
     var currentReminder: String?
+    
+    var countTopics: Int?
+    var countLists: Int?
     
     var notificationsOn: Bool?
     
@@ -51,7 +56,7 @@ class EditViewController: UIViewController, UITextFieldDelegate {
     var reminderMenu: UIMenu?
     
   
-    public var completion: ((String, String, Date, String, Int16, String) -> Void)?
+    public var completion: ((String, String, Date, String, Int16, String, Date, Bool) -> Void)?
     
     func getUser() -> [String: Any] {
         var user = DataBaseHelper.shareInstance.fetchLocalUser()
@@ -197,19 +202,48 @@ class EditViewController: UIViewController, UITextFieldDelegate {
         self.cancelTopic.addTarget(self, action: #selector(removeTopic), for: .touchUpInside)
         self.cancelPriority.addTarget(self, action: #selector(removePriority), for: .touchUpInside)
         
+        if self.countTopics == 0 {
+            self.addTopic.isEnabled = false
+            self.cancelTopic.isEnabled = false
+        }
+        
         setupListMenuItem()
         self.addList.menu = self.listMenu
         self.addList.showsMenuAsPrimaryAction = true
         self.addList.isEnabled = false
         self.cancelList.addTarget(self, action: #selector(removeList), for: .touchUpInside)
         
+        if self.countLists == 0 {
+            self.addList.isEnabled = false
+            self.cancelList.isEnabled = false
+        }
         
         self.currentReminder = ""
         self.notificationLabel.attributedText = NSMutableAttributedString().bold("Notification")
-        self.notificationToggle.isOn = false
-        self.reminderField.attributedText = NSMutableAttributedString().gray("Add a Reminder")
-        self.addReminder.isEnabled = false
-        self.cancelReminder.isEnabled = false
+        self.notificationToggle.isOn = notifications!
+        if notificationToggle.isOn {
+            currentReminder = "Deadline"
+            if dateVal!.addingTimeInterval(TimeInterval(-15 * 60)) == notificationDate {
+                currentReminder = "15 Minutes"
+            } else if dateVal!.addingTimeInterval(TimeInterval(-30 * 60)) == notificationDate {
+                currentReminder = "30 Minutes"
+            } else if dateVal!.addingTimeInterval(TimeInterval(-60 * 60)) == notificationDate {
+                currentReminder = "1 Hour"
+            } else if dateVal!.addingTimeInterval(TimeInterval(-360 * 60)) == notificationDate {
+                currentReminder = "6 Hours"
+            } else if dateVal!.addingTimeInterval(TimeInterval(-720 * 60)) == notificationDate {
+                currentReminder = "12 Hours"
+            } else if dateVal!.addingTimeInterval(TimeInterval(-1440 * 60)) == notificationDate {
+                currentReminder = "24 Hours"
+            }
+            self.reminderField.attributedText = NSMutableAttributedString().normal(currentReminder!)
+            self.addReminder.isEnabled = false
+            self.cancelReminder.isEnabled = true
+        } else {
+            self.reminderField.attributedText = NSMutableAttributedString().gray("Add a Reminder")
+            self.addReminder.isEnabled = false
+            self.cancelReminder.isEnabled = false
+        }
         
         self.addReminder.menu = self.reminderMenu
         self.addReminder.showsMenuAsPrimaryAction = true
@@ -231,9 +265,11 @@ class EditViewController: UIViewController, UITextFieldDelegate {
     private func setupTopicMenu() {
         let topics = getTopics()
         var topicsData = [String]()
+        self.countTopics = 0
         for (_, topic) in topics {
             if !((topic as! String).isEmpty) {
                 topicsData.append(topic as! String)
+                self.countTopics! += 1
             }
         }
         topicsData.sort()
@@ -275,10 +311,12 @@ class EditViewController: UIViewController, UITextFieldDelegate {
         let lists = getList()
         var listsId = [String]()
         var listsData = [String]()
+        self.countLists = 0
         for (id, list) in lists {
             if !((list as! String).isEmpty) {
                 listsId.append(id)
                 listsData.append(list as! String)
+                self.countLists! += 1
             }
         }
         var listsChildren = [UIAction]()
@@ -387,7 +425,12 @@ class EditViewController: UIViewController, UITextFieldDelegate {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "YY, MMM d, HH:mm:ss"
             let madeDate = dateFormatter.string(from: made)
+            var notiDate: Date
+            var notiOn: Bool
+            notiDate = targetDate
+            notiOn = false
             if (notificationsOn! && currentReminder != "") {
+                notiOn = true
                 var timeMultiplier = 0
                 if currentReminder == "15 Minutes" {
                     timeMultiplier = 15
@@ -403,6 +446,7 @@ class EditViewController: UIViewController, UITextFieldDelegate {
                     timeMultiplier = 60 * 24
                 }
                 let reminderDate = targetDate.addingTimeInterval(TimeInterval(-timeMultiplier * 60))
+                notiDate = reminderDate
                 let content = UNMutableNotificationContent()
                 content.title = currentReminder! + ": " + titleText
                 content.sound = .default
@@ -416,7 +460,7 @@ class EditViewController: UIViewController, UITextFieldDelegate {
                 })
             }
             
-            completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate)
+            completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate, notiDate, notiOn)
             print("Saved")
         }
         if currentList != task!.list {

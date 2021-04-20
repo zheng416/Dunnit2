@@ -208,9 +208,9 @@ extension ListTaskViewController: UITableViewDelegate {
             destination?.task = taskListStore[indexPath.section][indexPath.row]
             tableTaskView.deselectRow(at: indexPath, animated: true)
             let id = taskListStore[indexPath.section][indexPath.row].id
-            destination?.completion = {title, body, date, color, priority, made in
+            destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn in
                 DispatchQueue.main.async {
-                    DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made)
+                    DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
                     self.navigationController?.popViewController(animated: true)
                     self.getData()
                 }
@@ -330,12 +330,13 @@ extension ListTaskViewController: UITableViewDataSource {
             rectangle.layer.cornerRadius = 5
             
             rectangle.tag = 100
+            if rectangle.backgroundColor != UIColor.white {
+                // Add the label to your rectangle
+                rectangle.addSubview(label)
 
-            // Add the label to your rectangle
-            rectangle.addSubview(label)
-
-            // Add the rectangle to your cell
-            cell.addSubview(rectangle)
+                // Add the rectangle to your cell
+                cell.addSubview(rectangle)
+            }
         }
         return cell
     }

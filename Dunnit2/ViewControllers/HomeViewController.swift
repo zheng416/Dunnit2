@@ -471,10 +471,12 @@ extension HomeViewController: UITableViewDelegate {
                 destination?.priorityVal = Int(searchTasks[indexPath.section][indexPath.row].priority)
                 destination?.madeVal = searchTasks[indexPath.section][indexPath.row].made
                 destination?.task = searchTasks[indexPath.section][indexPath.row]
+                destination?.notifications = searchTasks[indexPath.section][indexPath.row].notiOn
+                destination?.notificationDate = searchTasks[indexPath.section][indexPath.row].notiDate
                 tableView.deselectRow(at: indexPath, animated: true)
-                destination?.completion = {title, body, date, color, priority, made in
+                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn in
                     DispatchQueue.main.async {
-                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made)
+                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
                         self.navigationController?.popViewController(animated: true)
                         self.getData()
                     }
@@ -490,10 +492,12 @@ extension HomeViewController: UITableViewDelegate {
                 destination?.priorityVal = Int(taskStore[indexPath.section][indexPath.row].priority)
                 destination?.madeVal = taskStore[indexPath.section][indexPath.row].made
                 destination?.task = taskStore[indexPath.section][indexPath.row]
+                destination?.notifications = taskStore[indexPath.section][indexPath.row].notiOn
+                destination?.notificationDate = taskStore[indexPath.section][indexPath.row].notiDate
                 tableView.deselectRow(at: indexPath, animated: true)
-                destination?.completion = {title, body, date, color, priority, made in
+                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn in
                     DispatchQueue.main.async {
-                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made)
+                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
                         self.navigationController?.popViewController(animated: true)
                         self.getData()
                     }
@@ -618,12 +622,15 @@ extension HomeViewController: UITableViewDataSource {
                 rectangle.layer.cornerRadius = 5
                 
                 rectangle.tag = 100
+                
+                if rectangle.backgroundColor != UIColor.white {
+                
+                    // Add the label to your rectangle
+                    rectangle.addSubview(label)
 
-                // Add the label to your rectangle
-                rectangle.addSubview(label)
-
-                // Add the rectangle to your cell
-                cell.addSubview(rectangle)
+                    // Add the rectangle to your cell
+                    cell.addSubview(rectangle)
+                }
             }
             
         }
@@ -719,12 +726,15 @@ extension HomeViewController: UITableViewDataSource {
                 rectangle.layer.cornerRadius = 5
                 
                 rectangle.tag = 100
+                
+                if rectangle.backgroundColor != UIColor.white {
 
-                // Add the label to your rectangle
-                rectangle.addSubview(label)
+                    // Add the label to your rectangle
+                    rectangle.addSubview(label)
 
-                // Add the rectangle to your cell
-                cell.addSubview(rectangle)
+                    // Add the rectangle to your cell
+                    cell.addSubview(rectangle)
+                }
             }
         }
         return cell
