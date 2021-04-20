@@ -102,28 +102,6 @@ class HomeViewController: UIViewController {
     var filteredTaskStore = [[TaskEntity](), [TaskEntity]()]
     var globalUser = [String: Any]()
     
-    //helper functions
-//    func getUser() -> [String: Any] {
-//        var user = DataBaseHelper.shareInstance.fetchLocalUser()
-//        if user.isEmpty{
-//            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
-//            user = DataBaseHelper.shareInstance.fetchLocalUser()
-//        }
-//        
-//        // Unpack user entity to dictionary
-//        var endUser = [String:Any]()
-//        for x in user as [UserEntity] {
-//            endUser["name"] = x.name
-//            endUser["email"] = x.email
-//            endUser["darkMode"] = x.darkMode
-//            endUser["notification"] = x.notification
-//            endUser["sound"] = x.sound
-//        }
-//        
-//        print("user is \(endUser)")
-//        
-//        return endUser
-//    }
     
     //local
     func getData() {
@@ -209,7 +187,28 @@ class HomeViewController: UIViewController {
                 navigationItem.rightBarButtonItems = nil
                 menu = MenuType.progress
             }
-        
+            
+        case .calender:
+            if (guest) {
+                let dialogMessage = UIAlertController(title: "", message: "Please Sign In to Access Premium Feature", preferredStyle: .alert)
+                let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+                })
+                dialogMessage.addAction(ok)
+                self.present(dialogMessage, animated: true, completion: nil)
+            } else {
+                let title = String(describing: menuType).capitalized
+                self.title = title
+                
+                let storyboard = UIStoryboard(name: "Home", bundle: nil)
+                let listVC = storyboard.instantiateViewController(withIdentifier: "calenderVC")
+                view.addSubview(listVC.view)
+                self.topView = listVC.view
+                addChild(listVC)
+                self.title = "Calender"
+
+                navigationItem.rightBarButtonItems = nil
+                menu = MenuType.calender
+            }
         case .shared:
             if (guest) {
                 let dialogMessage = UIAlertController(title: "", message: "Please Sign In to Access Premium Feature", preferredStyle: .alert)
