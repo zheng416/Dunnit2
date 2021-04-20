@@ -19,6 +19,9 @@ class AddViewController: UIViewController, UITextFieldDelegate {
     var notificationsOn: Bool?
     var list: ListEntity?
     
+    var countTopics: Int?
+    var countLists: Int?
+    
     @IBOutlet var titlefield: UITextField!
     @IBOutlet var bodyField: UITextField!
     @IBOutlet var datePicker: UIDatePicker!
@@ -174,6 +177,11 @@ class AddViewController: UIViewController, UITextFieldDelegate {
         self.cancelTopic.addTarget(self, action: #selector(removeTopic), for: .touchUpInside)
         self.cancelPriority.addTarget(self, action: #selector(removePriority), for: .touchUpInside)
         
+        if self.countTopics == 0 {
+            self.addTopic.isEnabled = false
+            self.cancelTopic.isEnabled = false
+        }
+        
         if list != nil {
             self.listString = ""
             self.listField.attributedText = NSMutableAttributedString().normal((list?.title)!)
@@ -185,6 +193,10 @@ class AddViewController: UIViewController, UITextFieldDelegate {
             self.addList.menu = self.listMenu
             self.addList.showsMenuAsPrimaryAction = true
             self.cancelList.addTarget(self, action: #selector(removeList), for: .touchUpInside)
+            if self.countLists == 0 {
+                self.addList.isEnabled = false
+                self.cancelList.isEnabled = false
+            }
         }
         
         
@@ -215,9 +227,11 @@ class AddViewController: UIViewController, UITextFieldDelegate {
     private func setupTopicMenu() {
         let topics = getTopics()
         var topicsData = [String]()
+        self.countTopics = 0
         for (_, topic) in topics {
             if !((topic as! String).isEmpty) {
                 topicsData.append(topic as! String)
+                self.countTopics! += 1
             }
         }
         topicsData.sort()
@@ -259,10 +273,12 @@ class AddViewController: UIViewController, UITextFieldDelegate {
         let lists = getList()
         var listsId = [String]()
         var listsData = [String]()
+        self.countLists = 0
         for (id, list) in lists {
             if !((list as! String).isEmpty) {
                 listsId.append(id)
                 listsData.append(list as! String)
+                self.countLists! += 1
             }
         }
         var listsChildren = [UIAction]()
@@ -368,7 +384,12 @@ class AddViewController: UIViewController, UITextFieldDelegate {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "YY, MMM d, HH:mm:ss"
             let madeDate = dateFormatter.string(from: made)
+            var notiDate: Date
+            var notiOn: Bool
+            notiDate = targetDate
+            notiOn = false
             if (notificationsOn! && currentReminder != "") {
+                notiOn = true
                 var timeMultiplier = 0
                 if currentReminder == "15 Minutes" {
                     timeMultiplier = 15
@@ -384,6 +405,7 @@ class AddViewController: UIViewController, UITextFieldDelegate {
                     timeMultiplier = 60 * 24
                 }
                 let reminderDate = targetDate.addingTimeInterval(TimeInterval(-timeMultiplier * 60))
+                notiDate = reminderDate
                 let content = UNMutableNotificationContent()
                 content.title = currentReminder! + ": " + titleText
                 content.sound = .default
@@ -396,8 +418,8 @@ class AddViewController: UIViewController, UITextFieldDelegate {
                     }
                 })
             }
-            print("CURRENT LIST \(currentList!)")
-            DataBaseHelper.shareInstance.saveTask(title: titleText, body: bodyText, date: targetDate, isDone: false, list: currentList!, color: currentTopic!, priority: Int16(currentPriority!), made: madeDate)
+            DataBaseHelper.shareInstance.saveTask(title: titleText, body: bodyText, date: targetDate, isDone: false, list: currentList!, color: currentTopic!, priority: Int16(currentPriority!), made: madeDate, notiDate: notiDate, notiOn: notiOn)
+
             completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate)
         }
     }

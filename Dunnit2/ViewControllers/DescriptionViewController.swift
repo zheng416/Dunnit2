@@ -20,6 +20,10 @@ class DescriptionViewController: UIViewController {
     
     var priorityVal: Int?
     
+    var notifications: Bool?
+    
+    var notificationDate: Date?
+    
     var madeVal: String?
     var task: TaskEntity?
     
@@ -33,7 +37,7 @@ class DescriptionViewController: UIViewController {
     
     @IBOutlet var priorityField: UILabel!
     
-    public var completion: ((String, String, Date, String, Int16, String) -> Void)?
+    public var completion: ((String, String, Date, String, Int16, String, Date, Bool) -> Void)?
     
     func getUser() -> [String: Any] {
         var user = DataBaseHelper.shareInstance.fetchLocalUser()
@@ -122,10 +126,12 @@ class DescriptionViewController: UIViewController {
         vc.topicStr = self.topicStr
         vc.priority = self.priorityVal
         vc.task = self.task
+        vc.notifications = self.notifications
+        vc.notificationDate = self.notificationDate
         vc.title = "Edit"
         vc.navigationItem.largeTitleDisplayMode = .never
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [String(madeVal!)])
-        vc.completion = {title, body, date, color, priority, made in
+        vc.completion = {title, body, date, color, priority, made, notiDate, notiOn in
             DispatchQueue.main.async {
                 self.titleField.attributedText =  NSMutableAttributedString().boldTitle(title)
                 let formatter = DateFormatter()
@@ -134,6 +140,13 @@ class DescriptionViewController: UIViewController {
                 self.bodyField.attributedText =  NSMutableAttributedString().bodyNormal(body)
                 self.topicField.attributedText =  NSMutableAttributedString().bodyNormal(color)
                 self.madeVal = made
+                self.titleStr = title
+                self.bodyStr = body
+                self.dateVal = date
+                self.topicStr = color
+                self.priorityVal = Int(priority)
+                self.notificationDate = notiDate
+                self.notifications = notiOn
                 /*DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false)*/
                 if (priority == 0) {
                     self.priorityField.attributedText =  NSMutableAttributedString().bodyNormal("")
@@ -144,7 +157,7 @@ class DescriptionViewController: UIViewController {
                 } else {
                     self.priorityField.attributedText =  NSMutableAttributedString().bodyNormal("Priority: High")
                 }
-                self.completion?(title, body, date, color, priority, made)
+                self.completion?(title, body, date, color, priority, made, notiDate, notiOn)
             }
         }
         navigationController?.pushViewController(vc, animated: true)
