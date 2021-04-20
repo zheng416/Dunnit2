@@ -158,7 +158,11 @@ class AddViewController: UIViewController, UITextFieldDelegate {
         
         self.currentTopic = ""
         self.currentPriority = 0
-        self.currentList = ""
+        if list == nil {
+            self.currentList = ""
+        } else {
+            self.currentList = list?.id
+        }
         self.topicField.attributedText = NSMutableAttributedString().gray("Add a Topic")
         self.priorityField.attributedText = NSMutableAttributedString().gray("Add a Priority")
         
@@ -392,6 +396,7 @@ class AddViewController: UIViewController, UITextFieldDelegate {
                     }
                 })
             }
+            print("CURRENT LIST \(currentList!)")
             DataBaseHelper.shareInstance.saveTask(title: titleText, body: bodyText, date: targetDate, isDone: false, list: currentList!, color: currentTopic!, priority: Int16(currentPriority!), made: madeDate)
             completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate)
         }
