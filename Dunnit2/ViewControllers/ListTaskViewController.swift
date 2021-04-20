@@ -49,6 +49,9 @@ class ListTaskViewController: UIViewController {
         
         let tasks = DataBaseHelper.shareInstance.fetchLocalTask(key: sortKey, ascending: sortAscending, filterKey: filterKey)
         
+        print("THESE ARE THE TASKSS")
+        print(tasks)
+        
         taskListStore = [tasks.filter{$0.isDone == false && $0.list == self.list?.id}, tasks.filter{$0.isDone == true && $0.list == self.list?.id}]
         
         let progressCount = (Float(taskListStore[1].count) / Float(taskListStore[0].count + taskListStore[1].count))
