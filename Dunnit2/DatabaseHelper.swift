@@ -114,7 +114,8 @@ class DataBaseHelper {
                                                   "email": email,
                                                   "darkMode":false,
                                                   "notification":false,
-                                                  "sound":false]) { (error) in
+                                                  "sound":false,
+                                                  "blocked": []]) { (error) in
             
             if error != nil {
                 // Show error message
@@ -1573,13 +1574,19 @@ class DataBaseHelper {
     
     func removeSharedEmail(lid: String, email: String) {
         self.db.collection("taskLists").document(lid).updateData(["sharedArr": FieldValue.arrayRemove([email])])
-        
-        self.db.collection("sharedLists").whereField("lid", isEqualTo: lid).whereField("to", isEqualTo: email).getDocuments() { (querySnapshot, err) in
+        print("THis is \(lid)")
+        print(email)
+        // THIS IS TO REMOVE (Pending)
+        var delimiter = " "
+        var token = email.components(separatedBy: delimiter)
+        print("THIS IS DELIMINATORRR")
+        print (token[0])
+        self.db.collection("sharedLists").whereField("lid", isEqualTo: lid).whereField("to", isEqualTo: token[0]).getDocuments() { (querySnapshot, err) in
             if let err = err {
                 print("Error getting documents: \(err)")
             } else {
                 if (querySnapshot?.count == 0){
-                    print("No shared found")
+                    print("No sharing found {SADGE}")
                     return
                 }
                 for document in querySnapshot!.documents {
@@ -1809,7 +1816,6 @@ class DataBaseHelper {
             saveDBTask(id: task.id!, email: task.owner!, title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!)
         }
     }
-        
     func checkLocalList(email:String)->Void{
         let lists = fetchLocalLists() as [ListEntity]
         if lists.isEmpty {
@@ -1824,6 +1830,210 @@ class DataBaseHelper {
     func saveToDB(email:String)->Void{
         self.checkLocalTask(email:email)
         self.checkLocalList(email:email)
+    }
+    
+    
+    func addBlockUser(email: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        let managedContext = appDelegate.persistentContainer.viewContext
+        do {
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            let currentUser = (user[0] as! UserEntity).email
+            
+            self.db.collection("users").whereField("email", isEqualTo: currentUser).getDocuments{ (docs, err) in
+                if let err = err{
+                    print("cannot fetch user name from firebase: \(err)")
+                    return
+                }
+                else {
+                    print("email for the database", docs?.documents[0].get("name"))
+                    docs?.documents[0].reference.updateData(["blocked": FieldValue.arrayUnion([email])])
+                }
+            }
+            
+            
+        } catch {
+            print(error)
+        }
+    }
+    
+    func fetchBlocked(completion: @escaping (_ list: Array<Any>) -> Void) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        let managedContext = appDelegate.persistentContainer.viewContext
+        do {
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            let currentUser = (user[0] as! UserEntity).email
+            
+            self.db.collection("users").whereField("email", isEqualTo: currentUser).getDocuments{ (docs, err) in
+                if let err = err{
+                    print("cannot fetch user name from firebase: \(err)")
+                    return
+                }
+                if docs?.documents[0].get("blocked") == nil {
+                    completion([])
+                }
+                else {
+                    let emails = docs?.documents[0].get("blocked")
+                    completion(emails as! Array<Any>)
+                }
+            }
+            
+            
+        } catch {
+            print(error)
+        }
+    }
+    
+    
+    func removeBlockedEmail(email: String, onSuccess: @escaping(Bool) -> Void) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        let managedContext = appDelegate.persistentContainer.viewContext
+        do {
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            let currentUser = (user[0] as! UserEntity).email
+            
+            self.db.collection("users").whereField("email", isEqualTo: currentUser).getDocuments() {
+                (querySnapshot, err) in
+                for document in querySnapshot!.documents {
+                    let documentId = document.documentID
+                    self.db.collection("users").document(documentId).updateData(["blocked": FieldValue.arrayRemove([email])])
+                }
+                onSuccess(true)
+            }
+        } catch {
+            print(error)
+        }
+    }
+    
+    // , blocked: @escaping(Bool) -> Void
+    
+    func checkBlocked(email: String, blocked: @escaping(Bool) -> Void) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        let managedContext = appDelegate.persistentContainer.viewContext
+        do {
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            let currentUser = (user[0] as! UserEntity).email
+            
+            self.db.collection("users").whereField("email", isEqualTo: email).getDocuments() {
+                (docs, err) in
+                if let err = err{
+                    print("cannot fetch user name from firebase: \(err)")
+                    return
+                }
+                else {
+                    if docs?.documents[0].get("blocked") == nil || (docs?.documents[0].get("blocked") as! Array<Any>).isEmpty {
+                        print("SAFEEEE Not Blocked: \(email)")
+                        blocked(false)
+                        return
+                    }
+                    if (docs!.count > 1){
+                        print(String(docs!.count))
+                        return
+                    }
+                    print("BLOCKEDDDDD :(((((")
+                    print(docs?.documents[0].get("blocked"))
+                    blocked(true)
+                }
+                    
+            }
+            
+        } catch {
+            print(error)
+        }
+    }
+    
+    func removeInviteBlocked(userEmail: String, completion: @escaping(Bool) -> Void) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+        let managedContext = appDelegate.persistentContainer.viewContext
+        do {
+            let user = try managedContext.fetch(fetchUser)
+            if user.count > 1{
+                print("multiple user was found ")
+                return
+            }
+            if (user.isEmpty || user.count == 0){
+                print("not local user was found when fetching data")
+                return
+            }
+            let email = (user[0] as! UserEntity).email
+            
+            print("THIS IS EMAILLLLL")
+            print(email)
+            
+            let pending = "\(email!) (Pending)"
+            
+            print("THIS IS PENDING \(pending)")
+            
+            self.db.collection("taskLists").whereField("sharedArr", arrayContains: pending).whereField("email", isEqualTo: userEmail).getDocuments() {
+                (querySnapshot, err) in
+                if let err = err{
+                    print("cannot fetch user name from firebase: \(err)")
+                    return
+                }
+                else {
+                    for document in querySnapshot!.documents {
+                        let documentId = document.documentID
+                        self.db.collection("taskLists").document(documentId).updateData(["sharedArr": FieldValue.arrayRemove([pending])])
+                        print("Removed \(documentId)")
+                        self.db.collection("sharedLists").whereField("accepted", isEqualTo: false).whereField("owner", isEqualTo: userEmail).whereField("to", isEqualTo: email).getDocuments() {
+                            (docs, err) in
+                            if let err = err {
+                                print("cannot fetch user name from firebase: \(err)")
+                                return
+                            }
+                            else {
+                                for shared in docs!.documents {
+                                    let sharedDocId = shared.documentID
+                                    self.db.collection("sharedLists").document(sharedDocId).delete()
+                                    print("DELETED BC BLOCKED")
+                                }
+                            }
+                            completion(true)
+                        }
+                    }
+                }
+            }
+            
+        } catch {
+            print(error)
+        }
     }
 
 }

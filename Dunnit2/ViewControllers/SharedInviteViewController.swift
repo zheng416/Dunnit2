@@ -27,8 +27,23 @@ class SharedInviteViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        getInvites()
+        //getInvites()
         // Do any additional setup after loading the view.
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Blocked", style: .plain, target: self, action: #selector(didTapBlockedButton))
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+       getInvites()
+    }
+    
+    @objc func didTapBlockedButton() {
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        guard let vc = storyboard.instantiateViewController(identifier: "blockedList") as? BlockListViewController else {
+            return
+        }
+        
+        navigationController?.pushViewController(vc, animated: true)
+        
     }
 
 }
