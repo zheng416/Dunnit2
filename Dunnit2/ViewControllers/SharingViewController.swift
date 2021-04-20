@@ -44,16 +44,32 @@ class SharingViewController: UIViewController, UITextFieldDelegate {
     @objc func didTapShareButton() {
         
         if let emailText = emailField.text, !emailText.isEmpty {
+            
             DataBaseHelper.shareInstance.validEmail(email: emailText, onSuccess: {success in
                 if success {
-                    let dialogMessage = UIAlertController(title: "", message: "Invite Sent", preferredStyle: .alert)
-                    self.present(dialogMessage, animated: true, completion: nil)
-                    let when = DispatchTime.now() + .seconds(1)
-                    DispatchQueue.main.asyncAfter(deadline: when) {
-                        dialogMessage.dismiss(animated: true, completion: nil)
-                        self.navigationController?.popViewController(animated: true)
-                    }
-                    self.completion?(emailText)
+                    
+                    DataBaseHelper.shareInstance.checkBlocked(email: emailText, blocked: { block in
+                        if block == false {
+                            let dialogMessage = UIAlertController(title: "", message: "Invite Sent", preferredStyle: .alert)
+                            self.present(dialogMessage, animated: true, completion: nil)
+                            let when = DispatchTime.now() + .seconds(1)
+                            DispatchQueue.main.asyncAfter(deadline: when) {
+                                dialogMessage.dismiss(animated: true, completion: nil)
+                                self.navigationController?.popViewController(animated: true)
+                            }
+                            self.completion?(emailText)
+                        } else {
+                            let dialogMessage = UIAlertController(title: "", message: "User blocked you from sharing.", preferredStyle: .alert)
+                            self.present(dialogMessage, animated: true, completion: nil)
+                            let when = DispatchTime.now() + .seconds(1)
+                            DispatchQueue.main.asyncAfter(deadline: when) {
+                                dialogMessage.dismiss(animated: true, completion: nil)
+                            }
+                        }
+                    })
+                    
+                    
+                    
                 } else {
                     let dialogMessage = UIAlertController(title: "", message: "Error: sharing failed", preferredStyle: .alert)
                     self.present(dialogMessage, animated: true, completion: nil)
