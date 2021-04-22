@@ -25,10 +25,59 @@ class SharedInviteViewController: UIViewController {
       })
     }
     
+    func getUser() -> [String: Any] {
+        var user = DataBaseHelper.shareInstance.fetchLocalUser()
+        if user.isEmpty{
+            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
+            user = DataBaseHelper.shareInstance.fetchLocalUser()
+        }
+        
+        // Unpack user entity to dictionary
+        var endUser = [String:Any]()
+        for x in user as [UserEntity] {
+            endUser["name"] = x.name
+            endUser["email"] = x.email
+            endUser["darkMode"] = x.darkMode
+            endUser["notification"] = x.notification
+            endUser["sound"] = x.sound
+        }
+        
+        print("user is \(endUser)")
+        
+        return endUser
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        getInvites()
+        //getInvites()
         // Do any additional setup after loading the view.
+        let userInfo = getUser()
+        let darkModeOn = userInfo["darkMode"] as! Bool
+        if darkModeOn {
+            overrideUserInterfaceStyle = .dark
+            navigationController?.navigationBar.barTintColor = UIColor.black
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.white]
+        } else {
+            overrideUserInterfaceStyle = .light
+            navigationController?.navigationBar.barTintColor = UIColor.white
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black]
+            
+        }
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Blocked", style: .plain, target: self, action: #selector(didTapBlockedButton))
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+       getInvites()
+    }
+    
+    @objc func didTapBlockedButton() {
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        guard let vc = storyboard.instantiateViewController(identifier: "blockedList") as? BlockListViewController else {
+            return
+        }
+        
+        navigationController?.pushViewController(vc, animated: true)
+        
     }
 
 }

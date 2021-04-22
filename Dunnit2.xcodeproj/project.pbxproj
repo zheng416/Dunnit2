@@ -46,6 +46,7 @@
 		9BBAE66F25EEAC3E003CC28B /* AddListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE66E25EEAC3D003CC28B /* AddListViewController.swift */; };
 		9BBAE67625F15EB7003CC28B /* ListTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBAE67525F15EB6003CC28B /* ListTaskViewController.swift */; };
 		9BFA4896262613EE00A9512E /* SharedInviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BFA4895262613EE00A9512E /* SharedInviteViewController.swift */; };
+		9BFA489B262DE0ED00A9512E /* BlockListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BFA489A262DE0EC00A9512E /* BlockListViewController.swift */; };
 		CE4912C42602E3B800896E14 /* UpdatePassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4912C32602E3B800896E14 /* UpdatePassViewController.swift */; };
 		CE58F3C3260FF61F0049EB4B /* ChangeListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE58F3C2260FF61F0049EB4B /* ChangeListViewController.swift */; };
 		D999FD13777EE2C0EA48865A /* Pods_Dunnit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA12CDEBDC4CE346BF760AAE /* Pods_Dunnit2.framework */; };
@@ -95,6 +96,7 @@
 		9BBAE66E25EEAC3D003CC28B /* AddListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddListViewController.swift; sourceTree = "<group>"; };
 		9BBAE67525F15EB6003CC28B /* ListTaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTaskViewController.swift; sourceTree = "<group>"; };
 		9BFA4895262613EE00A9512E /* SharedInviteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedInviteViewController.swift; sourceTree = "<group>"; };
+		9BFA489A262DE0EC00A9512E /* BlockListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockListViewController.swift; sourceTree = "<group>"; };
 		CE4912C32602E3B800896E14 /* UpdatePassViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePassViewController.swift; sourceTree = "<group>"; };
 		CE58F3C2260FF61F0049EB4B /* ChangeListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeListViewController.swift; sourceTree = "<group>"; };
 		FA12CDEBDC4CE346BF760AAE /* Pods_Dunnit2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dunnit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -198,6 +200,7 @@
 				9B6CC76E25DB5F5A00C0CAF7 /* ViewController.swift */,
 				8DB602D72612B6810057F27C /* YearlyProgressViewController.swift */,
 				9BFA4895262613EE00A9512E /* SharedInviteViewController.swift */,
+				9BFA489A262DE0EC00A9512E /* BlockListViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -377,6 +380,7 @@
 				9B46D56725DB7DB500E990CC /* Utilities.swift in Sources */,
 				9B6CC78025DB60DA00C0CAF7 /* SignUpViewController.swift in Sources */,
 				9B46D62625ED436500E990CC /* MenuViewController.swift in Sources */,
+				9BFA489B262DE0ED00A9512E /* BlockListViewController.swift in Sources */,
 				8D5594222614097100B4B1CC /* ForgetPasswordViewController.swift in Sources */,
 				9B6CC78325DB60F300C0CAF7 /* LoginViewController.swift in Sources */,
 				9BBAE66425ED7DF1003CC28B /* EditNameViewController.swift in Sources */,
@@ -538,13 +542,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = U9HB23NNW4;
+				DEVELOPMENT_TEAM = 9J8PP3T9PF;
 				INFOPLIST_FILE = Dunnit2/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.Dunnit2.Dunnit25;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Dunnit2.Dunnit2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

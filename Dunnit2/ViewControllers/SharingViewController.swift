@@ -19,6 +19,28 @@ class SharingViewController: UIViewController, UITextFieldDelegate {
     
     public var completion: ((String) -> Void)?
     
+    func getUser() -> [String: Any] {
+        var user = DataBaseHelper.shareInstance.fetchLocalUser()
+        if user.isEmpty{
+            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
+            user = DataBaseHelper.shareInstance.fetchLocalUser()
+        }
+        
+        // Unpack user entity to dictionary
+        var endUser = [String:Any]()
+        for x in user as [UserEntity] {
+            endUser["name"] = x.name
+            endUser["email"] = x.email
+            endUser["darkMode"] = x.darkMode
+            endUser["notification"] = x.notification
+            endUser["sound"] = x.sound
+        }
+        
+        print("user is \(endUser)")
+        
+        return endUser
+    }
+    
     func getData() {
         DataBaseHelper.shareInstance.fetchSharedEmails(lid: lid!, completion: { share in
             if share != nil {
@@ -39,21 +61,49 @@ class SharingViewController: UIViewController, UITextFieldDelegate {
         getData()
 
         // Do any additional setup after loading the view.
+        let userInfo = getUser()
+        let darkModeOn = userInfo["darkMode"] as! Bool
+        if darkModeOn {
+            overrideUserInterfaceStyle = .dark
+            navigationController?.navigationBar.barTintColor = UIColor.black
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.white]
+        } else {
+            overrideUserInterfaceStyle = .light
+            navigationController?.navigationBar.barTintColor = UIColor.white
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black]
+            
+        }
     }
     
     @objc func didTapShareButton() {
         
         if let emailText = emailField.text, !emailText.isEmpty {
+            
             DataBaseHelper.shareInstance.validEmail(email: emailText, onSuccess: {success in
                 if success {
-                    let dialogMessage = UIAlertController(title: "", message: "Invite Sent", preferredStyle: .alert)
-                    self.present(dialogMessage, animated: true, completion: nil)
-                    let when = DispatchTime.now() + .seconds(1)
-                    DispatchQueue.main.asyncAfter(deadline: when) {
-                        dialogMessage.dismiss(animated: true, completion: nil)
-                        self.navigationController?.popViewController(animated: true)
-                    }
-                    self.completion?(emailText)
+                    
+                    DataBaseHelper.shareInstance.checkBlocked(email: emailText, blocked: { block in
+                        if block == false {
+                            let dialogMessage = UIAlertController(title: "", message: "Invite Sent", preferredStyle: .alert)
+                            self.present(dialogMessage, animated: true, completion: nil)
+                            let when = DispatchTime.now() + .seconds(1)
+                            DispatchQueue.main.asyncAfter(deadline: when) {
+                                dialogMessage.dismiss(animated: true, completion: nil)
+                                self.navigationController?.popViewController(animated: true)
+                            }
+                            self.completion?(emailText)
+                        } else {
+                            let dialogMessage = UIAlertController(title: "", message: "User blocked you from sharing.", preferredStyle: .alert)
+                            self.present(dialogMessage, animated: true, completion: nil)
+                            let when = DispatchTime.now() + .seconds(1)
+                            DispatchQueue.main.asyncAfter(deadline: when) {
+                                dialogMessage.dismiss(animated: true, completion: nil)
+                            }
+                        }
+                    })
+                    
+                    
+                    
                 } else {
                     let dialogMessage = UIAlertController(title: "", message: "Error: sharing failed", preferredStyle: .alert)
                     self.present(dialogMessage, animated: true, completion: nil)

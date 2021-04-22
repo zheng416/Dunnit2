@@ -19,6 +19,9 @@ class AddViewController: UIViewController, UITextFieldDelegate {
     var notificationsOn: Bool?
     var list: ListEntity?
     
+    var countTopics: Int?
+    var countLists: Int?
+    
     @IBOutlet var titlefield: UITextField!
     @IBOutlet var bodyField: UITextField!
     @IBOutlet var datePicker: UIDatePicker!
@@ -49,6 +52,28 @@ class AddViewController: UIViewController, UITextFieldDelegate {
 
     public var completion: ((String, String, Date, String, Int16, String) -> Void)?
  
+    
+    func getUser() -> [String: Any] {
+        var user = DataBaseHelper.shareInstance.fetchLocalUser()
+        if user.isEmpty{
+            DataBaseHelper.shareInstance.createNewUser(name: "test", email:"test@email.com")
+            user = DataBaseHelper.shareInstance.fetchLocalUser()
+        }
+        
+        // Unpack user entity to dictionary
+        var endUser = [String:Any]()
+        for x in user as [UserEntity] {
+            endUser["name"] = x.name
+            endUser["email"] = x.email
+            endUser["darkMode"] = x.darkMode
+            endUser["notification"] = x.notification
+            endUser["sound"] = x.sound
+        }
+        
+        print("user is \(endUser)")
+        
+        return endUser
+    }
     
     func getTopics() -> [String: Any] {
         let user = DataBaseHelper.shareInstance.fetchTopics()
@@ -136,7 +161,11 @@ class AddViewController: UIViewController, UITextFieldDelegate {
         
         self.currentTopic = ""
         self.currentPriority = 0
-        self.currentList = ""
+        if list == nil {
+            self.currentList = ""
+        } else {
+            self.currentList = list?.id
+        }
         self.topicField.attributedText = NSMutableAttributedString().gray("Add a Topic")
         self.priorityField.attributedText = NSMutableAttributedString().gray("Add a Priority")
         
@@ -147,6 +176,11 @@ class AddViewController: UIViewController, UITextFieldDelegate {
       
         self.cancelTopic.addTarget(self, action: #selector(removeTopic), for: .touchUpInside)
         self.cancelPriority.addTarget(self, action: #selector(removePriority), for: .touchUpInside)
+        
+        if self.countTopics == 0 {
+            self.addTopic.isEnabled = false
+            self.cancelTopic.isEnabled = false
+        }
         
         if list != nil {
             self.listString = ""
@@ -159,6 +193,10 @@ class AddViewController: UIViewController, UITextFieldDelegate {
             self.addList.menu = self.listMenu
             self.addList.showsMenuAsPrimaryAction = true
             self.cancelList.addTarget(self, action: #selector(removeList), for: .touchUpInside)
+            if self.countLists == 0 {
+                self.addList.isEnabled = false
+                self.cancelList.isEnabled = false
+            }
         }
         
         
@@ -172,14 +210,28 @@ class AddViewController: UIViewController, UITextFieldDelegate {
         self.addReminder.menu = self.reminderMenu
         self.addReminder.showsMenuAsPrimaryAction = true
         self.cancelReminder.addTarget(self, action: #selector(removeReminder), for: .touchUpInside)
+        let userInfo = getUser()
+        let darkModeOn = userInfo["darkMode"] as! Bool
+        if darkModeOn {
+            overrideUserInterfaceStyle = .dark
+            navigationController?.navigationBar.barTintColor = UIColor.black
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.white]
+        } else {
+            overrideUserInterfaceStyle = .light
+            navigationController?.navigationBar.barTintColor = UIColor.white
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black]
+            
+        }
     }
     
     private func setupTopicMenu() {
         let topics = getTopics()
         var topicsData = [String]()
+        self.countTopics = 0
         for (_, topic) in topics {
             if !((topic as! String).isEmpty) {
                 topicsData.append(topic as! String)
+                self.countTopics! += 1
             }
         }
         topicsData.sort()
@@ -221,10 +273,12 @@ class AddViewController: UIViewController, UITextFieldDelegate {
         let lists = getList()
         var listsId = [String]()
         var listsData = [String]()
+        self.countLists = 0
         for (id, list) in lists {
             if !((list as! String).isEmpty) {
                 listsId.append(id)
                 listsData.append(list as! String)
+                self.countLists! += 1
             }
         }
         var listsChildren = [UIAction]()
@@ -330,7 +384,12 @@ class AddViewController: UIViewController, UITextFieldDelegate {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "YY, MMM d, HH:mm:ss"
             let madeDate = dateFormatter.string(from: made)
+            var notiDate: Date
+            var notiOn: Bool
+            notiDate = targetDate
+            notiOn = false
             if (notificationsOn! && currentReminder != "") {
+                notiOn = true
                 var timeMultiplier = 0
                 if currentReminder == "15 Minutes" {
                     timeMultiplier = 15
@@ -346,6 +405,7 @@ class AddViewController: UIViewController, UITextFieldDelegate {
                     timeMultiplier = 60 * 24
                 }
                 let reminderDate = targetDate.addingTimeInterval(TimeInterval(-timeMultiplier * 60))
+                notiDate = reminderDate
                 let content = UNMutableNotificationContent()
                 content.title = currentReminder! + ": " + titleText
                 content.sound = .default
@@ -358,7 +418,8 @@ class AddViewController: UIViewController, UITextFieldDelegate {
                     }
                 })
             }
-            DataBaseHelper.shareInstance.saveTask(title: titleText, body: bodyText, date: targetDate, isDone: false, list: currentList!, color: currentTopic!, priority: Int16(currentPriority!), made: madeDate)
+            DataBaseHelper.shareInstance.saveTask(title: titleText, body: bodyText, date: targetDate, isDone: false, list: currentList!, color: currentTopic!, priority: Int16(currentPriority!), made: madeDate, notiDate: notiDate, notiOn: notiOn)
+
             completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate)
         }
     }

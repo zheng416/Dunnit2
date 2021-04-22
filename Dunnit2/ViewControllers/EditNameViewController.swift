@@ -20,21 +20,21 @@ class EditNameViewController: UIViewController, UITextFieldDelegate {
     public var completion: ((String) -> Void)?
     
     //  Access databse functions
-//    func getUser() -> [String: Any] {
-//        let user = DataBaseHelper.shareInstance.fetchLocalUser()
-//
-//        // Unpack user entity to dictionary
-//        var endUser = [String:Any]()
-//        for x in user as [UserEntity] {
-//            endUser["name"] = x.name
-//            endUser["email"] = x.email
-//            endUser["darkMode"] = x.darkMode
-//            endUser["notification"] = x.notification
-//            endUser["sound"] = x.sound
-//        }
-//
-//        return endUser
-//    }
+    func getUser() -> [String: Any] {
+        let user = DataBaseHelper.shareInstance.fetchLocalUser()
+
+        // Unpack user entity to dictionary
+        var endUser = [String:Any]()
+        for x in user as [UserEntity] {
+            endUser["name"] = x.name
+            endUser["email"] = x.email
+            endUser["darkMode"] = x.darkMode
+            endUser["notification"] = x.notification
+            endUser["sound"] = x.sound
+        }
+
+        return endUser
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,6 +48,18 @@ class EditNameViewController: UIViewController, UITextFieldDelegate {
         nameField.autocorrectionType = .no
         nameField.becomeFirstResponder()
         nameField.delegate = self
+        let userInfo = getUser()
+        let darkModeOn = userInfo["darkMode"] as! Bool
+        if darkModeOn {
+            overrideUserInterfaceStyle = .dark
+            navigationController?.navigationBar.barTintColor = UIColor.black
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.white]
+        } else {
+            overrideUserInterfaceStyle = .light
+            navigationController?.navigationBar.barTintColor = UIColor.white
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black]
+            
+        }
     }
     
     @IBAction func buttonTapped() {

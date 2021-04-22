@@ -125,24 +125,42 @@ class SettingsViewController: UITableViewController {
         if notificationsToggle.isOn {
             if taskStore[0].count >= 1 {
                 for i in 0...taskStore[0].count - 1 {
-                    let titleText = taskStore[0][i].title
-                    print("Title: " + titleText!)
-                    let bodyText = taskStore[0][i].body
-                    let targetDate = taskStore[0][i].date!
-                    let madeDate = taskStore[0][i].made!
-                    let formatter = DateFormatter()
-                    formatter.dateFormat = "MMM dd, YYYY HH:mm"
-                    let content = UNMutableNotificationContent()
-                    content.title = formatter.string(from: targetDate) + ": " + titleText!
-                    content.sound = .default
-                    content.body = bodyText!
-                    let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: targetDate), repeats: false)
-                    let request = UNNotificationRequest(identifier: madeDate, content: content, trigger: trigger)
-                    UNUserNotificationCenter.current().add(request, withCompletionHandler: {error in
-                        if error != nil {
-                            print("error for adding notification")
+                    if taskStore[0][i].notiOn {
+                        let titleText = taskStore[0][i].title
+                        print("Title: " + titleText!)
+                        let bodyText = taskStore[0][i].body
+                        let targetDate = taskStore[0][i].date!
+                        let notiDate = taskStore[0][i].notiDate!
+                        let madeDate = taskStore[0][i].made!
+                        var currentReminder: String
+                        currentReminder = "Deadline"
+                        if targetDate.addingTimeInterval(TimeInterval(-15 * 60)) == notiDate {
+                            currentReminder = "15 Minutes"
+                        } else if targetDate.addingTimeInterval(TimeInterval(-30 * 60)) == notiDate {
+                            currentReminder = "30 Minutes"
+                        } else if targetDate.addingTimeInterval(TimeInterval(-60 * 60)) == notiDate {
+                            currentReminder = "1 Hour"
+                        } else if targetDate.addingTimeInterval(TimeInterval(-360 * 60)) == notiDate {
+                            currentReminder = "6 Hours"
+                        } else if targetDate.addingTimeInterval(TimeInterval(-720 * 60)) == notiDate {
+                            currentReminder = "12 Hours"
+                        } else if targetDate.addingTimeInterval(TimeInterval(-1440 * 60)) == notiDate {
+                            currentReminder = "24 Hours"
                         }
-                    })
+                        let formatter = DateFormatter()
+                        formatter.dateFormat = "MMM dd, YYYY HH:mm"
+                        let content = UNMutableNotificationContent()
+                        content.title = currentReminder + ": " + titleText!
+                        content.sound = .default
+                        content.body = bodyText!
+                        let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: notiDate), repeats: false)
+                        let request = UNNotificationRequest(identifier: madeDate, content: content, trigger: trigger)
+                        UNUserNotificationCenter.current().add(request, withCompletionHandler: {error in
+                            if error != nil {
+                                print("error for adding notification")
+                            }
+                        })
+                    }
                 }
             }
             DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,notification: true )
@@ -161,10 +179,14 @@ class SettingsViewController: UITableViewController {
             DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,darkMode: true)
             DataBaseHelper.shareInstance.updateDBUser(email: globalUser["email"] as! String,darkMode: true)
             overrideUserInterfaceStyle = .dark
+            navigationController?.navigationBar.barTintColor = UIColor.black
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.white]
         } else {
             DataBaseHelper.shareInstance.updateLocalUser(email: globalUser["email"] as! String,darkMode: false)
             DataBaseHelper.shareInstance.updateDBUser(email: globalUser["email"] as! String,darkMode: false)
             overrideUserInterfaceStyle = .light
+            navigationController?.navigationBar.barTintColor = UIColor.white
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black]
         }
         
         globalUser = DataBaseHelper.shareInstance.parsedLocalUser()
@@ -185,7 +207,7 @@ class SettingsViewController: UITableViewController {
                 UIAlertAction in
                 // Clear storage
                 DataBaseHelper.shareInstance.logout(email: self.globalUser["email"] as! String)
-                
+                               
                 // Clear local firebase auth
                 do {
                     try Auth.auth().signOut()
@@ -210,7 +232,17 @@ class SettingsViewController: UITableViewController {
             }
             dialogMessage.addAction(ok)
             dialogMessage.addAction(cancel)
-            self.present(dialogMessage, animated: true, completion: nil)
+            if (globalUser["email"] as! String != "Guest"){
+                self.present(dialogMessage, animated: true, completion: nil)
+            }
+            else{
+                DataBaseHelper.shareInstance.logout(email: self.globalUser["email"] as! String)
+                let loginStory = UIStoryboard(name: "Main", bundle: nil)
+                let startVC = loginStory.instantiateViewController(withIdentifier: "welcome")
+                let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as! SceneDelegate
+                sceneDelegate.window?.rootViewController = startVC
+            }
+            
         } else if (indexPath == verifyEmailIndex){
             if authUser!.isEmailVerified{
                 print("User already verified")
