@@ -7,9 +7,9 @@
 
 import UIKit
 import UserNotifications
+import CoreLocation
 
-
-class AddViewController: UIViewController, UITextFieldDelegate {
+class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate {
     
     var currentTopic: String?
     var currentPriority: Int?
@@ -18,6 +18,7 @@ class AddViewController: UIViewController, UITextFieldDelegate {
     var currentReminder: String?
     var notificationsOn: Bool?
     var list: ListEntity?
+    var locationManager: CLLocationManager?
     
     @IBOutlet var titlefield: UITextField!
     @IBOutlet var bodyField: UITextField!
@@ -104,6 +105,9 @@ class AddViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
 //        let user = getUser()
+        locationManager = CLLocationManager()
+        locationManager?.delegate = self
+        locationManager?.requestAlwaysAuthorization()
         let user = DataBaseHelper.shareInstance.parsedLocalUser()
       /*let darkModeOn = user["darkMode"] as! Bool
         if darkModeOn {
@@ -172,6 +176,11 @@ class AddViewController: UIViewController, UITextFieldDelegate {
         self.addReminder.menu = self.reminderMenu
         self.addReminder.showsMenuAsPrimaryAction = true
         self.cancelReminder.addTarget(self, action: #selector(removeReminder), for: .touchUpInside)
+    }
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .authorizedAlways {
+            print("Location authorized\n")
+        }
     }
     
     private func setupTopicMenu() {

@@ -839,20 +839,10 @@ class DataBaseHelper {
             }
             let email = (user[0] as! UserEntity).email!
             instance.owner = email
-            let docData: [String: Any] = ["title" : title, "email": email, "shared": shared, "sharedWith": sharedWith, "sharedArr": []]
             var ref: DatabaseReference?
             ref = Database.database().reference()
             guard let id = ref?.child("taskLists").childByAutoId().key else { return }
             instance.id = id
-            db.collection("taskLists").document(id).setData(docData) { err in
-                if err != nil {
-                    // Show error message
-                    print("Error saving user data\(err)")
-                    return
-                }
-                print("Saved list \(title) to DB")
-            }
-        
             print("Saving List \(title) local.")
             try managedContext.save()
             if email != "Guest"{
@@ -866,20 +856,8 @@ class DataBaseHelper {
     //SaveDBList
     func saveDBList(id: String, email: String,title: String, shared: Bool, sharedWith: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        
-        let managedContext = appDelegate.persistentContainer.viewContext
-        
-        let instance = ListEntity(context: managedContext)
-        instance.title = title
-        instance.shared = shared
-        instance.sharedWith = sharedWith
-        
         // Get user's email
         let docData: [String: Any] = ["title" : title, "email": email, "shared": shared, "sharedWith": sharedWith, "sharedArr": []]
-        var ref: DatabaseReference?
-        ref = Database.database().reference()
-        guard let id = ref?.child("taskLists").childByAutoId().key else { return }
-        instance.id = id
         db.collection("taskLists").document(id).setData(docData) { err in
             if err != nil {
                 // Show error message
