@@ -271,7 +271,7 @@ class DataBaseHelper {
         }
     }
     
-    func fetchLocalTask(key:String? = nil, ascending:Bool? = nil, filterKey: String? = nil) -> [TaskEntity] {
+    func fetchLocalTask(key:String? = nil, ascending:Bool? = nil, filterKey: String? = nil, targetDate: Date? = nil) -> [TaskEntity] {
         var fetchingImage = [TaskEntity]()
             
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return fetchingImage }
@@ -325,6 +325,24 @@ class DataBaseHelper {
                 
                 let datePredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [fromPredicate, toPredicate])
                 fetchRequest.predicate = datePredicate
+            } else if (filterKey == "date") {
+                // TODO: filter by date
+                // Maybe date range?
+                var dateFrom: Date!
+                if (targetDate == nil) {
+                    dateFrom = calendar.startOfDay(for: Date())
+                } else {
+                    dateFrom = calendar.startOfDay(for: targetDate!)
+                }
+                let dateTo = calendar.date(byAdding: .day, value: 1, to: dateFrom)
+                
+                // Set predicate as date being today's date
+                let fromPredicate = NSPredicate(format: "date >= %@", dateFrom as NSDate)
+                let toPredicate = NSPredicate(format: "date < %@", dateTo! as NSDate)
+                
+                let datePredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [fromPredicate, toPredicate])
+                fetchRequest.predicate = datePredicate
+                
             } else {
                 fetchRequest.predicate = nil
             }

@@ -13,4 +13,5 @@ target 'Dunnit2' do
   pod 'Firebase/Firestore' 
   pod 'GoogleSignIn'
   pod 'FBSDKLoginKit'
+  pod 'FSCalendar'
 end
