@@ -8,6 +8,8 @@
 import UIKit
 import UserNotifications
 import CoreLocation
+import MapKit
+import FloatingPanel
 
 class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate {
     
@@ -38,6 +40,11 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
     @IBOutlet var cancelPriority: UIButton!
     @IBOutlet var addList: UIButton!
     @IBOutlet var cancelList: UIButton!
+    
+    @IBOutlet weak var map: MKMapView!
+    @IBOutlet weak var editLocationButton: UIButton!
+    //    @IBOutlet weak var mapTitle: UILabel!
+//    @IBOutlet weak var mapSearchField: UITextField!
     
     var topicMenu: UIMenu?
     var priorityMenu: UIMenu?
@@ -126,22 +133,33 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
         cancelReminder.isHidden = true
     }
     
+    func centerMap(with location: CLLocation) {
+//        let pin = MKPointAnnotation()
+//        pin.coordinate = location.coordinate
+        map.setRegion(MKCoordinateRegion(
+                        center: location.coordinate,
+                        span: MKCoordinateSpan(
+                            latitudeDelta: 0.7,
+                            longitudeDelta: 0.7)),
+                        animated: true)
+//        map.addAnnotation(pin)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        let user = getUser()
-        locationManager = CLLocationManager()
-        locationManager?.delegate = self
-        locationManager?.requestAlwaysAuthorization()
-        
-//        LocationManager.shared.getUserLocation(completion: <#T##((CLLocation) -> Void)##((CLLocation) -> Void)##(CLLocation) -> Void#>)
+        LocationManager.shared.getUserLocation { [weak self] location in
+            DispatchQueue.main.async {
+                guard let strongSelf = self else {
+                    return
+                }
+
+                strongSelf.centerMap(with: location)
+            }
+        }
         let user = DataBaseHelper.shareInstance.parsedLocalUser()
-      /*let darkModeOn = user["darkMode"] as! Bool
-        if darkModeOn {
-            overrideUserInterfaceStyle = .dark
-        }*/
+      
         notificationsOn = user["notification"] as! Bool
-        
         titlefield.delegate = self // rid of keyboard
         bodyField.delegate = self
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(didTapSaveButton))
