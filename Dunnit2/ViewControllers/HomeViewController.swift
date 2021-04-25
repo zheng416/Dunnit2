@@ -269,7 +269,7 @@ class HomeViewController: UIViewController {
             getData()
             break
         }
-        let userInfo = getUser()
+        let userInfo = DataBaseHelper.shareInstance.parsedLocalUser()
         let darkModeOn = userInfo["darkMode"] as! Bool
         if darkModeOn {
             overrideUserInterfaceStyle = .dark
@@ -562,7 +562,8 @@ extension HomeViewController: UITableViewDataSource {
                 let dateStr = formatter.string(from: date)
                 let range = (dateStr as NSString).range(of: dateStr)
 
-                let userInfo = getUser()
+//                let userInfo = getUser()
+                let userInfo = DataBaseHelper.shareInstance.parsedLocalUser()
                 let darkModeOn = userInfo["darkMode"] as! Bool
                 let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
                 if darkModeOn {
@@ -666,7 +667,8 @@ extension HomeViewController: UITableViewDataSource {
                 let dateStr = formatter.string(from: date)
                 let range = (dateStr as NSString).range(of: dateStr)
                 
-                let userInfo = getUser()
+//                let userInfo = getUser()
+                let userInfo = DataBaseHelper.shareInstance.parsedLocalUser()
                 let darkModeOn = userInfo["darkMode"] as! Bool
                 let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
                 if darkModeOn {

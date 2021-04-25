@@ -133,6 +133,8 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
         locationManager = CLLocationManager()
         locationManager?.delegate = self
         locationManager?.requestAlwaysAuthorization()
+        
+//        LocationManager.shared.getUserLocation(completion: <#T##((CLLocation) -> Void)##((CLLocation) -> Void)##(CLLocation) -> Void#>)
         let user = DataBaseHelper.shareInstance.parsedLocalUser()
       /*let darkModeOn = user["darkMode"] as! Bool
         if darkModeOn {
