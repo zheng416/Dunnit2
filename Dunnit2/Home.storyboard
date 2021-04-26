@@ -14,7 +14,7 @@
             <objects>
                 <viewController storyboardIdentifier="description" id="my1-e3-sGj" customClass="DescriptionViewController" customModule="Dunnit2" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Qq9-Xj-yXz">
-                        <rect key="frame" x="0.0" y="0.0" width="390" height="790"/>
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HEf-eL-XZc">
@@ -483,10 +483,14 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0yp-Eg-3X1">
-                                <rect key="frame" x="16" y="605" width="358" height="220"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a7e-vc-SiK">
+                                <rect key="frame" x="34" y="608" width="59" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </mapView>
+                                <state key="normal" title="Location"/>
+                                <connections>
+                                    <segue destination="t3G-Nm-8iC" kind="show" id="zy8-ml-eqm"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="D3V-NB-Y31"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -513,6 +517,7 @@
                         <outlet property="cancelReminder" destination="UQt-ww-8Xh" id="Ec2-Ij-jLh"/>
                         <outlet property="cancelTopic" destination="JPJ-ZV-v4z" id="eZ1-Oj-7AB"/>
                         <outlet property="datePicker" destination="t6E-ET-qJ9" id="kkp-jJ-jx9"/>
+                        <outlet property="editLocationButton" destination="a7e-vc-SiK" id="Hyd-Vd-b2o"/>
                         <outlet property="listField" destination="uSx-vc-SMK" id="fla-PX-YTS"/>
                         <outlet property="notificationLabel" destination="urb-CI-Ox2" id="x3G-k1-H3V"/>
                         <outlet property="notificationToggle" destination="0Ib-Oh-iXp" id="x2L-OI-CFC"/>
@@ -526,20 +531,21 @@
             </objects>
             <point key="canvasLocation" x="1273.8461538461538" y="87.440758293838854"/>
         </scene>
-        <!--View Controller-->
-        <scene sceneID="H7w-bX-wxR">
+        <!--Map View Controller-->
+        <scene sceneID="tQD-va-2c9">
             <objects>
-                <viewController id="nV5-iS-fmn" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="rqZ-lm-GXM">
-                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
+                <viewController id="t3G-Nm-8iC" customClass="MapViewController" customModule="Dunnit2" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="4OQ-l5-A22">
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="790"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="5Rc-9k-QOp"/>
+                        <viewLayoutGuide key="safeArea" id="LXO-Rv-U1h"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
+                    <navigationItem key="navigationItem" id="hhQ-mC-aDM"/>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="nET-IN-AVp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="U4v-Ga-omF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2139" y="88"/>
+            <point key="canvasLocation" x="2240" y="100"/>
         </scene>
         <!--Add List View Controller-->
         <scene sceneID="eki-1N-vsn">
@@ -1579,7 +1585,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="n3N-CQ-sOo"/>
+        <segue reference="B07-yv-zC2"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="Hamburger_icon.svg" width="1920" height="1920"/>
