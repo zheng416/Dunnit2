@@ -41,7 +41,6 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
     @IBOutlet var addList: UIButton!
     @IBOutlet var cancelList: UIButton!
     
-    @IBOutlet weak var map: MKMapView!
     @IBOutlet weak var editLocationButton: UIButton!
     //    @IBOutlet weak var mapTitle: UILabel!
 //    @IBOutlet weak var mapSearchField: UITextField!
@@ -133,30 +132,30 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
         cancelReminder.isHidden = true
     }
     
-    func centerMap(with location: CLLocation) {
-//        let pin = MKPointAnnotation()
-//        pin.coordinate = location.coordinate
-        map.setRegion(MKCoordinateRegion(
-                        center: location.coordinate,
-                        span: MKCoordinateSpan(
-                            latitudeDelta: 0.7,
-                            longitudeDelta: 0.7)),
-                        animated: true)
-//        map.addAnnotation(pin)
-    }
+//    func centerMap(with location: CLLocation) {
+////        let pin = MKPointAnnotation()
+////        pin.coordinate = location.coordinate
+//        map.setRegion(MKCoordinateRegion(
+//                        center: location.coordinate,
+//                        span: MKCoordinateSpan(
+//                            latitudeDelta: 0.7,
+//                            longitudeDelta: 0.7)),
+//                        animated: true)
+////        map.addAnnotation(pin)
+//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        LocationManager.shared.getUserLocation { [weak self] location in
-            DispatchQueue.main.async {
-                guard let strongSelf = self else {
-                    return
-                }
-
-                strongSelf.centerMap(with: location)
-            }
-        }
+//        LocationManager.shared.getUserLocation { [weak self] location in
+//            DispatchQueue.main.async {
+//                guard let strongSelf = self else {
+//                    return
+//                }
+//
+//                strongSelf.centerMap(with: location)
+//            }
+//        }
         let user = DataBaseHelper.shareInstance.parsedLocalUser()
       
         notificationsOn = user["notification"] as! Bool
