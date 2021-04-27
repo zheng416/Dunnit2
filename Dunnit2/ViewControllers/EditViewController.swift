@@ -513,7 +513,6 @@ class EditViewController: UIViewController, UITextFieldDelegate, MapViewControll
                     }
                 })
             }
-            
             var new_longitude: Double = 0.0
             var new_latitude: Double = 0.0
             var location_name: String = ""
@@ -522,7 +521,8 @@ class EditViewController: UIViewController, UITextFieldDelegate, MapViewControll
                 new_latitude = locationCoords!.latitude
                 location_name = locationName!
             }
-            
+             
+            // NEED TO modify for recurring change
             completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate, notiDate, notiOn, new_longitude, new_latitude, location_name)
             print("Saved")
         }
