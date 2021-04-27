@@ -6,8 +6,10 @@
 //
 
 import UIKit
+import CoreLocation
+import MapKit
 
-class EditViewController: UIViewController, UITextFieldDelegate {
+class EditViewController: UIViewController, UITextFieldDelegate, MapViewControllerDelegate {
 
     var titleStr: String?
     var dateVal: Date?
@@ -28,6 +30,10 @@ class EditViewController: UIViewController, UITextFieldDelegate {
     var countLists: Int?
     
     var notificationsOn: Bool?
+    
+    var longitude: Double?
+    var latitude: Double?
+    var locationName: String?
     
     @IBOutlet var titlefield: UITextField!
     @IBOutlet var bodyField: UITextField!
@@ -53,10 +59,17 @@ class EditViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var addReminder: UIButton!
     @IBOutlet var cancelReminder: UIButton!
     
+//    Locations
+    @IBOutlet weak var locationField: UILabel!
+    @IBOutlet weak var addLocation: UIButton!
+    @IBOutlet weak var cancelLocation: UIButton!
+    
+    var locationCoords: CLLocationCoordinate2D?
+        
     var reminderMenu: UIMenu?
     
   
-    public var completion: ((String, String, Date, String, Int16, String, Date, Bool) -> Void)?
+    public var completion: ((String, String, Date, String, Int16, String, Date, Bool, Double, Double, String) -> Void)?
     
     func getUser() -> [String: Any] {
         var user = DataBaseHelper.shareInstance.fetchLocalUser()
@@ -97,6 +110,10 @@ class EditViewController: UIViewController, UITextFieldDelegate {
         reminderField.isHidden = true
         addReminder.isHidden = true
         cancelReminder.isHidden = true
+        
+        locationField.isHidden = true
+        addLocation.isHidden = true
+        cancelLocation.isHidden = true
     }
     
     func getTopics() -> [String: Any] {
@@ -135,6 +152,15 @@ class EditViewController: UIViewController, UITextFieldDelegate {
         return endList
     }
     
+    func mapViewController(_ vc: MapViewController, selectedLocationName: String, coordinates: CLLocationCoordinate2D?) {
+        locationField.text = selectedLocationName
+        print("selected Locatio name: \(selectedLocationName)")
+        locationName = selectedLocationName
+        guard let coordinates = coordinates else { return }
+        print("selected Locatio name: \(coordinates)")
+        locationCoords = coordinates
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -146,13 +172,21 @@ class EditViewController: UIViewController, UITextFieldDelegate {
             hidePremiumFields()
         }
         
+        
         notificationsOn = user["notification"] as! Bool        
         
         titlefield.text = titleStr
         datePicker.date = dateVal!
         bodyField.text = bodyStr
+        locationField.text = locationName
+        print("location Name",locationName)
+        
         titlefield.delegate = self
         bodyField.delegate = self
+        
+        self.addLocation.addTarget(self, action: #selector(didTapAddLocationButton), for: .touchUpInside)
+        
+        self.cancelLocation.addTarget(self, action: #selector(removeLocation), for: .touchUpInside)
         
         // Do any additional setup after loading the view.
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(didTapSaveButton))
@@ -162,6 +196,7 @@ class EditViewController: UIViewController, UITextFieldDelegate {
         self.cancelPriority.tintColor = UIColor.gray
         self.cancelList.tintColor = UIColor.gray
         self.cancelReminder.tintColor = UIColor.gray
+        self.cancelLocation.tintColor = UIColor.gray
         
         setupTopicMenu()
         setupPriorityMenuItem()
@@ -368,6 +403,25 @@ class EditViewController: UIViewController, UITextFieldDelegate {
         ])
     }
     
+    
+    @objc private func didTapAddLocationButton() {
+        // Show add mapVC
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        guard let mapVC = storyboard.instantiateViewController(identifier: "map") as? MapViewController else {
+            return
+        }
+        mapVC.delegate = self
+        
+        navigationController?.pushViewController(mapVC, animated: true)
+    }
+    
+    @objc private func removeLocation() {
+        self.locationName = ""
+        self.locationCoords = nil
+        self.locationField.attributedText = NSMutableAttributedString().gray("Add a Location")
+        self.addLocation.isEnabled = true
+    }
+    
     @objc private func removeTopic() {
         self.currentTopic = ""
         self.topicField.attributedText = NSMutableAttributedString().gray("Add a Topic")
@@ -459,8 +513,17 @@ class EditViewController: UIViewController, UITextFieldDelegate {
                     }
                 })
             }
+            var new_longitude: Double = 0.0
+            var new_latitude: Double = 0.0
+            var location_name: String = ""
+            if locationCoords != nil {
+                new_longitude = locationCoords!.longitude
+                new_latitude = locationCoords!.latitude
+                location_name = locationName!
+            }
+             
             // NEED TO modify for recurring change
-            completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate, notiDate, notiOn)
+            completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate, notiDate, notiOn, new_longitude, new_latitude, location_name)
             print("Saved")
         }
         if currentList != task!.list {

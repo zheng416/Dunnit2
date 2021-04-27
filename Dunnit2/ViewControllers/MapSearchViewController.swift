@@ -15,6 +15,7 @@ protocol MapSearchViewControllerDelegate: AnyObject {
 class MapSearchViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
     
     weak var delegate: MapSearchViewControllerDelegate?
+    public var chosenLocationName: String! = ""
     
     private let label: UILabel = {
         let label = UILabel()
@@ -85,6 +86,8 @@ class MapSearchViewController: UIViewController, UITextFieldDelegate, UITableVie
         cell.textLabel?.numberOfLines = 0
         cell.contentView.backgroundColor = .secondarySystemBackground
         cell.backgroundColor = .secondarySystemBackground
+        
+        chosenLocationName = locations[indexPath.row].title
         return cell
     }
     
@@ -94,7 +97,7 @@ class MapSearchViewController: UIViewController, UITextFieldDelegate, UITableVie
         // Notify map controller to show pin at selected place
         
         let coordinate = locations[indexPath.row].coordinates
-        
+    
         print("coords", coordinate)
         
         delegate?.mapSearchViewController(self, didSelectLocationWith: coordinate)

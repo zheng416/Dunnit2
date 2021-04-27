@@ -27,6 +27,10 @@ class DescriptionViewController: UIViewController {
     var madeVal: String?
     var task: TaskEntity?
     
+    var longitude: Double?
+    var latitude: Double?
+    var locationName: String?
+    
     @IBOutlet var titleField: UILabel!
     
     @IBOutlet var dateField: UILabel!
@@ -37,7 +41,7 @@ class DescriptionViewController: UIViewController {
     
     @IBOutlet var priorityField: UILabel!
     
-    public var completion: ((String, String, Date, String, Int16, String, Date, Bool) -> Void)?
+    public var completion: ((String, String, Date, String, Int16, String, Date, Bool, Double, Double, String) -> Void)?
     
     func getUser() -> [String: Any] {
         var user = DataBaseHelper.shareInstance.fetchLocalUser()
@@ -128,10 +132,14 @@ class DescriptionViewController: UIViewController {
         vc.task = self.task
         vc.notifications = self.notifications
         vc.notificationDate = self.notificationDate
+        vc.longitude = self.longitude
+        vc.latitude = self.latitude
+        vc.locationName = self.locationName
+        
         vc.title = "Edit"
         vc.navigationItem.largeTitleDisplayMode = .never
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [String(madeVal!)])
-        vc.completion = {title, body, date, color, priority, made, notiDate, notiOn in
+        vc.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName in
             DispatchQueue.main.async {
                 self.titleField.attributedText =  NSMutableAttributedString().boldTitle(title)
                 let formatter = DateFormatter()
@@ -147,6 +155,9 @@ class DescriptionViewController: UIViewController {
                 self.priorityVal = Int(priority)
                 self.notificationDate = notiDate
                 self.notifications = notiOn
+                self.longitude = longitude
+                self.latitude = latitude
+                self.locationName = locationName
                 /*DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false)*/
                 if (priority == 0) {
                     self.priorityField.attributedText =  NSMutableAttributedString().bodyNormal("")
@@ -157,7 +168,7 @@ class DescriptionViewController: UIViewController {
                 } else {
                     self.priorityField.attributedText =  NSMutableAttributedString().bodyNormal("Priority: High")
                 }
-                self.completion?(title, body, date, color, priority, made, notiDate, notiOn)
+                self.completion?(title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName)
             }
         }
         navigationController?.pushViewController(vc, animated: true)
