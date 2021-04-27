@@ -119,6 +119,9 @@ class HomeViewController: UIViewController {
         print("% = ", progressCount, "indi = ", taskStore[1].count, (taskStore[1].count + taskStore[0].count))
         self.progressView.setProgress(progressCount, animated: true)
         
+        print("HERE IS ALL THE TASKSS")
+        print(tasks)
+        
         tableView.reloadData()
     }
     
@@ -774,7 +777,8 @@ extension HomeViewController {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let doneAction = UIContextualAction(style: .normal, title: nil) { (action, sourceView, completionHandler) in
             let row = self.taskStore[0][indexPath.row]
-            DataBaseHelper.shareInstance.updateLocalTask(id: row.id!,isDone: true, title: row.title!)
+            
+            DataBaseHelper.shareInstance.updateLocalTask(id: row.id!,isDone: true, title: row.title!, recurring: row.recurring!)
             
             self.getData()
         }

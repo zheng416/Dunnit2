@@ -153,7 +153,7 @@ class DataBaseHelper {
             }
         }
     }
-    func saveDBTask(id: String, email: String, title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16, made: String, notiDate: Date, notiOn: Bool) {
+    func saveDBTask(id: String, email: String, title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16, made: String, notiDate: Date, notiOn: Bool, recurring: String) {
         let docData: [String: Any] = [
             "id" : id,
             "email" : email,
@@ -167,7 +167,8 @@ class DataBaseHelper {
             "priority": priority,
             "made": made,
             "notiDate": notiDate,
-            "notiOn": notiOn
+            "notiOn": notiOn,
+            "recurring": recurring
         ]
         
         db.collection("task").document(id).setData(docData) { err in
@@ -178,7 +179,7 @@ class DataBaseHelper {
             }
         }
     }
-    func saveTask(title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16, made: String, notiDate: Date, notiOn: Bool) {
+    func saveTask(title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16, made: String, notiDate: Date, notiOn: Bool, recurring: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -211,6 +212,7 @@ class DataBaseHelper {
         instance.made = made
         instance.notiDate = notiDate
         instance.notiOn = notiOn
+        instance.recurring = recurring
         do {
             print("Saved.")
             try managedContext.save()
@@ -218,7 +220,7 @@ class DataBaseHelper {
             print("Could not save. \(error), \(error.userInfo)")
         }
         if (email != "Guest"){
-            self.saveDBTask(id: key, email: email,title: title, body: body, date: date, isDone: isDone, list: list, color: color, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
+            self.saveDBTask(id: key, email: email,title: title, body: body, date: date, isDone: isDone, list: list, color: color, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, recurring: recurring)
         }
     }
     
@@ -433,7 +435,7 @@ class DataBaseHelper {
     }
     
     //change the isDone for a task
-    func updateDBTask(id:String, body: String? = nil, color: String? = nil, date:Date? = nil, isDone: Bool? = nil, list:String? = nil, owner:String? = nil, title:String? = nil, priority:Int16? = 0, made: String? = nil, notiDate:Date? = nil, notiOn: Bool? = nil) {
+    func updateDBTask(id:String, body: String? = nil, color: String? = nil, date:Date? = nil, isDone: Bool? = nil, list:String? = nil, owner:String? = nil, title:String? = nil, priority:Int16? = 0, made: String? = nil, notiDate:Date? = nil, notiOn: Bool? = nil, recurring:String? = nil) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -473,6 +475,7 @@ class DataBaseHelper {
         if made != nil {docData["made"] = made}
         if notiDate != nil {docData["notiDate"] = notiDate}
         if notiOn != nil {docData["notiOn"] = notiOn}
+        if recurring != nil {docData["recurring"] = recurring}
         print(docData)
         print("Status Change")
         db.collection("task").document(id).updateData(docData) {
@@ -494,7 +497,7 @@ class DataBaseHelper {
         }
     }
     // update local task
-    func updateLocalTask(id:String, body: String? = nil, color: String? = nil, date:Date? = nil, isDone: Bool? = nil, list:String? = nil, owner:String? = nil, title:String? = nil, priority:Int16? = 0, made:String? = nil, notiDate:Date? = nil, notiOn:Bool? = nil) {
+    func updateLocalTask(id:String, body: String? = nil, color: String? = nil, date:Date? = nil, isDone: Bool? = nil, list:String? = nil, owner:String? = nil, title:String? = nil, priority:Int16? = 0, made:String? = nil, notiDate:Date? = nil, notiOn:Bool? = nil, recurring:String? = nil) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -502,25 +505,51 @@ class DataBaseHelper {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
         let predicate = NSPredicate(format: "id = %@", id)
         fetchRequest.predicate = predicate
+        let newDate: Date!
+        let newNotiDate: Date!
         
         do {
             let foundTasks = try managedContext.fetch(fetchRequest) as! [TaskEntity]
             if title != nil {foundTasks.first?.title = title}
             if body != nil {foundTasks.first?.body = body}
             if date != nil {foundTasks.first?.date = date}
-            if color != nil {foundTasks.first?.color = color}
             if isDone != nil {foundTasks.first?.isDone = isDone!}
+            if color != nil {foundTasks.first?.color = color}
             if list != nil {foundTasks.first?.list = list}
             if owner != nil {foundTasks.first?.owner = owner}
             if priority != 0 {foundTasks.first?.priority = priority!}
             if made != nil {foundTasks.first?.made = made}
             if notiDate != nil {foundTasks.first?.notiDate = notiDate}
             if notiOn != nil {foundTasks.first?.notiOn = notiOn!}
-//            foundTasks.first?.color = color
-            try managedContext.save()
-            print("Updated local task. \(color)")
+            if recurring != nil {foundTasks.first?.recurring = recurring!}
+            print("RECUR: \(recurring) and isDone: \(isDone)")
+            if recurring == "daily" && isDone == true {
+                newDate = Calendar.current.date(byAdding: .day, value: 1, to: (foundTasks.first?.date)!)
+                newNotiDate = Calendar.current.date(byAdding: .day, value: 1, to: (foundTasks.first?.notiDate)!)
+                foundTasks.first?.date = newDate
+                foundTasks.first?.notiDate = newNotiDate
+                foundTasks.first?.isDone = false
+                try managedContext.save()
+                print("Updated local recurring daily task. \(color)")
 
-            updateDBTask(id: id, body: body, color: color, date: date, isDone: isDone, list: list, owner: owner, title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
+                updateDBTask(id: id, body: body, color: color, date: newDate, isDone: false, list: list, owner: owner, title: title, priority: priority, made: made, notiDate: newNotiDate, notiOn: notiOn, recurring: recurring)
+            } else if recurring == "weekly" && isDone == true {
+                newDate = Calendar.current.date(byAdding: .day, value: 7, to: (foundTasks.first?.date)!)
+                newNotiDate = Calendar.current.date(byAdding: .day, value: 7, to: (foundTasks.first?.notiDate)!)
+                foundTasks.first?.date = newDate
+                foundTasks.first?.notiDate = newNotiDate
+                foundTasks.first?.isDone = false
+                try managedContext.save()
+                print("Updated local recurring weekly task. \(color)")
+
+                updateDBTask(id: id, body: body, color: color, date: newDate, isDone: false, list: list, owner: owner, title: title, priority: priority, made: made, notiDate: newNotiDate, notiOn: notiOn, recurring: recurring)
+            } else {
+//            foundTasks.first?.color = color
+                try managedContext.save()
+                print("Updated local task. \(color)")
+
+                updateDBTask(id: id, body: body, color: color, date: date, isDone: isDone, list: list, owner: owner, title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, recurring: recurring)
+            }
         } catch {
             print("Update error.")
         }
@@ -1806,7 +1835,7 @@ class DataBaseHelper {
     }
     
     func duplicateTask(task: TaskEntity){
-        self.saveTask(title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!, notiDate: task.notiDate!, notiOn: task.notiOn)
+        self.saveTask(title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!, notiDate: task.notiDate!, notiOn: task.notiOn, recurring: task.recurring!)
     }
         
     func checkLocalTask(email:String)->Void{
@@ -1817,7 +1846,7 @@ class DataBaseHelper {
         }
         for task in tasks{
             task.owner = email
-            saveDBTask(id: task.id!, email: task.owner!, title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!, notiDate: task.notiDate!, notiOn: task.notiOn)
+            saveDBTask(id: task.id!, email: task.owner!, title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!, notiDate: task.notiDate!, notiOn: task.notiOn, recurring: task.recurring!)
         }
     }
     func checkLocalList(email:String)->Void{
