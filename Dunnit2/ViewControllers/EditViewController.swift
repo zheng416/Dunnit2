@@ -459,7 +459,7 @@ class EditViewController: UIViewController, UITextFieldDelegate {
                     }
                 })
             }
-            
+            // NEED TO modify for recurring change
             completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate, notiDate, notiOn)
             print("Saved")
         }
