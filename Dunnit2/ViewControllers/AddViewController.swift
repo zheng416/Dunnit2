@@ -11,7 +11,7 @@ import CoreLocation
 import MapKit
 import FloatingPanel
 
-class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate {
+class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate, MapViewControllerDelegate {
     
     var currentTopic: String?
     var currentPriority: Int?
@@ -54,6 +54,14 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
     @IBOutlet var reminderField: UILabel!
     @IBOutlet var addReminder: UIButton!
     @IBOutlet var cancelReminder: UIButton!
+    
+//    Locations
+    @IBOutlet weak var locationField: UILabel!
+    @IBOutlet weak var addLocation: UIButton!
+    @IBOutlet weak var cancelLocation: UIButton!
+    
+    var locationCoords: CLLocationCoordinate2D?
+    var locationName: String?
     
     var reminderMenu: UIMenu?
 
@@ -130,6 +138,10 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
         reminderField.isHidden = true
         addReminder.isHidden = true
         cancelReminder.isHidden = true
+        
+        locationField.isHidden = true
+        addLocation.isHidden = true
+        cancelLocation.isHidden = true
     }
     
 //    func centerMap(with location: CLLocation) {
@@ -144,18 +156,17 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
 ////        map.addAnnotation(pin)
 //    }
     
+    func mapViewController(_ vc: MapViewController, selectedLocationName: String, coordinates: CLLocationCoordinate2D?) {
+        locationField.text = selectedLocationName
+        locationName = selectedLocationName
+        guard let coordinates = coordinates else { return }
+        
+        locationCoords = coordinates
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        LocationManager.shared.getUserLocation { [weak self] location in
-//            DispatchQueue.main.async {
-//                guard let strongSelf = self else {
-//                    return
-//                }
-//
-//                strongSelf.centerMap(with: location)
-//            }
-//        }
         let user = DataBaseHelper.shareInstance.parsedLocalUser()
       
         notificationsOn = user["notification"] as! Bool
@@ -173,10 +184,14 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
             hidePremiumFields()
         }
         
+        self.addLocation.addTarget(self, action: #selector(didTapAddLocationButton), for: .touchUpInside)
+        self.cancelLocation.addTarget(self, action: #selector(removeLocation), for: .touchUpInside)
+        
         self.cancelTopic.tintColor = UIColor.gray
         self.cancelPriority.tintColor = UIColor.gray
         self.cancelList.tintColor = UIColor.gray
         self.cancelReminder.tintColor = UIColor.gray
+        self.cancelLocation.tintColor = UIColor.gray
         
         setupTopicMenu()
         setupPriorityMenuItem()
@@ -191,6 +206,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
         }
         self.topicField.attributedText = NSMutableAttributedString().gray("Add a Topic")
         self.priorityField.attributedText = NSMutableAttributedString().gray("Add a Priority")
+        self.locationField.attributedText = NSMutableAttributedString().gray("Add a Location")
         
         self.addTopic.menu = self.topicMenu
         self.addTopic.showsMenuAsPrimaryAction = true
@@ -233,6 +249,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
         self.addReminder.menu = self.reminderMenu
         self.addReminder.showsMenuAsPrimaryAction = true
         self.cancelReminder.addTarget(self, action: #selector(removeReminder), for: .touchUpInside)
+        
         let userInfo = getUser()
         let darkModeOn = userInfo["darkMode"] as! Bool
         if darkModeOn {
@@ -246,6 +263,26 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
             
         }
     }
+    
+    @objc private func didTapAddLocationButton() {
+        // Show add mapVC
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        guard let mapVC = storyboard.instantiateViewController(identifier: "map") as? MapViewController else {
+            return
+        }
+        mapVC.delegate = self
+        
+        navigationController?.pushViewController(mapVC, animated: true)
+    }
+    
+    @objc private func removeLocation() {
+        self.locationName = ""
+        self.locationCoords = nil
+        self.locationField.attributedText = NSMutableAttributedString().gray("Add a Location")
+        self.addLocation.isEnabled = true
+    }
+    
+    
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if status == .authorizedAlways {
             print("Location authorized\n")
@@ -414,6 +451,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
             let madeDate = dateFormatter.string(from: made)
             var notiDate: Date
             var notiOn: Bool
+            
             notiDate = targetDate
             notiOn = false
             if (notificationsOn! && currentReminder != "") {
@@ -446,7 +484,16 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
                     }
                 })
             }
-            DataBaseHelper.shareInstance.saveTask(title: titleText, body: bodyText, date: targetDate, isDone: false, list: currentList!, color: currentTopic!, priority: Int16(currentPriority!), made: madeDate, notiDate: notiDate, notiOn: notiOn)
+            var longitude: Double = 0.0
+            var latitude: Double = 0.0
+            var location_name: String = ""
+            if locationCoords != nil {
+                longitude = locationCoords!.longitude
+                latitude = locationCoords!.latitude
+                location_name = locationName!
+            }
+            
+            DataBaseHelper.shareInstance.saveTask(title: titleText, body: bodyText, date: targetDate, isDone: false, list: currentList!, color: currentTopic!, priority: Int16(currentPriority!), made: madeDate, notiDate: notiDate, notiOn: notiOn, longitude: longitude, latitude: latitude, locationName: location_name)
 
             completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate)
         }

@@ -153,7 +153,7 @@ class DataBaseHelper {
             }
         }
     }
-    func saveDBTask(id: String, email: String, title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16, made: String, notiDate: Date, notiOn: Bool) {
+    func saveDBTask(id: String, email: String, title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16, made: String, notiDate: Date, notiOn: Bool, longitude: Double, latitude: Double, locationName: String) {
         let docData: [String: Any] = [
             "id" : id,
             "email" : email,
@@ -167,7 +167,10 @@ class DataBaseHelper {
             "priority": priority,
             "made": made,
             "notiDate": notiDate,
-            "notiOn": notiOn
+            "notiOn": notiOn,
+            "longitude": longitude,
+            "latitude": latitude,
+            "locationName": locationName
         ]
         
         db.collection("task").document(id).setData(docData) { err in
@@ -178,7 +181,7 @@ class DataBaseHelper {
             }
         }
     }
-    func saveTask(title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16, made: String, notiDate: Date, notiOn: Bool) {
+    func saveTask(title: String, body: String, date: Date, isDone: Bool, list: String, color: String, priority: Int16, made: String, notiDate: Date, notiOn: Bool, longitude: Double, latitude: Double, locationName: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let fetchUser = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
         let managedContext = appDelegate.persistentContainer.viewContext
@@ -211,6 +214,10 @@ class DataBaseHelper {
         instance.made = made
         instance.notiDate = notiDate
         instance.notiOn = notiOn
+        instance.longitude = longitude
+        instance.latitude = latitude
+        instance.locationName = locationName
+        
         do {
             print("Saved.")
             try managedContext.save()
@@ -218,7 +225,7 @@ class DataBaseHelper {
             print("Could not save. \(error), \(error.userInfo)")
         }
         if (email != "Guest"){
-            self.saveDBTask(id: key, email: email,title: title, body: body, date: date, isDone: isDone, list: list, color: color, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
+            self.saveDBTask(id: key, email: email,title: title, body: body, date: date, isDone: isDone, list: list, color: color, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, longitude: longitude, latitude: latitude, locationName: locationName)
         }
     }
     
@@ -407,6 +414,9 @@ class DataBaseHelper {
                         instance.owner = document.get("email")! as? String
                         instance.priority = (document.get("priority")! as? Int16)!
                         instance.made = document.get("made") as? String
+                        instance.longitude = (document.get("longitude")! as? Double)!
+                        instance.latitude = (document.get("latitude")! as? Double)!
+                        instance.locationName = document.get("locationName")! as? String
                         print("id \(instance.id), title\(instance.title), list \(instance.list)")
                         do{
                             try managedContext.save()//print("save to local.")
@@ -1806,7 +1816,7 @@ class DataBaseHelper {
     }
     
     func duplicateTask(task: TaskEntity){
-        self.saveTask(title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!, notiDate: task.notiDate!, notiOn: task.notiOn)
+        self.saveTask(title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!, notiDate: task.notiDate!, notiOn: task.notiOn, longitude: task.longitude, latitude: task.latitude, locationName: task.locationName!)
     }
         
     func checkLocalTask(email:String)->Void{
@@ -1817,7 +1827,7 @@ class DataBaseHelper {
         }
         for task in tasks{
             task.owner = email
-            saveDBTask(id: task.id!, email: task.owner!, title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!, notiDate: task.notiDate!, notiOn: task.notiOn)
+            saveDBTask(id: task.id!, email: task.owner!, title: task.title!, body: task.body!, date: task.date!, isDone: task.isDone, list: task.list!, color: task.color!, priority: task.priority, made: task.made!, notiDate: task.notiDate!, notiOn: task.notiOn, longitude: task.longitude, latitude: task.latitude, locationName: task.locationName!)
         }
     }
     func checkLocalList(email:String)->Void{
@@ -2039,5 +2049,7 @@ class DataBaseHelper {
             print(error)
         }
     }
+    
+    
 
 }

@@ -472,7 +472,7 @@ extension HomeViewController: UITableViewDelegate {
                 destination?.notifications = searchTasks[indexPath.section][indexPath.row].notiOn
                 destination?.notificationDate = searchTasks[indexPath.section][indexPath.row].notiDate
                 tableView.deselectRow(at: indexPath, animated: true)
-                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn in
+                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName in
                     DispatchQueue.main.async {
                         DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
                         self.navigationController?.popViewController(animated: true)
@@ -492,8 +492,11 @@ extension HomeViewController: UITableViewDelegate {
                 destination?.task = taskStore[indexPath.section][indexPath.row]
                 destination?.notifications = taskStore[indexPath.section][indexPath.row].notiOn
                 destination?.notificationDate = taskStore[indexPath.section][indexPath.row].notiDate
+                destination?.longitude = taskStore[indexPath.section][indexPath.row].longitude
+                destination?.latitude = taskStore[indexPath.section][indexPath.row].latitude
+                destination?.locationName = taskStore[indexPath.section][indexPath.row].locationName
                 tableView.deselectRow(at: indexPath, animated: true)
-                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn in
+                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName in
                     DispatchQueue.main.async {
                         DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
                         self.navigationController?.popViewController(animated: true)
