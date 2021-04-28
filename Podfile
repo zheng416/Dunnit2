@@ -14,4 +14,5 @@ target 'Dunnit2' do
   pod 'GoogleSignIn'
   pod 'FBSDKLoginKit'
   pod 'FSCalendar'
+  pod 'FloatingPanel'
 end
