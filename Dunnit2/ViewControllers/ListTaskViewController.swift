@@ -16,6 +16,12 @@ class ListTaskViewController: UIViewController {
     @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet var tableTaskView: UITableView!
     
+    @IBOutlet var searchBar: UISearchBar!
+    
+    var searchTasks = [[TaskEntity](), [TaskEntity]()]
+    
+    var searching = false
+    
     var taskListStore = [[TaskEntity](), [TaskEntity]()]
     
     func getUser() -> [String: Any] {
@@ -137,6 +143,7 @@ class ListTaskViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        searchBar.autocapitalizationType = .none
         self.title = titleList
         getData()
         setupSortMenuItem()
@@ -209,13 +216,47 @@ extension ListTaskViewController: UITableViewDelegate {
         if let indexPath = tableTaskView.indexPathForSelectedRow {
             let destination = segue.destination as? DescriptionViewController
             destination?.task = taskListStore[indexPath.section][indexPath.row]
-            tableTaskView.deselectRow(at: indexPath, animated: true)
-            let id = taskListStore[indexPath.section][indexPath.row].id
-            destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn in
-                DispatchQueue.main.async {
-                    DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
-                    self.navigationController?.popViewController(animated: true)
-                    self.getData()
+            if searching {
+                let id = searchTasks[indexPath.section][indexPath.row].id
+                print("THE ID IS    ")
+                print(id)
+                destination?.titleStr = searchTasks[indexPath.section][indexPath.row].title!
+                destination?.dateVal = searchTasks[indexPath.section][indexPath.row].date!
+                destination?.bodyStr = searchTasks[indexPath.section][indexPath.row].body
+                destination?.topicStr = searchTasks[indexPath.section][indexPath.row].color
+                destination?.priorityVal = Int(searchTasks[indexPath.section][indexPath.row].priority)
+                destination?.madeVal = searchTasks[indexPath.section][indexPath.row].made
+                destination?.task = searchTasks[indexPath.section][indexPath.row]
+                destination?.notifications = searchTasks[indexPath.section][indexPath.row].notiOn
+                destination?.notificationDate = searchTasks[indexPath.section][indexPath.row].notiDate
+                tableTaskView.deselectRow(at: indexPath, animated: true)
+                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn in
+                    DispatchQueue.main.async {
+                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
+                        self.navigationController?.popViewController(animated: true)
+                        self.getData()
+                    }
+                }
+            } else {
+                let id = taskListStore[indexPath.section][indexPath.row].id
+                print("THE ID IS    ")
+                print(id)
+                destination?.titleStr = taskListStore[indexPath.section][indexPath.row].title!
+                destination?.dateVal = taskListStore[indexPath.section][indexPath.row].date!
+                destination?.bodyStr = taskListStore[indexPath.section][indexPath.row].body
+                destination?.topicStr = taskListStore[indexPath.section][indexPath.row].color
+                destination?.priorityVal = Int(taskListStore[indexPath.section][indexPath.row].priority)
+                destination?.madeVal = taskListStore[indexPath.section][indexPath.row].made
+                destination?.task = taskListStore[indexPath.section][indexPath.row]
+                destination?.notifications = taskListStore[indexPath.section][indexPath.row].notiOn
+                destination?.notificationDate = taskListStore[indexPath.section][indexPath.row].notiDate
+                tableTaskView.deselectRow(at: indexPath, animated: true)
+                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn in
+                    DispatchQueue.main.async {
+                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
+                        self.navigationController?.popViewController(animated: true)
+                        self.getData()
+                    }
                 }
             }
         }
@@ -232,7 +273,11 @@ extension ListTaskViewController: UITableViewDataSource {
         return taskListStore.count
     }
     
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if searching {
+            return searchTasks[section].count
+        }
         return taskListStore[section].count
     }
     
@@ -242,106 +287,247 @@ extension ListTaskViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath)
         let viewWithTag = cell.viewWithTag(100)
         viewWithTag?.removeFromSuperview()
-        let date = taskListStore[indexPath.section][indexPath.row].date!
-        let color = taskListStore[indexPath.section][indexPath.row].color
-        let priority = taskListStore[indexPath.section][indexPath.row].priority
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM dd, YYYY HH:mm"
-        cell.textLabel?.attributedText = NSMutableAttributedString()
-            .normal(taskListStore[indexPath.section][indexPath.row].title!)
-        if (priority != 0) {
-            var priorityText = ""
-            if (priority == 1) {
-                priorityText = "!"
-            } else if (priority == 2) {
-                priorityText = "!!"
-            } else {
-                priorityText = "!!!"
-            }
+        if searching {
+            let date = searchTasks[indexPath.section][indexPath.row].date!
+            let color = searchTasks[indexPath.section][indexPath.row].color
+            let priority = searchTasks[indexPath.section][indexPath.row].priority
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMM dd, YYYY HH:mm"
             cell.textLabel?.attributedText = NSMutableAttributedString()
-                .normal(taskListStore[indexPath.section][indexPath.row].title! + "  ( ")
-                .boldAndRed(priorityText)
-                .normal(" )")
-        }
-        cell.textLabel?.sizeToFit()
-        if (date < Date() && indexPath.section != 1) {
-            let dateStr = formatter.string(from: date)
-            let range = (dateStr as NSString).range(of: dateStr)
+                .normal(searchTasks[indexPath.section][indexPath.row].title!)
+            if (priority != 0) {
+                var priorityText = ""
+                if (priority == 1) {
+                    priorityText = "!"
+                } else if (priority == 2) {
+                    priorityText = "!!"
+                } else {
+                    priorityText = "!!!"
+                }
+                cell.textLabel?.attributedText = NSMutableAttributedString()
+                    .normal(searchTasks[indexPath.section][indexPath.row].title! + "  ( ")
+                    .boldAndRed(priorityText)
+                    .normal(" )")
+            }
+            cell.textLabel?.sizeToFit()
+            if (date < Date() && indexPath.section != 1) {
+                let dateStr = formatter.string(from: date)
+                let range = (dateStr as NSString).range(of: dateStr)
 
-            let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
-            mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
-            cell.detailTextLabel?.attributedText = mutableAttributedString
-        } else {
-            let dateStr = formatter.string(from: date)
-            let range = (dateStr as NSString).range(of: dateStr)
-
-            let userInfo = getUser()
-            let darkModeOn = userInfo["darkMode"] as! Bool
-            let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
-            if darkModeOn {
-                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range: range)
+                let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
+                cell.detailTextLabel?.attributedText = mutableAttributedString
             } else {
-                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: range)
+                let dateStr = formatter.string(from: date)
+                let range = (dateStr as NSString).range(of: dateStr)
+
+//                let userInfo = getUser()
+                let userInfo = DataBaseHelper.shareInstance.parsedLocalUser()
+                let darkModeOn = userInfo["darkMode"] as! Bool
+                let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+                if darkModeOn {
+                    mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range: range)
+                } else {
+                    mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: range)
+                }
+                cell.detailTextLabel?.attributedText = mutableAttributedString
             }
-            cell.detailTextLabel?.attributedText = mutableAttributedString
-        }
 //            if !(color!.isEmpty) {
-        if (color != nil && !color!.isEmpty) {
-            let label = UILabel()
-            label.text = " " + color! + " "
-            label.font = UIFont.boldSystemFont(ofSize: 16.0)
-            label.textColor = .white
-            label.sizeToFit()
+            if (color != nil && !color!.isEmpty) {
+                let label = UILabel()
+                label.text = " " + color! + " "
+                label.font = UIFont.boldSystemFont(ofSize: 16.0)
+                label.textColor = .white
+                label.sizeToFit()
 
-            // Add a rectangle view
-            let rectangle = UIView(frame: CGRect(x: (cell.textLabel?.frame.size.width)! + 50, y: (cell.textLabel?.frame.size.height)! - 10, width: label.frame.size.width, height: 20))
+                // Add a rectangle view
+                let rectangle = UIView(frame: CGRect(x: (cell.textLabel?.frame.size.width)! + 50, y: (cell.textLabel?.frame.size.height)! - 10, width: label.frame.size.width, height: 20))
 
-            var background = UIColor.white
-            if (topics["red"] as? String) == color {
-                background = UIColor.systemRed
-            }
-            else if (topics["orange"] as? String) == color {
-                background = UIColor.systemOrange
-            }
-            else if (topics["yellow"] as? String) == color {
-                background = UIColor.systemYellow
-            }
-            else if (topics["green"] as? String) == color {
-                background = UIColor.systemGreen
-            }
-            else if (topics["blue"] as? String) == color {
-                background = UIColor.systemBlue
-            }
-            else if (topics["purple"] as? String) == color {
-                background = UIColor.systemPurple
-            }
-            else if (topics["indigo"] as? String) == color {
-                background = UIColor.systemIndigo
-            }
-            else if (topics["teal"] as? String) == color {
-                background = UIColor.systemTeal
-            }
-            else if (topics["pink"] as? String) == color {
-                background = UIColor.systemPink
-            }
-            else if (topics["black"] as? String) == color {
-                background = UIColor.black
+                var background = UIColor.white
+                if (topics["red"] as? String) == color {
+                    background = UIColor.systemRed
+                }
+                else if (topics["orange"] as? String) == color {
+                    background = UIColor.systemOrange
+                }
+                else if (topics["yellow"] as? String) == color {
+                    background = UIColor.systemYellow
+                }
+                else if (topics["green"] as? String) == color {
+                    background = UIColor.systemGreen
+                }
+                else if (topics["blue"] as? String) == color {
+                    background = UIColor.systemBlue
+                }
+                else if (topics["purple"] as? String) == color {
+                    background = UIColor.systemPurple
+                }
+                else if (topics["indigo"] as? String) == color {
+                    background = UIColor.systemIndigo
+                }
+                else if (topics["teal"] as? String) == color {
+                    background = UIColor.systemTeal
+                }
+                else if (topics["pink"] as? String) == color {
+                    background = UIColor.systemPink
+                }
+                else if (topics["black"] as? String) == color {
+                    background = UIColor.black
+                }
+                
+                rectangle.backgroundColor = background
+                
+                rectangle.layer.cornerRadius = 5
+                
+                rectangle.tag = 100
+                
+                if rectangle.backgroundColor != UIColor.white {
+                
+                    // Add the label to your rectangle
+                    rectangle.addSubview(label)
+
+                    // Add the rectangle to your cell
+                    cell.addSubview(rectangle)
+                }
             }
             
-            rectangle.backgroundColor = background
-            
-            rectangle.layer.cornerRadius = 5
-            
-            rectangle.tag = 100
-            if rectangle.backgroundColor != UIColor.white {
-                // Add the label to your rectangle
-                rectangle.addSubview(label)
+        }
+        else {
+            let date = taskListStore[indexPath.section][indexPath.row].date!
+            let color = taskListStore[indexPath.section][indexPath.row].color
+            let priority = taskListStore[indexPath.section][indexPath.row].priority
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMM dd, YYYY HH:mm"
+            cell.textLabel?.attributedText = NSMutableAttributedString()
+                .normal(taskListStore[indexPath.section][indexPath.row].title!)
+            if (priority != 0) {
+                var priorityText = ""
+                if (priority == 1) {
+                    priorityText = "!"
+                } else if (priority == 2) {
+                    priorityText = "!!"
+                } else {
+                    priorityText = "!!!"
+                }
+                cell.textLabel?.attributedText = NSMutableAttributedString()
+                    .normal(taskListStore[indexPath.section][indexPath.row].title! + "  ( ")
+                    .boldAndRed(priorityText)
+                    .normal(" )")
+            }
+            cell.textLabel?.sizeToFit()
+            if (date < Date() && indexPath.section != 1) {
+                let dateStr = formatter.string(from: date)
+                let range = (dateStr as NSString).range(of: dateStr)
 
-                // Add the rectangle to your cell
-                cell.addSubview(rectangle)
+                let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
+                cell.detailTextLabel?.attributedText = mutableAttributedString
+            } else {
+                let dateStr = formatter.string(from: date)
+                let range = (dateStr as NSString).range(of: dateStr)
+                
+//                let userInfo = getUser()
+                let userInfo = DataBaseHelper.shareInstance.parsedLocalUser()
+                let darkModeOn = userInfo["darkMode"] as! Bool
+                let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+                if darkModeOn {
+                    mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range: range)
+                } else {
+                    mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: range)
+                }
+                cell.detailTextLabel?.attributedText = mutableAttributedString
+            }
+//            if !(color!.isEmpty) {
+            if (color != nil && !color!.isEmpty) {
+                let label = UILabel()
+                label.text = " " + color! + " "
+                label.font = UIFont.boldSystemFont(ofSize: 16.0)
+                label.textColor = .white
+                label.sizeToFit()
+
+                // Add a rectangle view
+                let rectangle = UIView(frame: CGRect(x: (cell.textLabel?.frame.size.width)! + 50, y: (cell.textLabel?.frame.size.height)! - 10, width: label.frame.size.width, height: 20))
+
+                var background = UIColor.white
+                if (topics["red"] as? String) == color {
+                    background = UIColor.systemRed
+                }
+                else if (topics["orange"] as? String) == color {
+                    background = UIColor.systemOrange
+                }
+                else if (topics["yellow"] as? String) == color {
+                    background = UIColor.systemYellow
+                }
+                else if (topics["green"] as? String) == color {
+                    background = UIColor.systemGreen
+                }
+                else if (topics["blue"] as? String) == color {
+                    background = UIColor.systemBlue
+                }
+                else if (topics["purple"] as? String) == color {
+                    background = UIColor.systemPurple
+                }
+                else if (topics["indigo"] as? String) == color {
+                    background = UIColor.systemIndigo
+                }
+                else if (topics["teal"] as? String) == color {
+                    background = UIColor.systemTeal
+                }
+                else if (topics["pink"] as? String) == color {
+                    background = UIColor.systemPink
+                }
+                else if (topics["black"] as? String) == color {
+                    background = UIColor.black
+                }
+                
+                rectangle.backgroundColor = background
+                
+                rectangle.layer.cornerRadius = 5
+                
+                rectangle.tag = 100
+                
+                if rectangle.backgroundColor != UIColor.white {
+
+                    // Add the label to your rectangle
+                    rectangle.addSubview(label)
+
+                    // Add the rectangle to your cell
+                    cell.addSubview(rectangle)
+                }
             }
         }
         return cell
+    }
+}
+
+extension ListTaskViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        var searchingTasks = [[TaskEntity](), [TaskEntity]()]
+        if (taskListStore[0].count >= 1) {
+            for i in 0...taskListStore[0].count - 1 {
+                if ((taskListStore[0][i].title!.lowercased().hasPrefix(searchText.lowercased())) || (taskListStore[0][i].color!.lowercased().hasPrefix(searchText.lowercased()))) {
+                    searchingTasks[0].append(taskListStore[0][i])
+                }
+            }
+        }
+        
+        if (taskListStore[1].count >= 1) {
+            for i in 0...taskListStore[1].count - 1 {
+                if ((taskListStore[1][i].title!.lowercased().hasPrefix(searchText.lowercased())) || (taskListStore[1][i].color!.lowercased().hasPrefix(searchText.lowercased()))) {
+                    searchingTasks[1].append(taskListStore[1][i])
+                }
+            }
+        }
+        searchTasks = searchingTasks
+        print("SEARCHING...")
+        print(searchText)
+        if !searchText.isEmpty {
+            searching = true
+        }
+        else {
+            searching = false
+        }
+        self.getData()
     }
 }
 
