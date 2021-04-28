@@ -474,10 +474,14 @@ extension HomeViewController: UITableViewDelegate {
                 destination?.task = searchTasks[indexPath.section][indexPath.row]
                 destination?.notifications = searchTasks[indexPath.section][indexPath.row].notiOn
                 destination?.notificationDate = searchTasks[indexPath.section][indexPath.row].notiDate
+                destination?.longitude = searchTasks[indexPath.section][indexPath.row].longitude
+                destination?.latitude = searchTasks[indexPath.section][indexPath.row].latitude
+                destination?.locationName = searchTasks[indexPath.section][indexPath.row].locationName
+                
                 tableView.deselectRow(at: indexPath, animated: true)
                 destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName in
                     DispatchQueue.main.async {
-                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
+                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, longitude: longitude, latitude: latitude, locationName: locationName)
                         self.navigationController?.popViewController(animated: true)
                         self.getData()
                     }
@@ -498,10 +502,14 @@ extension HomeViewController: UITableViewDelegate {
                 destination?.longitude = taskStore[indexPath.section][indexPath.row].longitude
                 destination?.latitude = taskStore[indexPath.section][indexPath.row].latitude
                 destination?.locationName = taskStore[indexPath.section][indexPath.row].locationName
+                destination?.longitude = taskStore[indexPath.section][indexPath.row].longitude
+                destination?.latitude = taskStore[indexPath.section][indexPath.row].latitude
+                destination?.locationName = taskStore[indexPath.section][indexPath.row].locationName
+                
                 tableView.deselectRow(at: indexPath, animated: true)
                 destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName in
                     DispatchQueue.main.async {
-                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
+                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, longitude: longitude, latitude: latitude, locationName: locationName)
                         self.navigationController?.popViewController(animated: true)
                         self.getData()
                     }
