@@ -58,6 +58,17 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Location" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hff-Lj-UJc">
+                                <rect key="frame" x="20" y="410" width="342" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="LER-we-Gwp">
+                                <rect key="frame" x="16" y="439" width="346" height="159"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </mapView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="q9A-s3-K3N"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -66,6 +77,8 @@
                     <connections>
                         <outlet property="bodyField" destination="esv-t1-lGO" id="ozi-nj-Py1"/>
                         <outlet property="dateField" destination="NV1-gI-vQ1" id="z8N-qK-Usp"/>
+                        <outlet property="locationField" destination="Hff-Lj-UJc" id="SWb-FJ-JQD"/>
+                        <outlet property="mapField" destination="LER-we-Gwp" id="whh-sv-cAY"/>
                         <outlet property="priorityField" destination="Zax-RA-qAG" id="l5Q-SN-gP4"/>
                         <outlet property="titleField" destination="HEf-eL-XZc" id="DMm-t6-5uS"/>
                         <outlet property="topicField" destination="RAJ-oN-vtW" id="XM4-s7-v7R"/>

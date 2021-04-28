@@ -7,6 +7,7 @@
 
 import UIKit
 import UserNotifications
+import MapKit
 
 class DescriptionViewController: UIViewController {
 
@@ -31,15 +32,14 @@ class DescriptionViewController: UIViewController {
     var latitude: Double?
     var locationName: String?
     
+    // Button outlets
     @IBOutlet var titleField: UILabel!
-    
     @IBOutlet var dateField: UILabel!
-    
     @IBOutlet var bodyField: UILabel!
-    
     @IBOutlet var topicField: UILabel!
-    
     @IBOutlet var priorityField: UILabel!
+    @IBOutlet var locationField: UILabel!
+    @IBOutlet var mapField: MKMapView!
     
     public var completion: ((String, String, Date, String, Int16, String, Date, Bool, Double, Double, String) -> Void)?
     
@@ -81,6 +81,9 @@ class DescriptionViewController: UIViewController {
         topicStr = task?.color
         priorityVal = Int(task!.priority)
         madeVal = task?.made
+        locationName = task?.locationName
+        longitude = task?.longitude
+        latitude = task?.latitude
         
         titleField.attributedText =  NSMutableAttributedString().boldTitle(titleStr!)
         let formatter = DateFormatter()
@@ -102,6 +105,22 @@ class DescriptionViewController: UIViewController {
         } else {
             priorityField.attributedText =  NSMutableAttributedString().bodyNormal("Priority: High")
         }
+        
+        // Location field display
+        if (locationName != nil) {
+            locationField.attributedText = NSMutableAttributedString().bodyNormal(locationName!)
+            
+            // Put pin and center map
+            mapField.removeAnnotations(mapField.annotations)
+            
+            let pin = MKPointAnnotation()
+            let coordinates = CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!)
+            pin.coordinate = coordinates
+            
+            mapField.addAnnotation(pin)
+            mapField.setRegion(MKCoordinateRegion(center: coordinates, span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)), animated: false)
+        }
+        
         // Do any additional setup after loading the view.
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(didTapEditButton))
         let userInfo = getUser()
