@@ -19,11 +19,19 @@ class ViewController: UIViewController /*, LoginButtonDelegate*/ {
     
     @IBOutlet weak var guestButton: UIButton!
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        
         overrideUserInterfaceStyle = .light
+        
+        let backgroundImage = UIImage.init(named: "background_2")
+        let backgroundImageView = UIImageView.init(frame: self.view.frame)
+        backgroundImageView.image = backgroundImage
+        backgroundImageView.contentMode = .scaleAspectFill
+        backgroundImageView.alpha = 0.69
+        
+        self.view.insertSubview(backgroundImageView, at: 0)
         
         setUpElements()
     }
