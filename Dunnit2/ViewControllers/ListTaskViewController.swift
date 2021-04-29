@@ -230,9 +230,9 @@ extension ListTaskViewController: UITableViewDelegate {
                 destination?.notifications = searchTasks[indexPath.section][indexPath.row].notiOn
                 destination?.notificationDate = searchTasks[indexPath.section][indexPath.row].notiDate
                 tableTaskView.deselectRow(at: indexPath, animated: true)
-                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName in
+                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName, recurring in
                     DispatchQueue.main.async {
-                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, longitude: longitude, latitude: latitude, locationName: locationName)
+                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, recurring: recurring, longitude: longitude, latitude: latitude, locationName: locationName)
                         self.navigationController?.popViewController(animated: true)
                         self.getData()
                     }
@@ -251,9 +251,9 @@ extension ListTaskViewController: UITableViewDelegate {
                 destination?.notifications = taskListStore[indexPath.section][indexPath.row].notiOn
                 destination?.notificationDate = taskListStore[indexPath.section][indexPath.row].notiDate
                 tableTaskView.deselectRow(at: indexPath, animated: true)
-                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName in
+                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName, recurring in
                     DispatchQueue.main.async {
-                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, longitude: longitude, latitude: latitude, locationName: locationName)
+                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, recurring: recurring, longitude: longitude, latitude: latitude, locationName: locationName)
                         self.navigationController?.popViewController(animated: true)
                         self.getData()
                     }
@@ -310,12 +310,20 @@ extension ListTaskViewController: UITableViewDataSource {
                     .normal(" )")
             }
             cell.textLabel?.sizeToFit()
+            let diff = Calendar.current.dateComponents([.day], from: Date(), to: date)
             if (date < Date() && indexPath.section != 1) {
                 let dateStr = formatter.string(from: date)
                 let range = (dateStr as NSString).range(of: dateStr)
 
                 let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
                 mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
+                cell.detailTextLabel?.attributedText = mutableAttributedString
+            } else if (diff.day == 0 && indexPath.section != 1) {
+                let dateStr = formatter.string(from: date)
+                let range = (dateStr as NSString).range(of: dateStr)
+
+                let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.green, range: range)
                 cell.detailTextLabel?.attributedText = mutableAttributedString
             } else {
                 let dateStr = formatter.string(from: date)
@@ -415,12 +423,20 @@ extension ListTaskViewController: UITableViewDataSource {
                     .normal(" )")
             }
             cell.textLabel?.sizeToFit()
+            let diff = Calendar.current.dateComponents([.day], from: Date(), to: date)
             if (date < Date() && indexPath.section != 1) {
                 let dateStr = formatter.string(from: date)
                 let range = (dateStr as NSString).range(of: dateStr)
 
                 let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
                 mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
+                cell.detailTextLabel?.attributedText = mutableAttributedString
+            } else if (diff.day == 0 && indexPath.section != 1) {
+                let dateStr = formatter.string(from: date)
+                let range = (dateStr as NSString).range(of: dateStr)
+
+                let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.green, range: range)
                 cell.detailTextLabel?.attributedText = mutableAttributedString
             } else {
                 let dateStr = formatter.string(from: date)
@@ -549,7 +565,7 @@ extension ListTaskViewController {
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .normal, title: nil) { (action, sourceView, completionHandler) in
             let row = self.taskListStore[indexPath.section][indexPath.row]
-            
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [String(row.made!)])
             DataBaseHelper.shareInstance.deleteTask(id: row.id!)
             
             self.getData()
