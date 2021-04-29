@@ -539,7 +539,7 @@ class DataBaseHelper {
             if locationName != nil {foundTasks.first?.locationName = locationName!}
             
             print("RECUR: \(recurring) and isDone: \(isDone)")
-            if recurring == "daily" && isDone == true {
+            if recurring == "Daily" && isDone == true {
                 newDate = Calendar.current.date(byAdding: .day, value: 1, to: (foundTasks.first?.date)!)
                 newNotiDate = Calendar.current.date(byAdding: .day, value: 1, to: (foundTasks.first?.notiDate)!)
                 foundTasks.first?.date = newDate
@@ -549,9 +549,19 @@ class DataBaseHelper {
                 print("Updated local recurring daily task. \(color)")
 
                 updateDBTask(id: id, body: body, color: color, date: newDate, isDone: false, list: list, owner: owner, title: title, priority: priority, made: made, notiDate: newNotiDate, notiOn: notiOn, recurring: recurring, longitude: longitude, latitude: latitude, locationName: locationName)
-            } else if recurring == "weekly" && isDone == true {
+            } else if recurring == "Weekly" && isDone == true {
                 newDate = Calendar.current.date(byAdding: .day, value: 7, to: (foundTasks.first?.date)!)
                 newNotiDate = Calendar.current.date(byAdding: .day, value: 7, to: (foundTasks.first?.notiDate)!)
+                foundTasks.first?.date = newDate
+                foundTasks.first?.notiDate = newNotiDate
+                foundTasks.first?.isDone = false
+                try managedContext.save()
+                print("Updated local recurring weekly task. \(color)")
+
+                updateDBTask(id: id, body: body, color: color, date: newDate, isDone: false, list: list, owner: owner, title: title, priority: priority, made: made, notiDate: newNotiDate, notiOn: notiOn, recurring: recurring, longitude: longitude, latitude: latitude, locationName: locationName)
+            } else if recurring == "Monthly" && isDone == true {
+                newDate = Calendar.current.date(byAdding: .month, value: 1, to: (foundTasks.first?.date)!)
+                newNotiDate = Calendar.current.date(byAdding: .month, value: 1, to: (foundTasks.first?.notiDate)!)
                 foundTasks.first?.date = newDate
                 foundTasks.first?.notiDate = newNotiDate
                 foundTasks.first?.isDone = false
