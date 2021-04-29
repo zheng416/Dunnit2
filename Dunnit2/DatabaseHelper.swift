@@ -292,7 +292,7 @@ class DataBaseHelper {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskEntity")
         if (key != nil){
             print("Sort by \(key)")
-            let sort = NSSortDescriptor(key: key, ascending: ascending ?? true)
+            let sort = NSSortDescriptor(key: key, ascending: ascending ?? true, selector: #selector(NSString.localizedCaseInsensitiveCompare))
             fetchRequest.sortDescriptors = [sort]
         }
 
@@ -1033,7 +1033,7 @@ class DataBaseHelper {
         let managedContext = appDelegate.persistentContainer.viewContext
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ListEntity")
-        let sort = NSSortDescriptor(key: "title", ascending: true)
+        let sort = NSSortDescriptor(key: "title", ascending: true,selector: #selector(NSString.localizedCaseInsensitiveCompare))
         fetchRequest.sortDescriptors = [sort]
         
         do {
