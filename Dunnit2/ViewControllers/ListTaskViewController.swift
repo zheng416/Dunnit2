@@ -310,12 +310,20 @@ extension ListTaskViewController: UITableViewDataSource {
                     .normal(" )")
             }
             cell.textLabel?.sizeToFit()
+            let diff = Calendar.current.dateComponents([.day], from: Date(), to: date)
             if (date < Date() && indexPath.section != 1) {
                 let dateStr = formatter.string(from: date)
                 let range = (dateStr as NSString).range(of: dateStr)
 
                 let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
                 mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
+                cell.detailTextLabel?.attributedText = mutableAttributedString
+            } else if (diff.day == 0 && indexPath.section != 1) {
+                let dateStr = formatter.string(from: date)
+                let range = (dateStr as NSString).range(of: dateStr)
+
+                let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.green, range: range)
                 cell.detailTextLabel?.attributedText = mutableAttributedString
             } else {
                 let dateStr = formatter.string(from: date)
@@ -415,12 +423,20 @@ extension ListTaskViewController: UITableViewDataSource {
                     .normal(" )")
             }
             cell.textLabel?.sizeToFit()
+            let diff = Calendar.current.dateComponents([.day], from: Date(), to: date)
             if (date < Date() && indexPath.section != 1) {
                 let dateStr = formatter.string(from: date)
                 let range = (dateStr as NSString).range(of: dateStr)
 
                 let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
                 mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
+                cell.detailTextLabel?.attributedText = mutableAttributedString
+            } else if (diff.day == 0 && indexPath.section != 1) {
+                let dateStr = formatter.string(from: date)
+                let range = (dateStr as NSString).range(of: dateStr)
+
+                let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.green, range: range)
                 cell.detailTextLabel?.attributedText = mutableAttributedString
             } else {
                 let dateStr = formatter.string(from: date)
@@ -549,7 +565,7 @@ extension ListTaskViewController {
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .normal, title: nil) { (action, sourceView, completionHandler) in
             let row = self.taskListStore[indexPath.section][indexPath.row]
-            
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [String(row.made!)])
             DataBaseHelper.shareInstance.deleteTask(id: row.id!)
             
             self.getData()

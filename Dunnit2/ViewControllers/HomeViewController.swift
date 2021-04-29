@@ -567,12 +567,20 @@ extension HomeViewController: UITableViewDataSource {
                     .normal(" )")
             }
             cell.textLabel?.sizeToFit()
+            let diff = Calendar.current.dateComponents([.day], from: Date(), to: date)
             if (date < Date() && indexPath.section != 1) {
                 let dateStr = formatter.string(from: date)
                 let range = (dateStr as NSString).range(of: dateStr)
 
                 let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
                 mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
+                cell.detailTextLabel?.attributedText = mutableAttributedString
+            } else if (diff.day == 0 && indexPath.section != 1) {
+                let dateStr = formatter.string(from: date)
+                let range = (dateStr as NSString).range(of: dateStr)
+
+                let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.green, range: range)
                 cell.detailTextLabel?.attributedText = mutableAttributedString
             } else {
                 let dateStr = formatter.string(from: date)
@@ -672,12 +680,20 @@ extension HomeViewController: UITableViewDataSource {
                     .normal(" )")
             }
             cell.textLabel?.sizeToFit()
+            let diff = Calendar.current.dateComponents([.day], from: Date(), to: date)
             if (date < Date() && indexPath.section != 1) {
                 let dateStr = formatter.string(from: date)
                 let range = (dateStr as NSString).range(of: dateStr)
 
                 let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
                 mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
+                cell.detailTextLabel?.attributedText = mutableAttributedString
+            } else if (diff.day == 0 && indexPath.section != 1) {
+                let dateStr = formatter.string(from: date)
+                let range = (dateStr as NSString).range(of: dateStr)
+
+                let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.green, range: range)
                 cell.detailTextLabel?.attributedText = mutableAttributedString
             } else {
                 let dateStr = formatter.string(from: date)
