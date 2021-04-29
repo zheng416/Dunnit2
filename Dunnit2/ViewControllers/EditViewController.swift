@@ -203,7 +203,7 @@ class EditViewController: UIViewController, UITextFieldDelegate, MapViewControll
         setupRecurringMenuItem()
         self.currentRecurring = "Never"
         if recurring == "Never" {
-            self.topicField.attributedText = NSMutableAttributedString().gray("Never Repeat")
+            self.recurringField.attributedText = NSMutableAttributedString().gray("Never Repeat")
         } else {
             self.currentRecurring = recurring
             self.recurringField.attributedText = NSMutableAttributedString().normal(recurring!)

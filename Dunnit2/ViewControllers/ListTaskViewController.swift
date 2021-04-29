@@ -322,7 +322,7 @@ extension ListTaskViewController: UITableViewDataSource {
                 let range = (dateStr as NSString).range(of: dateStr)
 
                 let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
-                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.green, range: range)
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.systemGreen, range: range)
                 cell.detailTextLabel?.attributedText = mutableAttributedString
             } else {
                 let dateStr = formatter.string(from: date)
@@ -434,7 +434,7 @@ extension ListTaskViewController: UITableViewDataSource {
                 let range = (dateStr as NSString).range(of: dateStr)
 
                 let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
-                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.green, range: range)
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.systemGreen, range: range)
                 cell.detailTextLabel?.attributedText = mutableAttributedString
             } else {
                 let dateStr = formatter.string(from: date)

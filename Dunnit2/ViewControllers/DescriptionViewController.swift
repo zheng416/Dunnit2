@@ -181,7 +181,7 @@ class DescriptionViewController: UIViewController {
                 self.longitude = longitude
                 self.latitude = latitude
                 self.locationName = locationName
-                
+                self.recurring = recurring
                 /*DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false)*/
                 if (priority == 0) {
                     self.priorityField.attributedText =  NSMutableAttributedString().bodyNormal("")
