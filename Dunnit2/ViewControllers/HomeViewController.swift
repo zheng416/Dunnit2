@@ -477,11 +477,12 @@ extension HomeViewController: UITableViewDelegate {
                 destination?.longitude = searchTasks[indexPath.section][indexPath.row].longitude
                 destination?.latitude = searchTasks[indexPath.section][indexPath.row].latitude
                 destination?.locationName = searchTasks[indexPath.section][indexPath.row].locationName
+                destination?.recurring = searchTasks[indexPath.section][indexPath.row].recurring
                 
                 tableView.deselectRow(at: indexPath, animated: true)
-                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName in
+                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName, recurring in
                     DispatchQueue.main.async {
-                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, longitude: longitude, latitude: latitude, locationName: locationName)
+                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, recurring: recurring, longitude: longitude, latitude: latitude, locationName: locationName)
                         self.navigationController?.popViewController(animated: true)
                         self.getData()
                     }
@@ -505,11 +506,12 @@ extension HomeViewController: UITableViewDelegate {
                 destination?.longitude = taskStore[indexPath.section][indexPath.row].longitude
                 destination?.latitude = taskStore[indexPath.section][indexPath.row].latitude
                 destination?.locationName = taskStore[indexPath.section][indexPath.row].locationName
+                destination?.recurring = taskStore[indexPath.section][indexPath.row].recurring
                 
                 tableView.deselectRow(at: indexPath, animated: true)
-                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName in
+                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName, recurring in
                     DispatchQueue.main.async {
-                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, longitude: longitude, latitude: latitude, locationName: locationName)
+                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, recurring: recurring, longitude: longitude, latitude: latitude, locationName: locationName)
                         self.navigationController?.popViewController(animated: true)
                         self.getData()
                     }
@@ -808,7 +810,8 @@ extension HomeViewController {
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .normal, title: nil) { (action, sourceView, completionHandler) in
             let row = self.taskStore[indexPath.section][indexPath.row]
-            
+            // Delete the notification
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [String(row.made!)])
             DataBaseHelper.shareInstance.deleteTask(id: row.id!)
             
             self.getData()

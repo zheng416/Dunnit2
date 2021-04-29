@@ -21,6 +21,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
     var notificationsOn: Bool?
     var list: ListEntity?
     var locationManager: CLLocationManager?
+    var currentRecurring: String?
     
     var countTopics: Int?
     var countLists: Int?
@@ -28,6 +29,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
     @IBOutlet var titlefield: UITextField!
     @IBOutlet var bodyField: UITextField!
     @IBOutlet var datePicker: UIDatePicker!
+    @IBOutlet var recurringField: UILabel!
     
     // Premium Features
     @IBOutlet var topicField: UILabel!
@@ -40,10 +42,14 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
     @IBOutlet var cancelPriority: UIButton!
     @IBOutlet var addList: UIButton!
     @IBOutlet var cancelList: UIButton!
+    @IBOutlet var addRecurring: UIButton!
+    @IBOutlet var cancelRecurring: UIButton!
     
     @IBOutlet weak var editLocationButton: UIButton!
     //    @IBOutlet weak var mapTitle: UILabel!
 //    @IBOutlet weak var mapSearchField: UITextField!
+    
+    var recurringMenu: UIMenu?
     
     var topicMenu: UIMenu?
     var priorityMenu: UIMenu?
@@ -177,7 +183,18 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
         let modifiedDate = Calendar.current.date(byAdding: .day, value: 1, to: date)!
         datePicker.date = modifiedDate
         // Do any additional setup after loading the view.
-      
+        
+        self.currentRecurring = "Never"
+        self.recurringField.attributedText = NSMutableAttributedString().gray("Never Repeat")
+        self.cancelRecurring.tintColor = UIColor.gray
+        
+        setupRecurringMenuItem()
+        
+        self.addRecurring.menu = self.recurringMenu
+        self.addRecurring.showsMenuAsPrimaryAction = true
+        
+        self.cancelRecurring.addTarget(self, action: #selector(removeRecurring), for: .touchUpInside)
+        
         let guest = (user["email"] as! String == "Guest")
         
         if (guest) {
@@ -289,6 +306,26 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
         }
     }
     
+    private func setupRecurringMenuItem() {
+        self.recurringMenu = UIMenu(title: "", children: [
+            UIAction(title: "Daily") {action in
+                self.currentRecurring = "Daily"
+                self.recurringField.attributedText = NSMutableAttributedString().normal("Daily")
+                self.addRecurring.isEnabled = false
+            },
+            UIAction(title: "Weekly") {action in
+                self.currentRecurring = "Weekly"
+                self.recurringField.attributedText = NSMutableAttributedString().normal("Weekly")
+                self.addRecurring.isEnabled = false
+            },
+            UIAction(title: "Monthly") {action in
+                self.currentRecurring = "Monthly"
+                self.recurringField.attributedText = NSMutableAttributedString().normal("Monthly")
+                self.addRecurring.isEnabled = false
+            }
+        ])
+    }
+    
     private func setupTopicMenu() {
         let topics = getTopics()
         var topicsData = [String]()
@@ -395,6 +432,12 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
         ])
     }
     
+    @objc private func removeRecurring() {
+        self.currentRecurring = "Never"
+        self.recurringField.attributedText = NSMutableAttributedString().gray("Never Repeat")
+        self.addRecurring.isEnabled = true
+    }
+    
     @objc private func removeTopic() {
         self.currentTopic = ""
         self.topicField.attributedText = NSMutableAttributedString().gray("Add a Topic")
@@ -476,7 +519,14 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
                 content.title = currentReminder! + ": " + titleText
                 content.sound = .default
                 content.body = bodyText
-                let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminderDate), repeats: false)
+                var trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminderDate), repeats: false)
+                if currentRecurring == "Daily" {
+                    trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.hour, .minute, .second], from: reminderDate), repeats: true)
+                } else if currentRecurring == "Weekly" {
+                    trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.hour, .minute, .second, .weekday], from: reminderDate), repeats: true)
+                } else if currentRecurring == "Monthly" {
+                    trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.day, .hour, .minute, .second], from: reminderDate), repeats: true)
+                }
                 let request = UNNotificationRequest(identifier: madeDate, content: content, trigger: trigger)
                 UNUserNotificationCenter.current().add(request, withCompletionHandler: {error in
                     if error != nil {
@@ -492,8 +542,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
                 latitude = locationCoords!.latitude
                 location_name = locationName!
             }
-            let recurring = "weekly"            
-            DataBaseHelper.shareInstance.saveTask(title: titleText, body: bodyText, date: targetDate, isDone: false, list: currentList!, color: currentTopic!, priority: Int16(currentPriority!), made: madeDate, notiDate: notiDate, notiOn: notiOn, recurring: recurring, longitude: longitude, latitude: latitude, locationName: location_name)
+            DataBaseHelper.shareInstance.saveTask(title: titleText, body: bodyText, date: targetDate, isDone: false, list: currentList!, color: currentTopic!, priority: Int16(currentPriority!), made: madeDate, notiDate: notiDate, notiOn: notiOn, recurring: currentRecurring!, longitude: longitude, latitude: latitude, locationName: location_name)
              
             completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate)
         }

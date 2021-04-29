@@ -230,9 +230,9 @@ extension ListTaskViewController: UITableViewDelegate {
                 destination?.notifications = searchTasks[indexPath.section][indexPath.row].notiOn
                 destination?.notificationDate = searchTasks[indexPath.section][indexPath.row].notiDate
                 tableTaskView.deselectRow(at: indexPath, animated: true)
-                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName in
+                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName, recurring in
                     DispatchQueue.main.async {
-                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, longitude: longitude, latitude: latitude, locationName: locationName)
+                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, recurring: recurring, longitude: longitude, latitude: latitude, locationName: locationName)
                         self.navigationController?.popViewController(animated: true)
                         self.getData()
                     }
@@ -251,9 +251,9 @@ extension ListTaskViewController: UITableViewDelegate {
                 destination?.notifications = taskListStore[indexPath.section][indexPath.row].notiOn
                 destination?.notificationDate = taskListStore[indexPath.section][indexPath.row].notiDate
                 tableTaskView.deselectRow(at: indexPath, animated: true)
-                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName in
+                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName, recurring in
                     DispatchQueue.main.async {
-                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, longitude: longitude, latitude: latitude, locationName: locationName)
+                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, recurring: recurring, longitude: longitude, latitude: latitude, locationName: locationName)
                         self.navigationController?.popViewController(animated: true)
                         self.getData()
                     }

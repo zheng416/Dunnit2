@@ -20,11 +20,14 @@ class EditViewController: UIViewController, UITextFieldDelegate, MapViewControll
     var notificationDate: Date?
     var task:TaskEntity?
     
+    var recurring: String?
+    
     var currentTopic: String?
     var currentPriority: Int?
     var currentList: String?
     var listString: String?
     var currentReminder: String?
+    var currentRecurring: String?
     
     var countTopics: Int?
     var countLists: Int?
@@ -41,6 +44,7 @@ class EditViewController: UIViewController, UITextFieldDelegate, MapViewControll
     @IBOutlet var topicField: UILabel!
     @IBOutlet var priorityField: UILabel!
     @IBOutlet var listField: UILabel!
+    @IBOutlet var recurringField: UILabel!
     
     @IBOutlet var addTopic: UIButton!
     @IBOutlet var cancelTopic: UIButton!
@@ -48,10 +52,13 @@ class EditViewController: UIViewController, UITextFieldDelegate, MapViewControll
     @IBOutlet var cancelPriority: UIButton!
     @IBOutlet var addList: UIButton!
     @IBOutlet var cancelList: UIButton!
+    @IBOutlet var addRecurring: UIButton!
+    @IBOutlet var cancelRecurring: UIButton!
     
     var topicMenu: UIMenu?
     var priorityMenu: UIMenu?
     var listMenu: UIMenu?
+    var recurringMenu: UIMenu?
     
     @IBOutlet weak var notificationToggle: UISwitch!
     @IBOutlet var notificationLabel: UILabel!
@@ -69,7 +76,7 @@ class EditViewController: UIViewController, UITextFieldDelegate, MapViewControll
     var reminderMenu: UIMenu?
     
   
-    public var completion: ((String, String, Date, String, Int16, String, Date, Bool, Double, Double, String) -> Void)?
+    public var completion: ((String, String, Date, String, Int16, String, Date, Bool, Double, Double, String, String) -> Void)?
     
     func getUser() -> [String: Any] {
         var user = DataBaseHelper.shareInstance.fetchLocalUser()
@@ -192,6 +199,22 @@ class EditViewController: UIViewController, UITextFieldDelegate, MapViewControll
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(didTapSaveButton))
 
         // Do any additional setup after loading the view.
+        self.cancelRecurring.tintColor = UIColor.gray
+        setupRecurringMenuItem()
+        self.currentRecurring = "Never"
+        if recurring == "Never" {
+            self.topicField.attributedText = NSMutableAttributedString().gray("Never Repeat")
+        } else {
+            self.currentRecurring = recurring
+            self.recurringField.attributedText = NSMutableAttributedString().normal(recurring!)
+            self.addRecurring.isEnabled = false
+        }
+        
+        self.addRecurring.menu = self.recurringMenu
+        self.addRecurring.showsMenuAsPrimaryAction = true
+        
+        self.cancelRecurring.addTarget(self, action: #selector(removeRecurring), for: .touchUpInside)
+        
         self.cancelTopic.tintColor = UIColor.gray
         self.cancelPriority.tintColor = UIColor.gray
         self.cancelList.tintColor = UIColor.gray
@@ -322,6 +345,26 @@ class EditViewController: UIViewController, UITextFieldDelegate, MapViewControll
         self.topicMenu = UIMenu(title: "", children: topicsChildren)
     }
     
+    private func setupRecurringMenuItem() {
+        self.recurringMenu = UIMenu(title: "", children: [
+            UIAction(title: "Daily") {action in
+                self.currentRecurring = "Daily"
+                self.recurringField.attributedText = NSMutableAttributedString().normal("Daily")
+                self.addRecurring.isEnabled = false
+            },
+            UIAction(title: "Weekly") {action in
+                self.currentRecurring = "Weekly"
+                self.recurringField.attributedText = NSMutableAttributedString().normal("Weekly")
+                self.addRecurring.isEnabled = false
+            },
+            UIAction(title: "Monthly") {action in
+                self.currentRecurring = "Monthly"
+                self.recurringField.attributedText = NSMutableAttributedString().normal("Monthly")
+                self.addRecurring.isEnabled = false
+            }
+        ])
+    }
+    
     private func setupPriorityMenuItem() {
         self.priorityMenu = UIMenu(title: "", children: [
             UIAction(title: "Low Priority") {action in
@@ -403,6 +446,11 @@ class EditViewController: UIViewController, UITextFieldDelegate, MapViewControll
         ])
     }
     
+    @objc private func removeRecurring() {
+        self.currentRecurring = "Never"
+        self.recurringField.attributedText = NSMutableAttributedString().gray("Never Repeat")
+        self.addRecurring.isEnabled = true
+    }
     
     @objc private func didTapAddLocationButton() {
         // Show add mapVC
@@ -523,7 +571,7 @@ class EditViewController: UIViewController, UITextFieldDelegate, MapViewControll
             }
              
             // NEED TO modify for recurring change
-            completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate, notiDate, notiOn, new_longitude, new_latitude, location_name)
+            completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate, notiDate, notiOn, new_longitude, new_latitude, location_name, currentRecurring!)
             print("Saved")
         }
         if currentList != task!.list {
