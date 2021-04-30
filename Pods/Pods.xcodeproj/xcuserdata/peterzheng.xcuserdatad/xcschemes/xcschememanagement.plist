@@ -32,6 +32,11 @@
 			<key>orderHint</key>
 			<integer>4</integer>
 		</dict>
+		<key>FSCalendar.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>27</integer>
+		</dict>
 		<key>Firebase.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -87,6 +92,11 @@
 			<false/>
 			<key>orderHint</key>
 			<integer>12</integer>
+		</dict>
+		<key>FloatingPanel.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>26</integer>
 		</dict>
 		<key>GTMAppAuth.xcscheme</key>
 		<dict>

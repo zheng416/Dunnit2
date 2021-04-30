@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import MapKit
 import CoreLocation
 
 protocol MapSearchViewControllerDelegate: AnyObject {
@@ -104,7 +105,6 @@ class MapSearchViewController: UIViewController, UITextFieldDelegate, UITableVie
         // Notify map controller to show pin at selected place
         
         let coordinate = locations[indexPath.row].coordinates
-    
         print("coords", coordinate)
         
         delegate?.mapSearchViewController(self, didSelectLocationWith: coordinate)

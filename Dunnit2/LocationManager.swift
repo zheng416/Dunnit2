@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreLocation
+import UserNotifications
 import MapKit
 
 struct Location {
@@ -17,14 +18,18 @@ struct Location {
 
 class LocationManager: NSObject, CLLocationManagerDelegate{
     static let shared = LocationManager()
-    
+    let notificationCenter = UNUserNotificationCenter.current()
     let manager = CLLocationManager()
     
     var completion: ((CLLocation) -> Void)?
-    
-    public func getUserLocation(completion: @escaping ((CLLocation) -> Void)) {
-        self.completion = completion
-        manager.requestWhenInUseAuthorization()
+    public func getUserlocation()->CLLocationCoordinate2D? {
+        self.startMonitoringLocation()
+        return manager.location?.coordinate
+        
+    }
+    public func startMonitoringLocation() {
+        //self.completion = completion
+        manager.requestAlwaysAuthorization()
         manager.delegate = self
         manager.startUpdatingLocation()
     }
@@ -94,6 +99,31 @@ class LocationManager: NSObject, CLLocationManagerDelegate{
             
         }
     }
+    public func notified(region: CLCircularRegion){
+        let options: UNAuthorizationOptions = [.sound, .alert]
+        notificationCenter.requestAuthorization(options: options){
+            result, _ in
+            print("request result\(result)")
+        }
+        let notification = UNMutableNotificationContent()
+        notification.title = "Hello"
+        notification.body = "Hi"
+        notification.sound = .default
+        let trigger = UNLocationNotificationTrigger(
+            region: region, repeats: false
+        )
+        
+        let request = UNNotificationRequest(
+            identifier: UUID().uuidString, content: notification, trigger: trigger)
+        notificationCenter.add(request){
+            error in
+            if error != nil{
+                print("notification error \(error)")
+            }
+        }
+        print("Set up notification \(region)")
+        //manager.startMonitoring(for: region)
+    }
     
     public func findNearbyLocations(with query: String, completion: @escaping (([Location]) -> Void)) {
         
@@ -135,5 +165,10 @@ class LocationManager: NSObject, CLLocationManagerDelegate{
         }
         completion?(location)
         manager.stopUpdatingLocation()
+    }
+    func locationManager(_ manager: CLLocationManager,
+        didEnterRegion region: CLRegion) {
+        print("Enter the region")
+      // do something on entry
     }
 }
