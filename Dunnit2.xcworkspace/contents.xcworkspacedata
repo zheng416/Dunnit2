@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Dunnit2/SimulatedLocations.gpx">
+   </FileRef>
+   <FileRef
       location = "group:Dunnit2.xcodeproj">
    </FileRef>
    <FileRef

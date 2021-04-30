@@ -105,6 +105,7 @@
 		9BFA489A262DE0EC00A9512E /* BlockListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockListViewController.swift; sourceTree = "<group>"; };
 		CE4912C32602E3B800896E14 /* UpdatePassViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePassViewController.swift; sourceTree = "<group>"; };
 		CE58F3C2260FF61F0049EB4B /* ChangeListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeListViewController.swift; sourceTree = "<group>"; };
+		CE5D78EC263B7C880001F838 /* SimulatedLocations.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = SimulatedLocations.gpx; sourceTree = "<group>"; };
 		FA12CDEBDC4CE346BF760AAE /* Pods_Dunnit2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dunnit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -172,6 +173,7 @@
 				9B46D5F925E6DD5800E990CC /* DatabaseHelper.swift */,
 				9B46D62825ED49E400E990CC /* SlideInTransition.swift */,
 				8DE63E012635DDA6005C1454 /* LocationManager.swift */,
+				CE5D78EC263B7C880001F838 /* SimulatedLocations.gpx */,
 			);
 			path = Dunnit2;
 			sourceTree = "<group>";
@@ -560,7 +562,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.Dunnit2.Dunnit2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Dunnit2.Dunnit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -580,7 +582,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.Dunnit2.Dunnit2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Dunnit2.Dunnit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
