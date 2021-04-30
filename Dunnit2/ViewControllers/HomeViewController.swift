@@ -245,19 +245,27 @@ class HomeViewController: UIViewController {
             navigationItem.rightBarButtonItems = nil
             getData()
         case .myList:
-            let title = String(describing: menuType).capitalized
-            self.title = title
-            
-            let storyboard = UIStoryboard(name: "Home", bundle: nil)
-            let listVC = storyboard.instantiateViewController(withIdentifier: "listsVC")
-            view.addSubview(listVC.view)
-            self.topView = listVC.view
-            addChild(listVC)
-            self.title = "My Lists"
-            
-            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
-            navigationItem.rightBarButtonItems = [addButton]
-            menu = MenuType.myList
+            if (guest) {
+                let dialogMessage = UIAlertController(title: "", message: "Please Sign In to Access Premium Feature", preferredStyle: .alert)
+                let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+                })
+                dialogMessage.addAction(ok)
+                self.present(dialogMessage, animated: true, completion: nil)
+            } else {
+                let title = String(describing: menuType).capitalized
+                self.title = title
+                
+                let storyboard = UIStoryboard(name: "Home", bundle: nil)
+                let listVC = storyboard.instantiateViewController(withIdentifier: "listsVC")
+                view.addSubview(listVC.view)
+                self.topView = listVC.view
+                addChild(listVC)
+                self.title = "My Lists"
+                
+                let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+                navigationItem.rightBarButtonItems = [addButton]
+                menu = MenuType.myList
+            }
 
         default:
             let title = String(describing: menuType).capitalized
