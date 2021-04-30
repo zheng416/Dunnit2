@@ -6,8 +6,10 @@
 //
 
 import UIKit
+import CoreLocation
+import MapKit
 
-class EditViewController: UIViewController, UITextFieldDelegate {
+class EditViewController: UIViewController, UITextFieldDelegate, MapViewControllerDelegate {
 
     var titleStr: String?
     var dateVal: Date?
@@ -18,16 +20,23 @@ class EditViewController: UIViewController, UITextFieldDelegate {
     var notificationDate: Date?
     var task:TaskEntity?
     
+    var recurring: String?
+    
     var currentTopic: String?
     var currentPriority: Int?
     var currentList: String?
     var listString: String?
     var currentReminder: String?
+    var currentRecurring: String?
     
     var countTopics: Int?
     var countLists: Int?
     
     var notificationsOn: Bool?
+    
+    var longitude: Double?
+    var latitude: Double?
+    var locationName: String?
     
     @IBOutlet var titlefield: UITextField!
     @IBOutlet var bodyField: UITextField!
@@ -35,6 +44,7 @@ class EditViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var topicField: UILabel!
     @IBOutlet var priorityField: UILabel!
     @IBOutlet var listField: UILabel!
+    @IBOutlet var recurringField: UILabel!
     
     @IBOutlet var addTopic: UIButton!
     @IBOutlet var cancelTopic: UIButton!
@@ -42,10 +52,13 @@ class EditViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var cancelPriority: UIButton!
     @IBOutlet var addList: UIButton!
     @IBOutlet var cancelList: UIButton!
+    @IBOutlet var addRecurring: UIButton!
+    @IBOutlet var cancelRecurring: UIButton!
     
     var topicMenu: UIMenu?
     var priorityMenu: UIMenu?
     var listMenu: UIMenu?
+    var recurringMenu: UIMenu?
     
     @IBOutlet weak var notificationToggle: UISwitch!
     @IBOutlet var notificationLabel: UILabel!
@@ -53,10 +66,17 @@ class EditViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var addReminder: UIButton!
     @IBOutlet var cancelReminder: UIButton!
     
+//    Locations
+    @IBOutlet weak var locationField: UILabel!
+    @IBOutlet weak var addLocation: UIButton!
+    @IBOutlet weak var cancelLocation: UIButton!
+    
+    var locationCoords: CLLocationCoordinate2D?
+        
     var reminderMenu: UIMenu?
     
   
-    public var completion: ((String, String, Date, String, Int16, String, Date, Bool) -> Void)?
+    public var completion: ((String, String, Date, String, Int16, String, Date, Bool, Double, Double, String, String) -> Void)?
     
     func getUser() -> [String: Any] {
         var user = DataBaseHelper.shareInstance.fetchLocalUser()
@@ -97,6 +117,10 @@ class EditViewController: UIViewController, UITextFieldDelegate {
         reminderField.isHidden = true
         addReminder.isHidden = true
         cancelReminder.isHidden = true
+        
+        locationField.isHidden = true
+        addLocation.isHidden = true
+        cancelLocation.isHidden = true
     }
     
     func getTopics() -> [String: Any] {
@@ -135,6 +159,15 @@ class EditViewController: UIViewController, UITextFieldDelegate {
         return endList
     }
     
+    func mapViewController(_ vc: MapViewController, selectedLocationName: String, coordinates: CLLocationCoordinate2D?) {
+        locationField.text = selectedLocationName
+        print("selected Locatio name: \(selectedLocationName)")
+        locationName = selectedLocationName
+        guard let coordinates = coordinates else { return }
+        print("selected Locatio name: \(coordinates)")
+        locationCoords = coordinates
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -146,22 +179,47 @@ class EditViewController: UIViewController, UITextFieldDelegate {
             hidePremiumFields()
         }
         
+        
         notificationsOn = user["notification"] as! Bool        
         
         titlefield.text = titleStr
         datePicker.date = dateVal!
         bodyField.text = bodyStr
+        locationField.text = locationName
+        print("location Name",locationName)
+        
         titlefield.delegate = self
         bodyField.delegate = self
+        
+        self.addLocation.addTarget(self, action: #selector(didTapAddLocationButton), for: .touchUpInside)
+        
+        self.cancelLocation.addTarget(self, action: #selector(removeLocation), for: .touchUpInside)
         
         // Do any additional setup after loading the view.
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(didTapSaveButton))
 
         // Do any additional setup after loading the view.
+        self.cancelRecurring.tintColor = UIColor.gray
+        setupRecurringMenuItem()
+        self.currentRecurring = "Never"
+        if recurring == "Never" {
+            self.recurringField.attributedText = NSMutableAttributedString().gray("Never Repeat")
+        } else {
+            self.currentRecurring = recurring
+            self.recurringField.attributedText = NSMutableAttributedString().normal(recurring!)
+            self.addRecurring.isEnabled = false
+        }
+        
+        self.addRecurring.menu = self.recurringMenu
+        self.addRecurring.showsMenuAsPrimaryAction = true
+        
+        self.cancelRecurring.addTarget(self, action: #selector(removeRecurring), for: .touchUpInside)
+        
         self.cancelTopic.tintColor = UIColor.gray
         self.cancelPriority.tintColor = UIColor.gray
         self.cancelList.tintColor = UIColor.gray
         self.cancelReminder.tintColor = UIColor.gray
+        self.cancelLocation.tintColor = UIColor.gray
         
         setupTopicMenu()
         setupPriorityMenuItem()
@@ -287,6 +345,26 @@ class EditViewController: UIViewController, UITextFieldDelegate {
         self.topicMenu = UIMenu(title: "", children: topicsChildren)
     }
     
+    private func setupRecurringMenuItem() {
+        self.recurringMenu = UIMenu(title: "", children: [
+            UIAction(title: "Daily") {action in
+                self.currentRecurring = "Daily"
+                self.recurringField.attributedText = NSMutableAttributedString().normal("Daily")
+                self.addRecurring.isEnabled = false
+            },
+            UIAction(title: "Weekly") {action in
+                self.currentRecurring = "Weekly"
+                self.recurringField.attributedText = NSMutableAttributedString().normal("Weekly")
+                self.addRecurring.isEnabled = false
+            },
+            UIAction(title: "Monthly") {action in
+                self.currentRecurring = "Monthly"
+                self.recurringField.attributedText = NSMutableAttributedString().normal("Monthly")
+                self.addRecurring.isEnabled = false
+            }
+        ])
+    }
+    
     private func setupPriorityMenuItem() {
         self.priorityMenu = UIMenu(title: "", children: [
             UIAction(title: "Low Priority") {action in
@@ -366,6 +444,30 @@ class EditViewController: UIViewController, UITextFieldDelegate {
                 self.addReminder.isEnabled = false
             }
         ])
+    }
+    
+    @objc private func removeRecurring() {
+        self.currentRecurring = "Never"
+        self.recurringField.attributedText = NSMutableAttributedString().gray("Never Repeat")
+        self.addRecurring.isEnabled = true
+    }
+    
+    @objc private func didTapAddLocationButton() {
+        // Show add mapVC
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        guard let mapVC = storyboard.instantiateViewController(identifier: "map") as? MapViewController else {
+            return
+        }
+        mapVC.delegate = self
+        
+        navigationController?.pushViewController(mapVC, animated: true)
+    }
+    
+    @objc private func removeLocation() {
+        self.locationName = ""
+        self.locationCoords = nil
+        self.locationField.attributedText = NSMutableAttributedString().gray("Add a Location")
+        self.addLocation.isEnabled = true
     }
     
     @objc private func removeTopic() {
@@ -459,8 +561,17 @@ class EditViewController: UIViewController, UITextFieldDelegate {
                     }
                 })
             }
-            
-            completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate, notiDate, notiOn)
+            var new_longitude: Double = 0.0
+            var new_latitude: Double = 0.0
+            var location_name: String = ""
+            if locationCoords != nil {
+                new_longitude = locationCoords!.longitude
+                new_latitude = locationCoords!.latitude
+                location_name = locationName!
+            }
+             
+            // NEED TO modify for recurring change
+            completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate, notiDate, notiOn, new_longitude, new_latitude, location_name, currentRecurring!)
             print("Saved")
         }
         if currentList != task!.list {

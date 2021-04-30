@@ -192,7 +192,7 @@ extension CalenderViewController: UITableViewDelegate {
             destination?.task = taskListStore[indexPath.section][indexPath.row]
             tableTaskView.deselectRow(at: indexPath, animated: true)
             let id = taskListStore[indexPath.section][indexPath.row].id
-            destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn in
+            destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName, recurring in
                 DispatchQueue.main.async {
                     DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made)
                     self.navigationController?.popViewController(animated: true)

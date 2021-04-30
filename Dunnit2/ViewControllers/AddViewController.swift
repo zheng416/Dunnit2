@@ -11,7 +11,7 @@ import CoreLocation
 import MapKit
 import FloatingPanel
 
-class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate {
+class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate, MapViewControllerDelegate {
     
     var currentTopic: String?
     var currentPriority: Int?
@@ -21,6 +21,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
     var notificationsOn: Bool?
     var list: ListEntity?
     var locationManager: CLLocationManager?
+    var currentRecurring: String?
     
     var countTopics: Int?
     var countLists: Int?
@@ -28,6 +29,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
     @IBOutlet var titlefield: UITextField!
     @IBOutlet var bodyField: UITextField!
     @IBOutlet var datePicker: UIDatePicker!
+    @IBOutlet var recurringField: UILabel!
     
     // Premium Features
     @IBOutlet var topicField: UILabel!
@@ -40,10 +42,14 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
     @IBOutlet var cancelPriority: UIButton!
     @IBOutlet var addList: UIButton!
     @IBOutlet var cancelList: UIButton!
+    @IBOutlet var addRecurring: UIButton!
+    @IBOutlet var cancelRecurring: UIButton!
     
     @IBOutlet weak var editLocationButton: UIButton!
     //    @IBOutlet weak var mapTitle: UILabel!
 //    @IBOutlet weak var mapSearchField: UITextField!
+    
+    var recurringMenu: UIMenu?
     
     var topicMenu: UIMenu?
     var priorityMenu: UIMenu?
@@ -54,6 +60,14 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
     @IBOutlet var reminderField: UILabel!
     @IBOutlet var addReminder: UIButton!
     @IBOutlet var cancelReminder: UIButton!
+    
+//    Locations
+    @IBOutlet weak var locationField: UILabel!
+    @IBOutlet weak var addLocation: UIButton!
+    @IBOutlet weak var cancelLocation: UIButton!
+    
+    var locationCoords: CLLocationCoordinate2D?
+    var locationName: String?
     
     var reminderMenu: UIMenu?
 
@@ -130,6 +144,10 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
         reminderField.isHidden = true
         addReminder.isHidden = true
         cancelReminder.isHidden = true
+        
+        locationField.isHidden = true
+        addLocation.isHidden = true
+        cancelLocation.isHidden = true
     }
     
 //    func centerMap(with location: CLLocation) {
@@ -144,18 +162,17 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
 ////        map.addAnnotation(pin)
 //    }
     
+    func mapViewController(_ vc: MapViewController, selectedLocationName: String, coordinates: CLLocationCoordinate2D?) {
+        locationField.text = selectedLocationName
+        locationName = selectedLocationName
+        guard let coordinates = coordinates else { return }
+        
+        locationCoords = coordinates
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        LocationManager.shared.getUserLocation { [weak self] location in
-//            DispatchQueue.main.async {
-//                guard let strongSelf = self else {
-//                    return
-//                }
-//
-//                strongSelf.centerMap(with: location)
-//            }
-//        }
         let user = DataBaseHelper.shareInstance.parsedLocalUser()
       
         notificationsOn = user["notification"] as! Bool
@@ -166,17 +183,32 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
         let modifiedDate = Calendar.current.date(byAdding: .day, value: 1, to: date)!
         datePicker.date = modifiedDate
         // Do any additional setup after loading the view.
-      
+        
+        self.currentRecurring = "Never"
+        self.recurringField.attributedText = NSMutableAttributedString().gray("Never Repeat")
+        self.cancelRecurring.tintColor = UIColor.gray
+        
+        setupRecurringMenuItem()
+        
+        self.addRecurring.menu = self.recurringMenu
+        self.addRecurring.showsMenuAsPrimaryAction = true
+        
+        self.cancelRecurring.addTarget(self, action: #selector(removeRecurring), for: .touchUpInside)
+        
         let guest = (user["email"] as! String == "Guest")
         
         if (guest) {
             hidePremiumFields()
         }
         
+        self.addLocation.addTarget(self, action: #selector(didTapAddLocationButton), for: .touchUpInside)
+        self.cancelLocation.addTarget(self, action: #selector(removeLocation), for: .touchUpInside)
+        
         self.cancelTopic.tintColor = UIColor.gray
         self.cancelPriority.tintColor = UIColor.gray
         self.cancelList.tintColor = UIColor.gray
         self.cancelReminder.tintColor = UIColor.gray
+        self.cancelLocation.tintColor = UIColor.gray
         
         setupTopicMenu()
         setupPriorityMenuItem()
@@ -191,6 +223,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
         }
         self.topicField.attributedText = NSMutableAttributedString().gray("Add a Topic")
         self.priorityField.attributedText = NSMutableAttributedString().gray("Add a Priority")
+        self.locationField.attributedText = NSMutableAttributedString().gray("Add a Location")
         
         self.addTopic.menu = self.topicMenu
         self.addTopic.showsMenuAsPrimaryAction = true
@@ -233,6 +266,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
         self.addReminder.menu = self.reminderMenu
         self.addReminder.showsMenuAsPrimaryAction = true
         self.cancelReminder.addTarget(self, action: #selector(removeReminder), for: .touchUpInside)
+        
         let userInfo = getUser()
         let darkModeOn = userInfo["darkMode"] as! Bool
         if darkModeOn {
@@ -246,10 +280,50 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
             
         }
     }
+    
+    @objc private func didTapAddLocationButton() {
+        // Show add mapVC
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        guard let mapVC = storyboard.instantiateViewController(identifier: "map") as? MapViewController else {
+            return
+        }
+        mapVC.delegate = self
+        
+        navigationController?.pushViewController(mapVC, animated: true)
+    }
+    
+    @objc private func removeLocation() {
+        self.locationName = ""
+        self.locationCoords = nil
+        self.locationField.attributedText = NSMutableAttributedString().gray("Add a Location")
+        self.addLocation.isEnabled = true
+    }
+    
+    
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if status == .authorizedAlways {
             print("Location authorized\n")
         }
+    }
+    
+    private func setupRecurringMenuItem() {
+        self.recurringMenu = UIMenu(title: "", children: [
+            UIAction(title: "Daily") {action in
+                self.currentRecurring = "Daily"
+                self.recurringField.attributedText = NSMutableAttributedString().normal("Daily")
+                self.addRecurring.isEnabled = false
+            },
+            UIAction(title: "Weekly") {action in
+                self.currentRecurring = "Weekly"
+                self.recurringField.attributedText = NSMutableAttributedString().normal("Weekly")
+                self.addRecurring.isEnabled = false
+            },
+            UIAction(title: "Monthly") {action in
+                self.currentRecurring = "Monthly"
+                self.recurringField.attributedText = NSMutableAttributedString().normal("Monthly")
+                self.addRecurring.isEnabled = false
+            }
+        ])
     }
     
     private func setupTopicMenu() {
@@ -358,6 +432,12 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
         ])
     }
     
+    @objc private func removeRecurring() {
+        self.currentRecurring = "Never"
+        self.recurringField.attributedText = NSMutableAttributedString().gray("Never Repeat")
+        self.addRecurring.isEnabled = true
+    }
+    
     @objc private func removeTopic() {
         self.currentTopic = ""
         self.topicField.attributedText = NSMutableAttributedString().gray("Add a Topic")
@@ -414,6 +494,7 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
             let madeDate = dateFormatter.string(from: made)
             var notiDate: Date
             var notiOn: Bool
+            
             notiDate = targetDate
             notiOn = false
             if (notificationsOn! && currentReminder != "") {
@@ -438,7 +519,14 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
                 content.title = currentReminder! + ": " + titleText
                 content.sound = .default
                 content.body = bodyText
-                let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminderDate), repeats: false)
+                var trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminderDate), repeats: false)
+                if currentRecurring == "Daily" {
+                    trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.hour, .minute, .second], from: reminderDate), repeats: true)
+                } else if currentRecurring == "Weekly" {
+                    trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.hour, .minute, .second, .weekday], from: reminderDate), repeats: true)
+                } else if currentRecurring == "Monthly" {
+                    trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.day, .hour, .minute, .second], from: reminderDate), repeats: true)
+                }
                 let request = UNNotificationRequest(identifier: madeDate, content: content, trigger: trigger)
                 UNUserNotificationCenter.current().add(request, withCompletionHandler: {error in
                     if error != nil {
@@ -446,8 +534,16 @@ class AddViewController: UIViewController, UITextFieldDelegate, CLLocationManage
                     }
                 })
             }
-            DataBaseHelper.shareInstance.saveTask(title: titleText, body: bodyText, date: targetDate, isDone: false, list: currentList!, color: currentTopic!, priority: Int16(currentPriority!), made: madeDate, notiDate: notiDate, notiOn: notiOn)
-
+            var longitude: Double = 0.0
+            var latitude: Double = 0.0
+            var location_name: String = ""
+            if locationCoords != nil {
+                longitude = locationCoords!.longitude
+                latitude = locationCoords!.latitude
+                location_name = locationName!
+            }
+            DataBaseHelper.shareInstance.saveTask(title: titleText, body: bodyText, date: targetDate, isDone: false, list: currentList!, color: currentTopic!, priority: Int16(currentPriority!), made: madeDate, notiDate: notiDate, notiOn: notiOn, recurring: currentRecurring!, longitude: longitude, latitude: latitude, locationName: location_name)
+             
             completion?(titleText, bodyText, targetDate, currentTopic!, Int16(currentPriority!), madeDate)
         }
     }

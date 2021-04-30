@@ -119,6 +119,9 @@ class HomeViewController: UIViewController {
         print("% = ", progressCount, "indi = ", taskStore[1].count, (taskStore[1].count + taskStore[0].count))
         self.progressView.setProgress(progressCount, animated: true)
         
+        print("HERE IS ALL THE TASKSS")
+        print(tasks)
+        
         tableView.reloadData()
     }
     
@@ -471,10 +474,15 @@ extension HomeViewController: UITableViewDelegate {
                 destination?.task = searchTasks[indexPath.section][indexPath.row]
                 destination?.notifications = searchTasks[indexPath.section][indexPath.row].notiOn
                 destination?.notificationDate = searchTasks[indexPath.section][indexPath.row].notiDate
+                destination?.longitude = searchTasks[indexPath.section][indexPath.row].longitude
+                destination?.latitude = searchTasks[indexPath.section][indexPath.row].latitude
+                destination?.locationName = searchTasks[indexPath.section][indexPath.row].locationName
+                destination?.recurring = searchTasks[indexPath.section][indexPath.row].recurring
+                
                 tableView.deselectRow(at: indexPath, animated: true)
-                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn in
+                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName, recurring in
                     DispatchQueue.main.async {
-                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
+                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, recurring: recurring, longitude: longitude, latitude: latitude, locationName: locationName)
                         self.navigationController?.popViewController(animated: true)
                         self.getData()
                     }
@@ -492,10 +500,18 @@ extension HomeViewController: UITableViewDelegate {
                 destination?.task = taskStore[indexPath.section][indexPath.row]
                 destination?.notifications = taskStore[indexPath.section][indexPath.row].notiOn
                 destination?.notificationDate = taskStore[indexPath.section][indexPath.row].notiDate
+                destination?.longitude = taskStore[indexPath.section][indexPath.row].longitude
+                destination?.latitude = taskStore[indexPath.section][indexPath.row].latitude
+                destination?.locationName = taskStore[indexPath.section][indexPath.row].locationName
+                destination?.longitude = taskStore[indexPath.section][indexPath.row].longitude
+                destination?.latitude = taskStore[indexPath.section][indexPath.row].latitude
+                destination?.locationName = taskStore[indexPath.section][indexPath.row].locationName
+                destination?.recurring = taskStore[indexPath.section][indexPath.row].recurring
+                
                 tableView.deselectRow(at: indexPath, animated: true)
-                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn in
+                destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName, recurring in
                     DispatchQueue.main.async {
-                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn)
+                        DataBaseHelper.shareInstance.updateLocalTask(id: id!, body: body,color: color,date: date,title: title, priority: priority, made: made, notiDate: notiDate, notiOn: notiOn, recurring: recurring, longitude: longitude, latitude: latitude, locationName: locationName)
                         self.navigationController?.popViewController(animated: true)
                         self.getData()
                     }
@@ -557,6 +573,13 @@ extension HomeViewController: UITableViewDataSource {
 
                 let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
                 mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
+                cell.detailTextLabel?.attributedText = mutableAttributedString
+            } else if (date.isInSameDay(as: Date()) && indexPath.section != 1) {
+                let dateStr = formatter.string(from: date)
+                let range = (dateStr as NSString).range(of: dateStr)
+
+                let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.systemGreen, range: range)
                 cell.detailTextLabel?.attributedText = mutableAttributedString
             } else {
                 let dateStr = formatter.string(from: date)
@@ -662,6 +685,13 @@ extension HomeViewController: UITableViewDataSource {
 
                 let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
                 mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
+                cell.detailTextLabel?.attributedText = mutableAttributedString
+            } else if (date.isInSameDay(as: Date()) && indexPath.section != 1) {
+                let dateStr = formatter.string(from: date)
+                let range = (dateStr as NSString).range(of: dateStr)
+
+                let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+                mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.systemGreen, range: range)
                 cell.detailTextLabel?.attributedText = mutableAttributedString
             } else {
                 let dateStr = formatter.string(from: date)
@@ -774,7 +804,8 @@ extension HomeViewController {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let doneAction = UIContextualAction(style: .normal, title: nil) { (action, sourceView, completionHandler) in
             let row = self.taskStore[0][indexPath.row]
-            DataBaseHelper.shareInstance.updateLocalTask(id: row.id!,isDone: true, title: row.title!)
+            
+            DataBaseHelper.shareInstance.updateLocalTask(id: row.id!,isDone: true, title: row.title!, recurring: row.recurring!)
             
             self.getData()
         }
@@ -793,7 +824,8 @@ extension HomeViewController {
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .normal, title: nil) { (action, sourceView, completionHandler) in
             let row = self.taskStore[indexPath.section][indexPath.row]
-            
+            // Delete the notification
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [String(row.made!)])
             DataBaseHelper.shareInstance.deleteTask(id: row.id!)
             
             self.getData()

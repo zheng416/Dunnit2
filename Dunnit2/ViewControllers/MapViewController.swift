@@ -12,10 +12,17 @@ import CoreLocation
 import UserNotifications
 
 
+protocol MapViewControllerDelegate: AnyObject {
+    func mapViewController(_ vc: MapViewController, selectedLocationName: String, coordinates: CLLocationCoordinate2D?)
+}
+
 class MapViewController: UIViewController, MapSearchViewControllerDelegate {
     
+    weak var delegate: MapViewControllerDelegate?
     let mapView = MKMapView()
     let panel = FloatingPanelController()
+    
+//    public var completion: ((String) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,9 +105,28 @@ class MapViewController: UIViewController, MapSearchViewControllerDelegate {
             }
         }*/
 
-        //LocationManager.shared.notified(region: region)
-        //mapView.addAnnotation(pin)
-        print("get coordinate")
-        mapView.setRegion(MKCoordinateRegion(center: coordinates, span: MKCoordinateSpan(latitudeDelta: 0.7, longitudeDelta: 0.7)), animated: true)
+        mapView.addAnnotation(pin)
+        mapView.setRegion(MKCoordinateRegion(center: coordinates, span: MKCoordinateSpan(latitudeDelta: 0.7, longitudeDelta: 0.7)), animated: false)
+        
+        
+        print("chosen location",vc.chosenLocationName)
+        
+//        completion?(vc.chosenLocationName)
+        
+        // TODO: Maybe add delay here to see animation?
+
+        
+        delegate?.mapViewController(self, selectedLocationName: vc.chosenLocationName, coordinates: coordinates)
+        print("Done delegate?")
+        
+        // Save to DB
+        
+        
+        
+        // Remove pins from map to prevent memory leak
+        mapView.removeAnnotations(mapView.annotations)
+        
+        
+        navigationController?.popViewController(animated: true)
     }
 }

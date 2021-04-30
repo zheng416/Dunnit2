@@ -7,12 +7,15 @@
 
 import UIKit
 import UserNotifications
+import MapKit
 
 class DescriptionViewController: UIViewController {
 
     var titleStr: String?
     
     var dateVal: Date?
+    
+    var recurring: String?
     
     var bodyStr: String?
     
@@ -27,17 +30,20 @@ class DescriptionViewController: UIViewController {
     var madeVal: String?
     var task: TaskEntity?
     
+    var longitude: Double?
+    var latitude: Double?
+    var locationName: String?
+    
+    // Button outlets
     @IBOutlet var titleField: UILabel!
-    
     @IBOutlet var dateField: UILabel!
-    
     @IBOutlet var bodyField: UILabel!
-    
     @IBOutlet var topicField: UILabel!
-    
     @IBOutlet var priorityField: UILabel!
+    @IBOutlet var locationField: UILabel!
+    @IBOutlet var mapField: MKMapView!
     
-    public var completion: ((String, String, Date, String, Int16, String, Date, Bool) -> Void)?
+    public var completion: ((String, String, Date, String, Int16, String, Date, Bool, Double, Double, String, String) -> Void)?
     
     func getUser() -> [String: Any] {
         var user = DataBaseHelper.shareInstance.fetchLocalUser()
@@ -77,6 +83,12 @@ class DescriptionViewController: UIViewController {
         topicStr = task?.color
         priorityVal = Int(task!.priority)
         madeVal = task?.made
+        locationName = task?.locationName
+        longitude = task?.longitude
+        latitude = task?.latitude
+        recurring = task?.recurring
+        notifications = task?.notiOn
+        notificationDate = task?.notiDate
         
         titleField.attributedText =  NSMutableAttributedString().boldTitle(titleStr!)
         let formatter = DateFormatter()
@@ -98,6 +110,22 @@ class DescriptionViewController: UIViewController {
         } else {
             priorityField.attributedText =  NSMutableAttributedString().bodyNormal("Priority: High")
         }
+        
+        // Location field display
+        if (locationName != nil) {
+            locationField.attributedText = NSMutableAttributedString().bodyNormal(locationName!)
+            
+            // Put pin and center map
+            mapField.removeAnnotations(mapField.annotations)
+            
+            let pin = MKPointAnnotation()
+            let coordinates = CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!)
+            pin.coordinate = coordinates
+            
+            mapField.addAnnotation(pin)
+            mapField.setRegion(MKCoordinateRegion(center: coordinates, span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)), animated: false)
+        }
+        
         // Do any additional setup after loading the view.
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(didTapEditButton))
         let userInfo = getUser()
@@ -128,10 +156,15 @@ class DescriptionViewController: UIViewController {
         vc.task = self.task
         vc.notifications = self.notifications
         vc.notificationDate = self.notificationDate
+        vc.longitude = self.longitude
+        vc.latitude = self.latitude
+        vc.locationName = self.locationName
+        vc.recurring = self.recurring
+        
         vc.title = "Edit"
         vc.navigationItem.largeTitleDisplayMode = .never
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [String(madeVal!)])
-        vc.completion = {title, body, date, color, priority, made, notiDate, notiOn in
+        vc.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName, recurring in
             DispatchQueue.main.async {
                 self.titleField.attributedText =  NSMutableAttributedString().boldTitle(title)
                 let formatter = DateFormatter()
@@ -147,6 +180,10 @@ class DescriptionViewController: UIViewController {
                 self.priorityVal = Int(priority)
                 self.notificationDate = notiDate
                 self.notifications = notiOn
+                self.longitude = longitude
+                self.latitude = latitude
+                self.locationName = locationName
+                self.recurring = recurring
                 /*DataBaseHelper.shareInstance.save(title: title, body: body, date: date, isDone: false)*/
                 if (priority == 0) {
                     self.priorityField.attributedText =  NSMutableAttributedString().bodyNormal("")
@@ -157,7 +194,7 @@ class DescriptionViewController: UIViewController {
                 } else {
                     self.priorityField.attributedText =  NSMutableAttributedString().bodyNormal("Priority: High")
                 }
-                self.completion?(title, body, date, color, priority, made, notiDate, notiOn)
+                self.completion?(title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName, recurring)
             }
         }
         navigationController?.pushViewController(vc, animated: true)

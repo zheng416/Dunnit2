@@ -16,6 +16,7 @@ protocol MapSearchViewControllerDelegate: AnyObject {
 class MapSearchViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
     
     weak var delegate: MapSearchViewControllerDelegate?
+    public var chosenLocationName: String! = ""
     
     private let label: UILabel = {
         let label = UILabel()
@@ -67,9 +68,14 @@ class MapSearchViewController: UIViewController, UITextFieldDelegate, UITableVie
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         field.resignFirstResponder()
         if let text = field.text, !text.isEmpty {
-            LocationManager.shared.findLocations(with: text) { [weak self] locations in
-                self?.locations = locations
-                self?.tableView.reloadData()
+//            LocationManager.shared.findLocations(with: text) { [weak self] locations in
+//                self?.locations = locations
+//                self?.tableView.reloadData()
+//            }
+            LocationManager.shared.findNearbyLocations(with: text) {
+                [weak self] locations in
+                    self?.locations = locations
+                    self?.tableView.reloadData()
             }
         }
         return true
@@ -80,12 +86,16 @@ class MapSearchViewController: UIViewController, UITextFieldDelegate, UITableVie
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        var cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        cell = UITableViewCell(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "cell")
         
         cell.textLabel?.text = locations[indexPath.row].title
+        cell.detailTextLabel?.text = locations[indexPath.row].address
         cell.textLabel?.numberOfLines = 0
         cell.contentView.backgroundColor = .secondarySystemBackground
         cell.backgroundColor = .secondarySystemBackground
+        
+        chosenLocationName = locations[indexPath.row].title
         return cell
     }
     
