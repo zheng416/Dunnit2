@@ -87,6 +87,8 @@ class DescriptionViewController: UIViewController {
         longitude = task?.longitude
         latitude = task?.latitude
         recurring = task?.recurring
+        notifications = task?.notiOn
+        notificationDate = task?.notiDate
         
         titleField.attributedText =  NSMutableAttributedString().boldTitle(titleStr!)
         let formatter = DateFormatter()
