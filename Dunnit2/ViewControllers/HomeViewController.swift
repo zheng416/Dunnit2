@@ -190,7 +190,7 @@ class HomeViewController: UIViewController {
                 menu = MenuType.progress
             }
             
-        case .calender:
+        case .calendar:
             if (guest) {
                 let dialogMessage = UIAlertController(title: "", message: "Please Sign In to Access Premium Feature", preferredStyle: .alert)
                 let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
@@ -206,10 +206,10 @@ class HomeViewController: UIViewController {
                 view.addSubview(listVC.view)
                 self.topView = listVC.view
                 addChild(listVC)
-                self.title = "Calender"
+                self.title = "Calendar"
 
                 navigationItem.rightBarButtonItems = nil
-                menu = MenuType.calender
+                menu = MenuType.calendar
             }
         case .shared:
             if (guest) {
