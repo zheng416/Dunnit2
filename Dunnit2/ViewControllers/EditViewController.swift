@@ -185,7 +185,12 @@ class EditViewController: UIViewController, UITextFieldDelegate, MapViewControll
         titlefield.text = titleStr
         datePicker.date = dateVal!
         bodyField.text = bodyStr
-        locationField.text = locationName
+        if locationName == "" {
+            self.locationField.attributedText = NSMutableAttributedString().gray("Add a Location")
+        } else {
+            self.locationField.attributedText = NSMutableAttributedString().normal(locationName!)
+            self.addLocation.isEnabled = false
+        }
         print("location Name",locationName)
         
         titlefield.delegate = self
