@@ -14,7 +14,7 @@
             <objects>
                 <viewController storyboardIdentifier="description" id="my1-e3-sGj" customClass="DescriptionViewController" customModule="Dunnit2" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Qq9-Xj-yXz">
-                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="790"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HEf-eL-XZc">
@@ -1716,7 +1716,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="B07-yv-zC2"/>
+        <segue reference="n3N-CQ-sOo"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="Hamburger_icon.svg" width="1920" height="1920"/>
