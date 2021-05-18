@@ -155,13 +155,6 @@ class HomeViewController: UIViewController {
         present(menuViewController, animated: true)
     }
     
-//    private let progressView: UIProgressView = {
-//        let progressView = UIProgressView(progressViewStyle: .default)
-//        progressView.trackTintColor = .gray
-//        progressView.progressTintColor = .systemBlue
-//        return progressView
-//    }()
-    
     func transitionToNew(_ menuType: MenuType) {
        
         let guest = globalUser["email"] as! String == "Guest"
@@ -466,6 +459,22 @@ extension HomeViewController: UITableViewDelegate {
         performSegue(withIdentifier: "showInfo", sender: self)
     }
     
+    func mapDestinationFields(destination: DescriptionViewController?, indexPath: IndexPath) {
+        destination?.titleStr = searchTasks[indexPath.section][indexPath.row].title!
+        destination?.dateVal = searchTasks[indexPath.section][indexPath.row].date!
+        destination?.bodyStr = searchTasks[indexPath.section][indexPath.row].body
+        destination?.topicStr = searchTasks[indexPath.section][indexPath.row].color
+        destination?.priorityVal = Int(searchTasks[indexPath.section][indexPath.row].priority)
+        destination?.madeVal = searchTasks[indexPath.section][indexPath.row].made
+        destination?.task = searchTasks[indexPath.section][indexPath.row]
+        destination?.notifications = searchTasks[indexPath.section][indexPath.row].notiOn
+        destination?.notificationDate = searchTasks[indexPath.section][indexPath.row].notiDate
+        destination?.longitude = searchTasks[indexPath.section][indexPath.row].longitude
+        destination?.latitude = searchTasks[indexPath.section][indexPath.row].latitude
+        destination?.locationName = searchTasks[indexPath.section][indexPath.row].locationName
+        destination?.recurring = searchTasks[indexPath.section][indexPath.row].recurring
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let indexPath = tableView.indexPathForSelectedRow {
             let destination = segue.destination as? DescriptionViewController
@@ -473,19 +482,8 @@ extension HomeViewController: UITableViewDelegate {
                 let id = searchTasks[indexPath.section][indexPath.row].id
                 print("THE ID IS    ")
                 print(id)
-                destination?.titleStr = searchTasks[indexPath.section][indexPath.row].title!
-                destination?.dateVal = searchTasks[indexPath.section][indexPath.row].date!
-                destination?.bodyStr = searchTasks[indexPath.section][indexPath.row].body
-                destination?.topicStr = searchTasks[indexPath.section][indexPath.row].color
-                destination?.priorityVal = Int(searchTasks[indexPath.section][indexPath.row].priority)
-                destination?.madeVal = searchTasks[indexPath.section][indexPath.row].made
-                destination?.task = searchTasks[indexPath.section][indexPath.row]
-                destination?.notifications = searchTasks[indexPath.section][indexPath.row].notiOn
-                destination?.notificationDate = searchTasks[indexPath.section][indexPath.row].notiDate
-                destination?.longitude = searchTasks[indexPath.section][indexPath.row].longitude
-                destination?.latitude = searchTasks[indexPath.section][indexPath.row].latitude
-                destination?.locationName = searchTasks[indexPath.section][indexPath.row].locationName
-                destination?.recurring = searchTasks[indexPath.section][indexPath.row].recurring
+                
+                mapDestinationFields(destination: destination, indexPath: indexPath)
                 
                 tableView.deselectRow(at: indexPath, animated: true)
                 destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName, recurring in
@@ -499,23 +497,8 @@ extension HomeViewController: UITableViewDelegate {
                 let id = taskStore[indexPath.section][indexPath.row].id
                 print("THE ID IS    ")
                 print(id)
-                destination?.titleStr = taskStore[indexPath.section][indexPath.row].title!
-                destination?.dateVal = taskStore[indexPath.section][indexPath.row].date!
-                destination?.bodyStr = taskStore[indexPath.section][indexPath.row].body
-                destination?.topicStr = taskStore[indexPath.section][indexPath.row].color
-                destination?.priorityVal = Int(taskStore[indexPath.section][indexPath.row].priority)
-                destination?.madeVal = taskStore[indexPath.section][indexPath.row].made
-                destination?.task = taskStore[indexPath.section][indexPath.row]
-                destination?.notifications = taskStore[indexPath.section][indexPath.row].notiOn
-                destination?.notificationDate = taskStore[indexPath.section][indexPath.row].notiDate
-                destination?.longitude = taskStore[indexPath.section][indexPath.row].longitude
-                destination?.latitude = taskStore[indexPath.section][indexPath.row].latitude
-                destination?.locationName = taskStore[indexPath.section][indexPath.row].locationName
-                destination?.longitude = taskStore[indexPath.section][indexPath.row].longitude
-                destination?.latitude = taskStore[indexPath.section][indexPath.row].latitude
-                destination?.locationName = taskStore[indexPath.section][indexPath.row].locationName
-                destination?.recurring = taskStore[indexPath.section][indexPath.row].recurring
                 
+                mapDestinationFields(destination: destination, indexPath: indexPath)
                 tableView.deselectRow(at: indexPath, animated: true)
                 destination?.completion = {title, body, date, color, priority, made, notiDate, notiOn, longitude, latitude, locationName, recurring in
                     DispatchQueue.main.async {
