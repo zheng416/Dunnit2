@@ -22,16 +22,17 @@ class MapViewController: UIViewController, MapSearchViewControllerDelegate {
     let mapView = MKMapView()
     let panel = FloatingPanelController()
     
-//    public var completion: ((String) -> Void)?
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // add AppleMaps to view
         view.addSubview(mapView)
         title = "Locations"
         
         let searchVC = MapSearchViewController()
         searchVC.delegate = self
+        
+        // Place a pin on users' current location
         let currentlocation = LocationManager.shared.getUserlocation()
         let pin = MKPointAnnotation()
         if currentlocation != nil{
@@ -40,6 +41,7 @@ class MapViewController: UIViewController, MapSearchViewControllerDelegate {
             mapView.setRegion(MKCoordinateRegion(center: currentlocation!, span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)), animated: true)
         }
 
+        // Make mapSearchViewController the popup panel
         panel.set(contentViewController: searchVC)
         panel.addPanel(toParent: self)
         
@@ -60,7 +62,10 @@ class MapViewController: UIViewController, MapSearchViewControllerDelegate {
         
         panel.move(to: .tip, animated: true)
         
+        // Clear all pins from map
         mapView.removeAnnotations(mapView.annotations)
+        
+        // Hardcode location
         var favCoordinatesArray: CLLocationCoordinate2D  = CLLocationCoordinate2D(latitude: 37.422155, longitude: -122.134751)
         let pin = MKPointAnnotation()
         
@@ -114,19 +119,13 @@ class MapViewController: UIViewController, MapSearchViewControllerDelegate {
 //        completion?(vc.chosenLocationName)
         
         // TODO: Maybe add delay here to see animation?
-
-        
         delegate?.mapViewController(self, selectedLocationName: vc.chosenLocationName, coordinates: coordinates)
         print("Done delegate?")
-        
-        // Save to DB
-        
-        
         
         // Remove pins from map to prevent memory leak
         mapView.removeAnnotations(mapView.annotations)
         
-        
+        // Redirect to previous vc
         navigationController?.popViewController(animated: true)
     }
 }

@@ -9,15 +9,16 @@ import UIKit
 import MapKit
 import CoreLocation
 
+// Delegate to handle passing data back to MapViewController when click on row
 protocol MapSearchViewControllerDelegate: AnyObject {
     func mapSearchViewController(_ vc: MapSearchViewController, didSelectLocationWith coordinates: CLLocationCoordinate2D?)
 }
 
 class MapSearchViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
-    
     weak var delegate: MapSearchViewControllerDelegate?
     public var chosenLocationName: String! = ""
     
+    // Setup labels and table view
     private let label: UILabel = {
         let label = UILabel()
         label.text = "Where To?"
@@ -44,17 +45,20 @@ class MapSearchViewController: UIViewController, UITextFieldDelegate, UITableVie
     
     override func viewDidLoad(){
         super.viewDidLoad()
+        // Style vc
         view.backgroundColor = .secondarySystemBackground
         view.addSubview(label)
         view.addSubview(field)
         view.addSubview(tableView)
         
+        // Link delegates and data sources for table view
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = .secondarySystemBackground
         field.delegate = self
     }
     
+    // Setup labels on VC programitically
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         label.sizeToFit()
@@ -65,13 +69,10 @@ class MapSearchViewController: UIViewController, UITextFieldDelegate, UITableVie
         tableView.frame = CGRect(x: 0, y: tableY, width: view.frame.size.width, height: view.frame.size.height - tableY)
     }
     
+    // When clicked on cell should return
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         field.resignFirstResponder()
         if let text = field.text, !text.isEmpty {
-//            LocationManager.shared.findLocations(with: text) { [weak self] locations in
-//                self?.locations = locations
-//                self?.tableView.reloadData()
-//            }
             LocationManager.shared.findNearbyLocations(with: text) {
                 [weak self] locations in
                     self?.locations = locations
@@ -95,18 +96,21 @@ class MapSearchViewController: UIViewController, UITextFieldDelegate, UITableVie
         cell.contentView.backgroundColor = .secondarySystemBackground
         cell.backgroundColor = .secondarySystemBackground
         
+        // Save chosen cell for passing back to mapVC
         chosenLocationName = locations[indexPath.row].title
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        /// When a row is selected ...
+        
         tableView.deselectRow(at: indexPath, animated: true)
         
-        // Notify map controller to show pin at selected place
-        
+        // Get the coordinates of that selected location
         let coordinate = locations[indexPath.row].coordinates
         print("coords", coordinate)
         
+        // Pass coordinates back to mapVC
         delegate?.mapSearchViewController(self, didSelectLocationWith: coordinate)
         
         
