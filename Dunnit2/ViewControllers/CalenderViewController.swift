@@ -4,6 +4,7 @@
 //
 //  Created by Andrew T Lim on 4/18/21.
 //
+//  A View Controller to deal with the Calendar page that allows filter tasks by that particular date.
 
 import UIKit
 import FSCalendar
@@ -32,12 +33,6 @@ class CalenderViewController: UIViewController, FSCalendarDelegate {
         
         self.title = titleList
         getData()
-        setupSortMenuItem()
-        
-        let sortButton = UIBarButtonItem(title: "Sort", menu: sortMenu)
-        let shareButton = UIBarButtonItem(title: "Share", style: .plain, target: self, action: #selector(didTapShareButton))
-        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
-        navigationItem.rightBarButtonItems = [addButton, shareButton, sortButton]
     }
     
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
@@ -45,7 +40,6 @@ class CalenderViewController: UIViewController, FSCalendarDelegate {
         formatter.dateFormat = "EEEE MM-dd-YYYY"
         
         let string = formatter.string(from: date)
-        
         
         dateLabel.text = string
         getData(targetDate: date)
@@ -87,98 +81,6 @@ class CalenderViewController: UIViewController, FSCalendarDelegate {
         }
         return endUser
     }
-    
-    // Dropdown menu
-    private func setupSortMenuItem() {
-        let localUser = DataBaseHelper.shareInstance.fetchLocalUser()
-        self.sortMenu = UIMenu(title: "", children: [
-            //TODO: Sort by task list function
-            // Sort by title
-            UIAction(title: "By Title Ascending") { action in
-                // Update user's preference in db
-                DataBaseHelper.shareInstance.updateSortPreference(key: "title", ascending: true, email: localUser[0].email ?? "")
-                DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "title", ascending: true, email: localUser[0].email ?? "")
-                
-                self.getData()
-            },
-            UIAction(title: "By Title Decending") { action in
-                // Update user's preference in db
-                DataBaseHelper.shareInstance.updateSortPreference(key: "title", ascending: false, email: localUser[0].email ?? "")
-                DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "title", ascending: false, email: localUser[0].email ?? "")
-                
-                self.getData()
-            },
-             UIAction(title: "By Date Ascending") { action in
-
-                // Update user's preference in db
-                DataBaseHelper.shareInstance.updateSortPreference(key: "date", ascending: true, email: localUser[0].email ?? "")
-                DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "date", ascending: true, email: localUser[0].email ?? "")
-                
-                self.getData()
-            },
-             UIAction(title: "By Date Decending") { action in
-                
-                // Update user's preference in db
-                DataBaseHelper.shareInstance.updateSortPreference(key: "date", ascending: false, email: localUser[0].email ?? "")
-                DataBaseHelper.shareInstance.updateSortPreferenceDB(key: "date", ascending: false, email: localUser[0].email ?? "")
-                
-                self.getData()
-            },
-            UIAction(title: "Filter Today") { action in
-                DataBaseHelper.shareInstance.updateFilterPreference(email: localUser[0].email ?? "", filterKey: "today")
-                self.getData()
-           },
-            UIAction(title: "Filter This Month") { action in
-                DataBaseHelper.shareInstance.updateFilterPreference(email: localUser[0].email ?? "", filterKey: "month")
-                self.getData()
-           },
-            UIAction(title: "Filter This Year") { action in
-                DataBaseHelper.shareInstance.updateFilterPreference(email: localUser[0].email ?? "", filterKey: "year")
-                self.getData()
-           },
-            UIAction(title: "Clear Filter") { action in
-                DataBaseHelper.shareInstance.updateFilterPreference(email: localUser[0].email ?? "", filterKey: "")
-                self.getData()
-           },
-        ])
-    }
-    
-    @objc func didTapShareButton() {
-        let storyboard = UIStoryboard(name: "Home", bundle: nil)
-        guard let vc = storyboard.instantiateViewController(identifier: "share") as? SharingViewController else {
-            return
-        }
-        vc.title = "Share with"
-        vc.navigationItem.largeTitleDisplayMode = .never
-        vc.lid = self.id!
-        vc.completion = {email in
-            DispatchQueue.main.async {
-                self.navigationController?.popViewController(animated: true)
-                DataBaseHelper.shareInstance.saveDBSharedList(to: email, taskList: self.titleList!, lid: self.id!)
-                self.getData()
-            }
-        }
-        navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc func didTapAddButton() {
-        let storyboard = UIStoryboard(name: "Home", bundle: nil)
-        guard let vc = storyboard.instantiateViewController(identifier: "add") as? AddViewController else {
-            return
-        }
-        vc.list = self.list
-        vc.title = "New Task"
-        vc.navigationItem.largeTitleDisplayMode = .never
-        vc.completion = {title, body, date, color, priority, made in
-            DispatchQueue.main.async {
-                self.navigationController?.popViewController(animated: true)
-//                DataBaseHelper.shareInstance.saveTask(title: title, body: body, date: date, isDone: false, list: self.titleList!, color: color, priority: priority, made: made)
-                self.getData()
-            }
-        }
-        navigationController?.pushViewController(vc, animated: true)
-        
-    }
 }
 
 extension CalenderViewController: UITableViewDelegate {
@@ -204,7 +106,7 @@ extension CalenderViewController: UITableViewDelegate {
 }
 
 extension CalenderViewController: UITableViewDataSource {
-    
+    /// Data source for the table view
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return section == 0 ? "To-do" : "Done"
     }
@@ -219,17 +121,23 @@ extension CalenderViewController: UITableViewDataSource {
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        /// Format each individiual cell to have custom styles
+        
         let topics = getTopics()
         let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath)
         let viewWithTag = cell.viewWithTag(100)
         viewWithTag?.removeFromSuperview()
+        
         let date = taskListStore[indexPath.section][indexPath.row].date!
         let color = taskListStore[indexPath.section][indexPath.row].color
         let priority = taskListStore[indexPath.section][indexPath.row].priority
+        
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM dd, YYYY HH:mm"
         cell.textLabel?.attributedText = NSMutableAttributedString()
             .normal(taskListStore[indexPath.section][indexPath.row].title!)
+        
+        /// Display priority tags
         if (priority != 0) {
             var priorityText = ""
             if (priority == 1) {
@@ -245,22 +153,20 @@ extension CalenderViewController: UITableViewDataSource {
                 .normal(" )")
         }
         cell.textLabel?.sizeToFit()
+        
+        /// Format date string color
+        let dateStr = formatter.string(from: date)
+        let range = (dateStr as NSString).range(of: dateStr)
+        let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
+        
         if (date < Date() && indexPath.section != 1) {
-            let dateStr = formatter.string(from: date)
-            let range = (dateStr as NSString).range(of: dateStr)
-
-            let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
             mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: range)
-            cell.detailTextLabel?.attributedText = mutableAttributedString
         } else {
-            let dateStr = formatter.string(from: date)
-            let range = (dateStr as NSString).range(of: dateStr)
-
-            let mutableAttributedString = NSMutableAttributedString.init(string: dateStr)
             mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: range)
-            cell.detailTextLabel?.attributedText = mutableAttributedString
         }
-//            if !(color!.isEmpty) {
+        cell.detailTextLabel?.attributedText = mutableAttributedString
+        
+        /// Assign tag color
         if (color != nil && !color!.isEmpty) {
             let label = UILabel()
             label.text = " " + color! + " "
@@ -272,6 +178,7 @@ extension CalenderViewController: UITableViewDataSource {
             let rectangle = UIView(frame: CGRect(x: (cell.textLabel?.frame.size.width)! + 50, y: (cell.textLabel?.frame.size.height)! - 10, width: label.frame.size.width, height: 20))
 
             var background = UIColor.white
+            
             if (topics["red"] as? String) == color {
                 background = UIColor.systemRed
             }
@@ -320,6 +227,10 @@ extension CalenderViewController: UITableViewDataSource {
 }
 
 extension CalenderViewController {
+    /// Setup swipe actions
+    /// Left: Mark as done
+    /// Right: Delete task
+    
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let doneAction = UIContextualAction(style: .normal, title: nil) { (action, sourceView, completionHandler) in
             //QUESTION????? should this be intersectoin?
