@@ -16,7 +16,6 @@
 		8D8632D2260BE92E00EAEB85 /* DailyProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8632D1260BE92E00EAEB85 /* DailyProgressViewController.swift */; };
 		8D8632D5260BEBDE00EAEB85 /* MonthlyProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8632D4260BEBDE00EAEB85 /* MonthlyProgressViewController.swift */; };
 		8DB602D82612B6810057F27C /* YearlyProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DB602D72612B6810057F27C /* YearlyProgressViewController.swift */; };
-		8DC9D4AC25FB024F00353402 /* SortingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC9D4AB25FB024F00353402 /* SortingViewController.swift */; };
 		8DD81F5E260ACBE5003E9628 /* ProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DD81F5D260ACBE5003E9628 /* ProgressViewController.swift */; };
 		8DE63E022635DDA6005C1454 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE63E012635DDA6005C1454 /* LocationManager.swift */; };
 		8DE63E052636027E005C1454 /* MapSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE63E042636027E005C1454 /* MapSearchViewController.swift */; };
@@ -66,7 +65,6 @@
 		8D8632D1260BE92E00EAEB85 /* DailyProgressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyProgressViewController.swift; sourceTree = "<group>"; };
 		8D8632D4260BEBDE00EAEB85 /* MonthlyProgressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyProgressViewController.swift; sourceTree = "<group>"; };
 		8DB602D72612B6810057F27C /* YearlyProgressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearlyProgressViewController.swift; sourceTree = "<group>"; };
-		8DC9D4AB25FB024F00353402 /* SortingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortingViewController.swift; sourceTree = "<group>"; };
 		8DD81F5D260ACBE5003E9628 /* ProgressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressViewController.swift; sourceTree = "<group>"; };
 		8DE63E012635DDA6005C1454 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		8DE63E042636027E005C1454 /* MapSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSearchViewController.swift; sourceTree = "<group>"; };
@@ -204,7 +202,6 @@
 				9B7190BD25FBCD7100549805 /* SharedViewController.swift */,
 				9B7190C325FC1F0C00549805 /* SharingViewController.swift */,
 				9B6CC77F25DB60DA00C0CAF7 /* SignUpViewController.swift */,
-				8DC9D4AB25FB024F00353402 /* SortingViewController.swift */,
 				CE4912C32602E3B800896E14 /* UpdatePassViewController.swift */,
 				9B6CC76E25DB5F5A00C0CAF7 /* ViewController.swift */,
 				8DB602D72612B6810057F27C /* YearlyProgressViewController.swift */,
@@ -401,7 +398,6 @@
 				9BFA4896262613EE00A9512E /* SharedInviteViewController.swift in Sources */,
 				9B6CC76D25DB5F5A00C0CAF7 /* SceneDelegate.swift in Sources */,
 				9B6CC78625DB60FD00C0CAF7 /* HomeViewController.swift in Sources */,
-				8DC9D4AC25FB024F00353402 /* SortingViewController.swift in Sources */,
 				5D3B626025FB762300EFA147 /* EditTopicsViewController.swift in Sources */,
 				8DE63E052636027E005C1454 /* MapSearchViewController.swift in Sources */,
 				5DA410AB25F1494D005D3E0B /* DescriptionViewController.swift in Sources */,

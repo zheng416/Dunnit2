@@ -13,6 +13,7 @@ import UserNotifications
 
 class SettingsViewController: UITableViewController {
     
+    // Button and label outlets
     @IBOutlet weak var verifyEmailButton: UIView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var emailLabel: UILabel!
@@ -20,14 +21,14 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var verifyLabel: UILabel!
     @IBOutlet weak var notificationsToggle: UISwitch!
     @IBOutlet weak var darkModeToggle: UISwitch!
-    
     @IBOutlet weak var logoutLabel: UILabel!
     @IBOutlet weak var logoutButton: UITableViewCell!
+    
+    // Initialize store
     var userStore = [UserEntity]()
+    var taskStore = [[TaskEntity](), [TaskEntity]()]
     var globalUser = [String: Any]()
     var authUser = Auth.auth().currentUser
-    
-    var taskStore = [[TaskEntity](), [TaskEntity]()]
     
     func getData() {
         let user = DataBaseHelper.shareInstance.fetchLocalUser()
@@ -52,7 +53,7 @@ class SettingsViewController: UITableViewController {
         }
     }
     
-    func verifyemail(){
+    func verifyEmail(){
         guard let user = Auth.auth().currentUser else{
             print("no user found when trying to verify the email")
             return
@@ -63,12 +64,7 @@ class SettingsViewController: UITableViewController {
         })
     }
     
-    
-    
-    
     func loadLabelValues() {
-        
-//        let user = getUser()
         let user = DataBaseHelper.shareInstance.parsedLocalUser()
         if user.isEmpty{
             print("user is empty")
@@ -89,12 +85,12 @@ class SettingsViewController: UITableViewController {
         loadLabelValues()
         globalUser = DataBaseHelper.shareInstance.parsedLocalUser()
         
+        // Guest check
         if (globalUser["email"] as! String == "Guest"){
-            //TODO redirect them to sign in and login in
+            // Change logout button text to sign up
             logoutLabel.text = "Sign Up / Login"
         } else {
             authUser = Auth.auth().currentUser
-            print(authUser!.isEmailVerified)
             
             if authUser!.isEmailVerified{
                 verifyEmailButton.isUserInteractionEnabled = false
@@ -107,7 +103,7 @@ class SettingsViewController: UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         loadLabelValues()
     }
-    //TODO update DB
+
     @IBAction func toggleSound(){
         if soundToggle.isOn {
             print("Updating Sound")
@@ -171,6 +167,7 @@ class SettingsViewController: UITableViewController {
             DataBaseHelper.shareInstance.updateDBUser(email: globalUser["email"] as! String,notification: false )
         }
         
+        // update global user
         globalUser = DataBaseHelper.shareInstance.parsedLocalUser()
     }
     
@@ -189,19 +186,20 @@ class SettingsViewController: UITableViewController {
             navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black]
         }
         
+        // update global user
         globalUser = DataBaseHelper.shareInstance.parsedLocalUser()
     }
     
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        print("selected row is :\(indexPath)")
+        /// Function to handle row click
         
         // Hardcoded rowIndex
         let logoutIndex = [4,0] as IndexPath
         let verifyEmailIndex = [1,2] as IndexPath
         
         if (indexPath == logoutIndex) {
-            print("Logout")
+            // Logout pop up
             let dialogMessage = UIAlertController(title: "", message: "Would you like to logout?", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .default) {
                 UIAlertAction in
@@ -230,8 +228,12 @@ class SettingsViewController: UITableViewController {
                 UIAlertAction in
                 NSLog("Cancel Pressed")
             }
+            
+            // Assign action to dialog
             dialogMessage.addAction(ok)
             dialogMessage.addAction(cancel)
+            
+            // If guest then redirect to sign in page
             if (globalUser["email"] as! String != "Guest"){
                 self.present(dialogMessage, animated: true, completion: nil)
             }
@@ -244,32 +246,34 @@ class SettingsViewController: UITableViewController {
             }
             
         } else if (indexPath == verifyEmailIndex){
+            // Verify Email section
             if authUser!.isEmailVerified{
                 print("User already verified")
                 return
             }
-            print("Verify Email Button Pressed!")
+            
+            // Verify email pop up
             let dialogMessage = UIAlertController(title: "", message: "Would you like to verify your email?", preferredStyle: .alert)
             let ok = UIAlertAction(title: "Yes", style: .default) {
                 UIAlertAction in
-                // TODO: Verification for peter? Not sure what else to add here
-                self.verifyemail()
-                print("Ok button pressed")
+                self.verifyEmail()
             }
             let cancel = UIAlertAction(title: "No", style: .cancel) {
                 UIAlertAction in
                 NSLog("Cancel Pressed")
             }
+            
+            // Assign action to dialog
             dialogMessage.addAction(ok)
             dialogMessage.addAction(cancel)
             self.present(dialogMessage, animated: true, completion: nil)
-            
         }
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         let guestFlag = globalUser["email"] as! String == "Guest"
 
+        // Hide premium settings feature for guest users
         if (guestFlag) {
             switch section {
             case 0: return 0.0
@@ -285,6 +289,7 @@ class SettingsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let guestFlag = globalUser["email"] as! String == "Guest"
 
+        // Hide premium settings feature for guest users
         if (guestFlag) {
             switch indexPath {
             case [0,0]: return 0.0
